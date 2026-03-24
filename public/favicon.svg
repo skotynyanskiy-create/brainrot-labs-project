@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <!-- Background nero brutalist -->
+  <rect width="64" height="64" fill="#000000"/>
+  <!-- Bordo giallo -->
+  <rect x="2" y="2" width="60" height="60" fill="none" stroke="#FACC15" stroke-width="4"/>
+  <!-- Skull semplificato -->
+  <!-- Cranio -->
+  <ellipse cx="32" cy="26" rx="14" ry="13" fill="#FACC15"/>
+  <!-- Mascella -->
+  <rect x="22" y="35" width="20" height="9" rx="2" fill="#FACC15"/>
+  <!-- Denti -->
+  <rect x="23" y="37" width="4" height="5" rx="1" fill="#000"/>
+  <rect x="30" y="37" width="4" height="5" rx="1" fill="#000"/>
+  <rect x="37" y="37" width="4" height="5" rx="1" fill="#000"/>
+  <!-- Occhi -->
+  <ellipse cx="26" cy="25" rx="4" ry="4.5" fill="#000"/>
+  <ellipse cx="38" cy="25" rx="4" ry="4.5" fill="#000"/>
+  <!-- Naso -->
+  <path d="M30 30 L32 33 L34 30" stroke="#000" stroke-width="2" stroke-linecap="round" fill="none"/>
+  <!-- Pixel accent rosa -->
+  <rect x="4" y="4" width="4" height="4" fill="#EC4899"/>
+  <rect x="56" y="4" width="4" height="4" fill="#EC4899"/>
+  <rect x="4" y="56" width="4" height="4" fill="#EC4899"/>
+  <rect x="56" y="56" width="4" height="4" fill="#EC4899"/>
+</svg>
