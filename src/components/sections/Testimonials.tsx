@@ -37,7 +37,7 @@ const AnimatedCounter = ({ target, label, icon: Icon }: CounterProps) => {
     <div ref={ref} className="flex flex-col items-center gap-4">
       <motion.div
         animate={{ scale: inView ? 1 : 0.8, rotate: inView ? 5 : 0 }}
-        className="bg-black text-white p-6 border-4 border-black shadow-[8px_8px_0_0_rgba(0,0,0,1)]"
+        className="bg-black text-white p-4 md:p-6 border-4 border-black shadow-[4px_4px_0_0_rgba(0,0,0,1)] md:shadow-[8px_8px_0_0_rgba(0,0,0,1)]"
       >
         <Icon className="w-8 h-8" />
       </motion.div>
@@ -55,45 +55,45 @@ const AnimatedCounter = ({ target, label, icon: Icon }: CounterProps) => {
 export default function Testimonials() {
   const reviews = [
     {
-      name: 'Marco R.',
-      role: 'Collezionista di meme',
-      avatar: 'https://api.dicebear.com/9.x/thumbs/svg?seed=MarcoR',
-      text: 'La qualità di stampa è notevolmente sopra la media del meme merch. La maglietta è già stata rubata da due amici diversi — lo prendo come segnale positivo.',
+      name: 'Chad_Based_99',
+      role: 'Sigma Grindset CEO',
+      avatar: 'https://api.dicebear.com/9.x/thumbs/svg?seed=Chad',
+      text: 'Ho messo la t-shirt "This is Fine" al pranzo coi parenti. Nessuno ha capito niente, ma la mia aura è salita di +10000. Tessuto assurdo, zero poliestere radioattivo.',
       rating: 5,
       color: 'bg-pink-100',
     },
     {
-      name: 'Giulia S.',
-      role: 'Designer freelance',
-      avatar: 'https://api.dicebear.com/9.x/thumbs/svg?seed=GiuliaS',
-      text: 'Il customizer AI è sorprendentemente usabile. Ho generato un design in 5 minuti, ho ordinato, e il risultato fisico corrisponde esattamente al preview. Raro.',
+      name: 'Doomer.Girl',
+      role: 'Scroller Professionista',
+      avatar: 'https://api.dicebear.com/9.x/thumbs/svg?seed=Doomer',
+      text: 'Ho generato un meme alle 4 di notte in preda a una crisi esistenziale. Il pacco ha spawnato in 3 giorni. Adesso questa felpa è letteralmente la mia skin predefinita.',
       rating: 5,
       color: 'bg-cyan-100',
     },
     {
-      name: 'Luca T.',
-      role: 'Dev Frontend (e cliente abituale)',
-      avatar: 'https://api.dicebear.com/9.x/thumbs/svg?seed=LucaT',
-      text: 'Spedizione in 4 giorni, packaging solido, e il design ha una resa cromatica che non mi aspettavo. Zero sensazione di mockup fatto in fretta. Tornerò.',
+      name: 'Crypto_Bro_ETH',
+      role: 'Sopravvissuto al Bear Market',
+      avatar: 'https://api.dicebear.com/9.x/thumbs/svg?seed=Crypto',
+      text: 'Droppato 50 euro per la felpa del Doge. Miglior investimento dell\'anno, fa più ROI del mio portafoglio crypto. Spedizione speedrun vera. W assoluta.',
       rating: 5,
       color: 'bg-yellow-100',
     },
   ];
 
   return (
-    <section id="testimonials" className="py-32 px-6 md:px-12 bg-white border-b-8 border-black relative overflow-hidden">
+    <section id="testimonials" className="py-20 md:py-32 px-6 md:px-12 bg-white border-b-8 border-black relative overflow-hidden">
       <div className="max-w-7xl mx-auto relative z-10">
-        <div className="text-center mb-24">
+        <div className="text-center mb-16 md:mb-24">
           <motion.div
             initial={{ y: 20, opacity: 0 }}
             whileInView={{ y: 0, opacity: 1 }}
-            className="inline-block bg-black text-white px-6 py-2 border-4 border-black shadow-[8px_8px_0_0_rgba(0,0,0,1)] mb-6 transform rotate-2"
+            className="inline-block bg-black text-white px-4 md:px-6 py-2 border-4 border-black shadow-[4px_4px_0_0_rgba(0,0,0,1)] md:shadow-[8px_8px_0_0_rgba(0,0,0,1)] mb-6 transform rotate-2"
           >
             <span className="font-black uppercase text-2xl italic">Cosa Dicono Di Noi</span>
           </motion.div>
-          <h2 className="text-6xl md:text-9xl font-black uppercase tracking-tighter leading-[0.9] mb-8">
+          <h2 className="text-5xl md:text-9xl font-black uppercase tracking-tighter leading-[0.9] mb-8">
             FEEDBACK <br />
-            <span className="inline-block bg-pink-500 text-white px-8 py-2 border-4 border-black shadow-[12px_12px_0_0_rgba(0,0,0,1)] rotate-[-2deg] italic">VERIFICATI</span>
+            <span className="inline-block bg-pink-500 text-white px-6 md:px-8 py-2 border-4 border-black shadow-[8px_8px_0_0_rgba(0,0,0,1)] md:shadow-[12px_12px_0_0_rgba(0,0,0,1)] rotate-[-2deg] italic">VERIFICATI</span>
           </h2>
         </div>
 
@@ -105,7 +105,7 @@ export default function Testimonials() {
               whileInView={{ y: 0, opacity: 1 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.1 }}
-              className={`${review.color} border-4 border-black p-8 shadow-[12px_12px_0_0_rgba(0,0,0,1)] hover:-translate-y-2 transition-transform`}
+              className={`${review.color} border-4 border-black p-6 md:p-8 shadow-[8px_8px_0_0_rgba(0,0,0,1)] md:shadow-[12px_12px_0_0_rgba(0,0,0,1)] hover:-translate-y-2 transition-transform`}
             >
               <div className="flex gap-1 mb-6" aria-label={`${review.rating} stelle su 5`}>
                 {[...Array(review.rating)].map((_, index) => (
@@ -129,7 +129,7 @@ export default function Testimonials() {
           ))}
         </div>
 
-        <div className="mt-32 grid grid-cols-3 gap-8 md:gap-16">
+        <div className="mt-20 md:mt-32 grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-16">
           <AnimatedCounter target={12400} label="Meme Generati con AI" icon={MessageSquare} />
           <AnimatedCounter target={3200} label="Ordini Completati" icon={Star} />
           <AnimatedCounter target={98} label="Clienti Soddisfatti %" icon={ShieldCheck} />

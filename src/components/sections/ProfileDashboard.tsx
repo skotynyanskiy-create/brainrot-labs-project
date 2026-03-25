@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { db, collection, query, where, onSnapshot, orderBy } from '../../firebase';
 import { CommunityDesign } from '../../types';
 import { motion } from 'motion/react';
-import { ArrowLeft, LogOut, Package, Palette, Image as ImageIcon, Heart, Trash2 } from 'lucide-react';
+import { ArrowLeft, LogOut, Package, Palette, Image as ImageIcon, Heart, Trash2, DollarSign, TrendingUp, ShoppingBag, Star } from 'lucide-react';
 import { playBlipSound } from '../../utils/sounds';
 import { cn } from '../../utils/cn';
 
@@ -33,7 +33,7 @@ interface StoredOrder {
 
 export default function ProfileDashboard({ onBack }: ProfileDashboardProps) {
   const { user, logout } = useAuth();
-  const [activeTab, setActiveTab] = useState<'templates' | 'community' | 'orders'>('community');
+  const [activeTab, setActiveTab] = useState<'templates' | 'community' | 'orders' | 'earnings'>('community');
   const [myDesigns, setMyDesigns] = useState<CommunityDesign[]>([]);
   const [savedTemplates, setSavedTemplates] = useState<any[]>([]);
   const [orders, setOrders] = useState<StoredOrder[]>([]);
@@ -124,6 +124,14 @@ export default function ProfileDashboard({ onBack }: ProfileDashboardProps) {
     };
   }, [user]);
 
+  const earningsStats = useMemo(() => {
+    const totalEarnings = myDesigns.reduce((acc, d) => acc + (d.totalEarnings || 0), 0);
+    const totalSales = myDesigns.reduce((acc, d) => acc + (d.totalSales || 0), 0);
+    const totalLikes = myDesigns.reduce((acc, d) => acc + d.likes, 0);
+    const bestDesign = [...myDesigns].sort((a, b) => (b.totalEarnings || 0) - (a.totalEarnings || 0))[0];
+    return { totalEarnings, totalSales, totalLikes, bestDesign };
+  }, [myDesigns]);
+
   if (!user) {
     return (
       <div className="min-h-screen bg-[#f0f0f0] flex flex-col items-center justify-center p-6">
@@ -207,6 +215,20 @@ export default function ProfileDashboard({ onBack }: ProfileDashboardProps) {
           >
             <Package className="w-6 h-6" /> I Miei Ordini
           </button>
+          <button
+            onClick={() => { playBlipSound(); setActiveTab('earnings'); }}
+            className={cn(
+              'flex items-center gap-3 p-4 border-4 border-black font-black uppercase transition-all relative',
+              activeTab === 'earnings' ? 'bg-green-400 shadow-[6px_6px_0_0_rgba(0,0,0,1)] translate-x-1' : 'bg-white hover:bg-gray-100'
+            )}
+          >
+            <DollarSign className="w-6 h-6" /> Royalty & Guadagni
+            {earningsStats.totalEarnings > 0 && (
+              <span className="absolute -top-2 -right-2 bg-green-400 border-2 border-black text-black font-black text-xs px-2 py-0.5">
+                €{earningsStats.totalEarnings.toFixed(0)}
+              </span>
+            )}
+          </button>
         </div>
 
         <div className="flex-grow bg-white border-8 border-black p-6 shadow-[12px_12px_0_0_rgba(0,0,0,1)]">
@@ -268,6 +290,95 @@ export default function ProfileDashboard({ onBack }: ProfileDashboardProps) {
                       </button>
                     </div>
                   ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {activeTab === 'earnings' && (
+            <div>
+              <h2 className="text-4xl font-black uppercase italic mb-8 border-b-4 border-black pb-4">Royalty & Guadagni</h2>
+
+              {/* Stats overview */}
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
+                <div className="bg-green-400 border-4 border-black p-4 shadow-[4px_4px_0_0_rgba(0,0,0,1)]">
+                  <DollarSign className="w-6 h-6 mb-2" />
+                  <div className="text-3xl font-black">€{earningsStats.totalEarnings.toFixed(2)}</div>
+                  <p className="font-mono text-xs uppercase">Totale Guadagnato</p>
+                </div>
+                <div className="bg-yellow-400 border-4 border-black p-4 shadow-[4px_4px_0_0_rgba(0,0,0,1)]">
+                  <ShoppingBag className="w-6 h-6 mb-2" />
+                  <div className="text-3xl font-black">{earningsStats.totalSales}</div>
+                  <p className="font-mono text-xs uppercase">Vendite Totali</p>
+                </div>
+                <div className="bg-pink-400 border-4 border-black p-4 shadow-[4px_4px_0_0_rgba(0,0,0,1)]">
+                  <Heart className="w-6 h-6 mb-2" />
+                  <div className="text-3xl font-black">{earningsStats.totalLikes}</div>
+                  <p className="font-mono text-xs uppercase">Like Totali</p>
+                </div>
+                <div className="bg-cyan-400 border-4 border-black p-4 shadow-[4px_4px_0_0_rgba(0,0,0,1)]">
+                  <TrendingUp className="w-6 h-6 mb-2" />
+                  <div className="text-3xl font-black">12%</div>
+                  <p className="font-mono text-xs uppercase">Tasso Royalty</p>
+                </div>
+              </div>
+
+              {/* Info banner */}
+              <div className="bg-black text-white border-4 border-black p-5 mb-8 flex items-start gap-4">
+                <Star className="w-6 h-6 text-yellow-400 shrink-0 mt-1" />
+                <div>
+                  <p className="font-black uppercase text-sm mb-1">Come funzionano le Royalty?</p>
+                  <p className="font-mono text-sm text-gray-300">
+                    Ogni volta che un altro utente acquista un prodotto con il tuo design, ricevi automaticamente il{' '}
+                    <strong className="text-green-400">12%</strong> del prezzo di vendita. I guadagni si accumulano
+                    e vengono erogati mensilmente tramite il metodo di pagamento impostato nel tuo profilo.
+                  </p>
+                </div>
+              </div>
+
+              {/* Per-design earnings */}
+              {loading ? (
+                <p className="font-mono text-xl animate-pulse">CARICAMENTO...</p>
+              ) : myDesigns.length === 0 ? (
+                <div className="text-center py-12 border-4 border-dashed border-black bg-gray-50">
+                  <DollarSign className="w-16 h-16 mx-auto mb-4 opacity-20" />
+                  <p className="font-mono text-xl mb-2">Non hai ancora design pubblicati.</p>
+                  <p className="font-black uppercase text-green-600">Pubblica un design per iniziare a guadagnare!</p>
+                </div>
+              ) : (
+                <div>
+                  <h3 className="text-2xl font-black uppercase mb-4 border-b-2 border-black pb-2">Performance per Design</h3>
+                  <div className="flex flex-col gap-4">
+                    {[...myDesigns].sort((a, b) => (b.totalEarnings || 0) - (a.totalEarnings || 0)).map((design) => (
+                      <div key={design.id} className="flex gap-4 border-4 border-black bg-white p-4">
+                        <div className="w-20 h-20 shrink-0 border-4 border-black overflow-hidden bg-gray-100">
+                          <img src={design.image} alt={design.memeDescription} className="w-full h-full object-cover" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="font-mono text-sm truncate mb-2">{design.memeDescription}</p>
+                          <div className="flex flex-wrap gap-3">
+                            <div className="flex items-center gap-1 bg-green-100 border-2 border-green-400 px-2 py-1">
+                              <DollarSign className="w-3 h-3 text-green-600" />
+                              <span className="font-black text-sm text-green-700">€{(design.totalEarnings || 0).toFixed(2)}</span>
+                            </div>
+                            <div className="flex items-center gap-1 bg-gray-100 border-2 border-gray-300 px-2 py-1">
+                              <ShoppingBag className="w-3 h-3 text-gray-500" />
+                              <span className="font-mono text-xs">{design.totalSales || 0} vendite</span>
+                            </div>
+                            <div className="flex items-center gap-1 bg-pink-100 border-2 border-pink-300 px-2 py-1">
+                              <Heart className="w-3 h-3 text-pink-500 fill-pink-500" />
+                              <span className="font-mono text-xs">{design.likes} like</span>
+                            </div>
+                          </div>
+                        </div>
+                        {earningsStats.bestDesign?.id === design.id && (
+                          <div className="shrink-0 bg-yellow-400 border-2 border-black px-3 py-1 font-black text-xs uppercase self-start -rotate-2">
+                            ★ Best
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
                 </div>
               )}
             </div>

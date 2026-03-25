@@ -379,104 +379,122 @@ export default function CartDrawer() {
                   </motion.button>
                 </div>
               ) : checkoutState === 'idle' && (
-                items.map(item => (
-                  <div key={item.cartItemId} className="flex gap-6 border-4 border-black p-4 bg-white shadow-[8px_8px_0_0_rgba(0,0,0,1)] group hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all">
-                    <div className={`w-32 h-32 border-4 border-black shrink-0 ${item.color} relative overflow-hidden bg-white group-hover:rotate-2 transition-transform`}>
-                      {item.customData ? (
-                        <div 
-                          className="absolute origin-top-left"
-                          style={{
-                            width: item.customData.containerSize?.width || 500,
-                            height: item.customData.containerSize?.height || 500,
-                            transform: `scale(${128 / (item.customData.containerSize?.width || 500)})`
-                          }}
-                        >
-                          <img src={item.customData.baseImage} className="w-full h-full object-cover absolute inset-0" />
-                          <div 
-                            className="absolute"
-                            style={{
-                              top: item.customData.overlay.top,
-                              left: item.customData.overlay.left,
-                              width: item.customData.overlay.width,
-                              height: item.customData.overlay.height,
-                              transform: item.customData.overlay.rotate ? `rotate(${item.customData.overlay.rotate})` : 'none',
-                            }}
-                          >
-                            {item.customData.layers?.map((layer: LayerData) => (
+                <motion.div 
+                  initial="hidden" 
+                  animate="show" 
+                  variants={{ show: { transition: { staggerChildren: 0.1 } } }}
+                  className="flex flex-col gap-4 md:gap-5"
+                >
+                  <AnimatePresence>
+                    {items.map(item => (
+                      <motion.div 
+                        key={item.cartItemId} 
+                        layout
+                        initial={{ opacity: 0, x: 50, scale: 0.9 }}
+                        animate={{ opacity: 1, x: 0, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.8, x: -50, transition: { duration: 0.2 } }}
+                        className="flex gap-4 border-4 border-black p-3 bg-white shadow-[4px_4px_0_0_rgba(0,0,0,1)] md:shadow-[6px_6px_0_0_rgba(0,0,0,1)] hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all group"
+                      >
+                        <div className={`w-24 h-24 border-4 border-black shrink-0 ${item.color} relative overflow-hidden bg-white group-hover:rotate-2 transition-transform`}>
+                          {item.customData ? (
+                            <div 
+                              className="absolute origin-top-left"
+                              style={{
+                                width: item.customData.containerSize?.width || 500,
+                                height: item.customData.containerSize?.height || 500,
+                                transform: `scale(${96 / (item.customData.containerSize?.width || 500)})`
+                              }}
+                            >
+                              <img src={item.customData.baseImage} className="w-full h-full object-cover absolute inset-0" />
                               <div 
-                                key={layer.id}
                                 className="absolute"
                                 style={{
-                                  left: layer.x,
-                                  top: layer.y,
-                                  width: layer.width,
-                                  height: layer.height,
-                                  opacity: layer.opacity,
-                                  filter: layer.filter,
-                                  transform: `rotate(${layer.rotate}deg)`
+                                  top: item.customData.overlay.top,
+                                  left: item.customData.overlay.left,
+                                  width: item.customData.overlay.width,
+                                  height: item.customData.overlay.height,
+                                  transform: item.customData.overlay.rotate ? `rotate(${item.customData.overlay.rotate})` : 'none',
                                 }}
                               >
-                                {layer.type === 'text' ? (
+                                {item.customData.layers?.map((layer: LayerData) => (
                                   <div 
-                                    className="w-full h-full flex items-center justify-center text-center"
-                                    style={{ 
-                                      fontSize: `${layer.fontSize}px`,
-                                      fontFamily: layer.fontFamily,
-                                      color: layer.color,
-                                      WebkitTextStroke: `${layer.strokeWidth}px ${layer.strokeColor}`,
-                                      fontWeight: 900,
-                                      lineHeight: 1
+                                    key={layer.id}
+                                    className="absolute"
+                                    style={{
+                                      left: layer.x,
+                                      top: layer.y,
+                                      width: layer.width,
+                                      height: layer.height,
+                                      opacity: layer.opacity,
+                                      filter: layer.filter,
+                                      transform: `rotate(${layer.rotate}deg)`
                                     }}
                                   >
-                                    {layer.content}
+                                    {layer.type === 'text' ? (
+                                      <div 
+                                        className="w-full h-full flex items-center justify-center text-center"
+                                        style={{ 
+                                          fontSize: `${layer.fontSize}px`,
+                                          fontFamily: layer.fontFamily,
+                                          color: layer.color,
+                                          WebkitTextStroke: `${layer.strokeWidth}px ${layer.strokeColor}`,
+                                          fontWeight: 900,
+                                          lineHeight: 1
+                                        }}
+                                      >
+                                        {layer.content}
+                                      </div>
+                                    ) : (
+                                      <img src={layer.content} className="w-full h-full object-contain" />
+                                    )}
                                   </div>
-                                ) : (
-                                  <img src={layer.content} className="w-full h-full object-contain" />
-                                )}
+                                ))}
                               </div>
-                            ))}
+                            </div>
+                          ) : (
+                            <img src={item.image} alt={item.name} className="w-full h-full object-cover mix-blend-multiply" />
+                          )}
+                        </div>
+                        <div className="flex flex-col justify-between flex-grow min-w-0">
+                          <div>
+                            <h3 className="text-xl md:text-2xl font-black uppercase leading-tight mb-1.5 italic tracking-tighter truncate">{item.name}</h3>
+                            <div className="flex flex-wrap gap-1.5 text-[10px] md:text-xs font-mono font-bold uppercase text-gray-500 mt-1">
+                              {item.selectedSize && <span className="bg-black text-white px-1.5 py-0.5 shadow-[2px_2px_0_0_rgba(0,0,0,0.3)]">Taglia: {item.selectedSize}</span>}
+                              {item.selectedColor && <span className="bg-black text-white px-1.5 py-0.5 shadow-[2px_2px_0_0_rgba(0,0,0,0.3)]">Colore: {item.selectedColor}</span>}
+                            </div>
+                            <p className="text-xl md:text-2xl font-black text-pink-500 mt-2 italic">€{item.price.toFixed(2)}</p>
+                          </div>
+                          <div className="flex justify-between items-end mt-2 md:mt-4">
+                            <div className="flex items-center border-4 border-black bg-white shadow-[2px_2px_0_0_rgba(0,0,0,1)]">
+                              <button onClick={() => { playBlipSound(); updateQuantity(item.cartItemId, item.quantity - 1); }} aria-label="Diminuisci quantità" className="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center border-r-4 border-black hover:bg-yellow-400 font-black text-xl transition-colors">-</button>
+                              <span className="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center font-mono font-black text-base">{item.quantity}</span>
+                              <button onClick={() => { playBlipSound(); updateQuantity(item.cartItemId, item.quantity + 1); }} aria-label="Aumenta quantità" className="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center border-l-4 border-black hover:bg-yellow-400 font-black text-xl transition-colors">+</button>
+                            </div>
+                            <button onClick={() => { playBlipSound(); removeFromCart(item.cartItemId); }} aria-label="Rimuovi dal carrello" className="w-10 h-10 flex items-center justify-center border-4 border-black bg-white text-black hover:bg-red-500 hover:text-white transition-all shadow-[2px_2px_0_0_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]">
+                              <Trash2 className="w-5 h-5" />
+                            </button>
                           </div>
                         </div>
-                      ) : (
-                        <img src={item.image} alt={item.name} className="w-full h-full object-cover mix-blend-multiply" />
-                      )}
-                    </div>
-                    <div className="flex flex-col justify-between flex-grow">
-                      <div>
-                        <h3 className="text-2xl font-black uppercase leading-tight mb-2 italic tracking-tighter">{item.name}</h3>
-                        <div className="flex gap-2 text-[10px] font-mono font-bold uppercase text-gray-500 mt-1">
-                          {item.selectedSize && <span className="bg-black text-white px-1">Size: {item.selectedSize}</span>}
-                          {item.selectedColor && <span className="bg-black text-white px-1">Color: {item.selectedColor}</span>}
-                        </div>
-                        <p className="text-2xl font-black text-pink-500 mt-2 italic">€{item.price.toFixed(2)}</p>
-                      </div>
-                      <div className="flex justify-between items-center mt-4">
-                        <div className="flex items-center border-4 border-black bg-white">
-                          <button onClick={() => { playBlipSound(); updateQuantity(item.cartItemId, item.quantity - 1); }} aria-label="Diminuisci quantità" className="px-3 py-1 hover:bg-yellow-400 font-black text-xl">-</button>
-                          <span className="px-4 py-1 border-x-4 border-black font-mono font-black text-lg">{item.quantity}</span>
-                          <button onClick={() => { playBlipSound(); updateQuantity(item.cartItemId, item.quantity + 1); }} aria-label="Aumenta quantità" className="px-3 py-1 hover:bg-yellow-400 font-black text-xl">+</button>
-                        </div>
-                        <button onClick={() => { playBlipSound(); removeFromCart(item.cartItemId); }} aria-label="Rimuovi dal carrello" className="p-2 border-4 border-transparent hover:border-red-500 text-red-500 transition-all">
-                          <Trash2 className="w-6 h-6" />
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                ))
+                      </motion.div>
+                    ))}
+                  </AnimatePresence>
+                </motion.div>
               )}
             </div>
 
             {items.length > 0 && checkoutState === 'idle' && (
-              <div className="p-8 border-t-8 border-black bg-white">
-                <div className="flex justify-between items-center mb-8">
-                  <span className="text-2xl font-black uppercase italic tracking-tighter">TOTALE DANNI:</span>
-                  <span className="text-5xl font-black text-pink-500 tracking-tighter italic">€{total.toFixed(2)}</span>
+              <div className="p-6 md:p-8 border-t-8 border-black bg-white shrink-0">
+                <div className="flex justify-between items-end mb-6">
+                  <span className="text-xl md:text-2xl font-black uppercase italic tracking-tighter">TOTALE DANNI:</span>
+                  <span className="text-4xl md:text-5xl font-black text-pink-500 tracking-tighter italic leading-none">€{total.toFixed(2)}</span>
                 </div>
                 <motion.button 
-                  whileHover={{ scale: 1.02, y: -4 }}
-                  whileTap={{ scale: 0.98 }}
+                  animate={{ scale: [1, 1.02, 1] }}
+                  transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                  whileHover={{ scale: 1.04, y: -2 }}
+                  whileTap={{ scale: 0.96 }}
                   onClick={handleCheckout} 
-                  className="w-full py-6 bg-cyan-400 text-black border-8 border-black font-black text-4xl uppercase italic shadow-[12px_12px_0_0_rgba(0,0,0,1)] hover:shadow-[16px_16px_0_0_rgba(0,0,0,1)] transition-colors tracking-tighter"
+                  className="w-full py-5 md:py-6 bg-cyan-400 text-black border-4 md:border-8 border-black font-black text-3xl md:text-4xl uppercase italic shadow-[8px_8px_0_0_rgba(0,0,0,1)] md:shadow-[12px_12px_0_0_rgba(0,0,0,1)] hover:shadow-[4px_4px_0_0_rgba(0,0,0,1)] hover:translate-x-1 hover:translate-y-1 transition-all tracking-tighter"
                 >
                   PAGA ORA 💸
                 </motion.button>

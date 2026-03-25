@@ -1,127 +1,114 @@
 import { motion } from 'motion/react';
-import { ArrowRight, Wand2 } from 'lucide-react';
+import { Wand2, Users } from 'lucide-react';
 import { playBlipSound } from '../../utils/sounds';
-import { useRef, useState } from 'react';
-import { useScroll, useTransform } from 'motion/react';
-
-import Hero3D from './Hero3D';
+import Product3DPreview from '../customizer/Product3DPreview';
 
 interface HeroProps {
   onOpenCustomizer?: () => void;
+  onOpenCommunity?: () => void;
 }
 
-export default function Hero({ onOpenCustomizer }: HeroProps) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [hero3DReady, setHero3DReady] = useState(false);
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start end", "end start"]
-  });
-
-  // Highlight keywords on scroll
-  const titleOpacity = useTransform(scrollYProgress, [0, 0.15], [1, 0.5]);
-  const highlightProgress = useTransform(scrollYProgress, [0, 0.2], [0, 1]);
-  const highlightColor = useTransform(highlightProgress, [0, 1], ['rgba(252,211,77,0)', 'rgba(252,211,77,1)']);
-
+export default function Hero({ onOpenCustomizer, onOpenCommunity }: HeroProps) {
   return (
-    <section ref={containerRef} className="relative min-h-screen flex flex-col md:flex-row bg-white text-black overflow-hidden border-b-8 border-black">
-      {/* Left Pane - Content */}
-      <div className="w-full md:w-[55%] flex flex-col justify-between p-8 md:p-16 relative z-20 bg-yellow-400 border-r-0 md:border-r-8 border-black">
-        {/* Top Meta Info */}
-        <div className="flex justify-between items-start">
-          {/* Removed Collection Info and Live Badge */}
-        </div>
+    <section className="pt-24 pb-20 md:pt-32 md:pb-32 px-6 md:px-12 bg-white border-b-8 border-black relative overflow-hidden flex items-center min-h-[90vh]">
+      {/* Background Pattern */}
+      <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-grid z-0"></div>
 
-        {/* Main Headline */}
-        <div className="my-12 md:my-0">
-          <motion.div
-            initial={{ x: -100, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-          >
-            <h1 className="text-5xl md:text-7xl lg:text-8xl font-black uppercase leading-[1.05] tracking-tighter italic transform -skew-x-6">
-              THE ART OF <br />
-              <motion.span
-                style={{ opacity: titleOpacity }}
-                className="glitch inline-block bg-white text-black px-4 md:px-6 py-2 md:py-3 border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] md:shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] rotate-[-2deg] mt-4 relative"
-                data-text="NONSENSE"
-              >
-                <motion.span
-                  style={{ backgroundColor: highlightColor }}
-                  className="absolute inset-0 transition-colors"
-                />
-                <span className="relative z-10">NONSENSE</span>
-              </motion.span>
-            </h1>
-          </motion.div>
-
-          <motion.p
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.4, duration: 0.6 }}
-            className="mt-12 text-xl md:text-2xl font-sans font-medium text-black max-w-xl leading-relaxed"
-          >
-            Non è semplice merchandising, è un manifesto culturale. Indossa l'ironia, confondi i boomer e abbraccia il caos digitale con stile.
-          </motion.p>
-        </div>
-
-        {/* CTAs */}
-        <div className="flex flex-col gap-4 md:gap-6 mt-8 w-full md:w-auto">
-          {onOpenCustomizer && (
-            <motion.button
-              whileHover={{ scale: 1.02, x: 5 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={() => { playBlipSound(); onOpenCustomizer(); }}
-              className="flex-1 bg-pink-500 text-black border-4 border-black px-6 md:px-8 py-4 md:py-6 text-lg md:text-2xl font-black uppercase shadow-[8px_8px_0_0_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all flex items-center justify-center gap-4 group italic focus:outline-none focus:ring-4 focus:ring-offset-2"
+      <div className="max-w-7xl mx-auto w-full relative z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
+          
+          {/* Left Column: Copy & CTAs */}
+          <div className="flex flex-col items-start text-left order-1 z-20">
+            <motion.div
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              className="inline-block bg-pink-500 text-white px-4 md:px-6 py-2 border-4 border-black shadow-[4px_4px_0_0_rgba(0,0,0,1)] md:shadow-[6px_6px_0_0_rgba(0,0,0,1)] mb-6 md:mb-8 transform -rotate-2"
             >
-              <Wand2 className="w-8 h-8 group-hover:rotate-180 transition-transform duration-500" />
-              CREA MEME
-            </motion.button>
-          )}
-          <motion.button
-            whileHover={{ scale: 1.02, x: 5 }}
-            whileTap={{ scale: 0.98 }}
-            onClick={() => { playBlipSound(); document.getElementById('products')?.scrollIntoView({ behavior: 'smooth' }); }}
-            className="flex-1 bg-black text-white border-4 border-black px-6 md:px-8 py-4 md:py-6 text-lg md:text-2xl font-black uppercase shadow-[8px_8px_0_0_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all flex items-center justify-center gap-4 group italic focus:outline-none focus:ring-4 focus:ring-offset-2 focus:ring-offset-white"
-          >
-            SHOP ORA
-            <ArrowRight className="w-8 h-8 group-hover:translate-x-2 transition-transform" />
-          </motion.button>
+              <span className="font-black uppercase text-sm md:text-lg italic tracking-widest">Brainrot Labs v2.0</span>
+            </motion.div>
+
+            <motion.h1
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.1 }}
+              className="text-[3.5rem] leading-[0.9] md:text-8xl lg:text-[7rem] xl:text-[8rem] font-black uppercase tracking-tighter text-black mb-8"
+            >
+              IL TUO OUTFIT <br />
+              <span className="inline-block bg-yellow-400 text-black px-4 md:px-6 py-2 mt-2 md:mt-4 border-4 md:border-8 border-black shadow-[6px_6px_0_0_rgba(0,0,0,1)] md:shadow-[12px_12px_0_0_rgba(0,0,0,1)] transform rotate-2">
+                È UN MEME
+              </span>
+            </motion.h1>
+
+            <motion.p
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.2 }}
+              className="text-lg md:text-2xl xl:text-3xl font-mono font-bold text-gray-800 leading-relaxed max-w-2xl mb-10 md:mb-12 border-l-4 md:border-l-8 border-black pl-4 md:pl-6"
+            >
+              Smetti di vestirti come un NPC. Genera drip con l'AI o ruba il degrado dalla community.
+            </motion.p>
+
+            <motion.div
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.3 }}
+              className="flex flex-col sm:flex-row gap-4 md:gap-6 w-full sm:w-auto"
+            >
+              <motion.button
+                whileHover={{ scale: 1.02, y: -2 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => { playBlipSound(); onOpenCustomizer?.(); }}
+                className="flex items-center justify-center gap-3 bg-cyan-400 text-black border-4 md:border-8 border-black px-6 md:px-10 py-4 md:py-6 text-xl md:text-2xl font-black uppercase italic shadow-[6px_6px_0_0_rgba(0,0,0,1)] md:shadow-[12px_12px_0_0_rgba(0,0,0,1)] hover:shadow-[4px_4px_0_0_rgba(0,0,0,1)] hover:translate-x-[4px] hover:translate-y-[4px] transition-all group w-full sm:w-auto"
+              >
+                <Wand2 className="w-6 h-6 md:w-8 md:h-8 group-hover:rotate-12 transition-transform" />
+                Crea Drip AI
+              </motion.button>
+
+              <motion.button
+                whileHover={{ scale: 1.02, y: -2 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => { playBlipSound(); onOpenCommunity?.(); }}
+                className="flex items-center justify-center gap-3 bg-white text-black border-4 md:border-8 border-black px-6 md:px-10 py-4 md:py-6 text-xl md:text-2xl font-black uppercase italic shadow-[6px_6px_0_0_rgba(0,0,0,1)] md:shadow-[12px_12px_0_0_rgba(0,0,0,1)] hover:bg-black hover:text-white hover:shadow-[4px_4px_0_0_rgba(0,0,0,1)] hover:translate-x-[4px] hover:translate-y-[4px] transition-all group w-full sm:w-auto"
+              >
+                <Users className="w-6 h-6 md:w-8 md:h-8 group-hover:-rotate-12 transition-transform" />
+                Community
+              </motion.button>
+            </motion.div>
+          </div>
+
+          {/* Right Column: Big Borderless 3D Product */}
+          <div className="relative w-full h-[350px] sm:h-[450px] lg:h-[650px] order-2 z-10 flex flex-col items-center justify-center mt-4 lg:mt-0">
+            {/* Animated Spotlight blur effect behind 3D */}
+            <motion.div 
+              animate={{ opacity: [0.3, 0.6, 0.3], scale: [1, 1.1, 1] }}
+              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[80%] max-w-[400px] max-h-[400px] bg-yellow-400/40 rounded-full blur-[60px] md:blur-[100px] pointer-events-none z-0"
+            />
+            
+            {/* 3D Model Container */}
+            <div className="absolute inset-0 w-full h-full cursor-grab active:cursor-grabbing z-10">
+              <motion.div 
+                animate={{ y: [-8, 8, -8] }}
+                transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+                className="w-full h-full transform scale-110 sm:scale-125 lg:scale-[1.35] lg:translate-x-4"
+              >
+                <Product3DPreview
+                  baseProductId="base-tshirt"
+                  baseColor="#ffffff"
+                  designTextureUrl="https://api.dicebear.com/9.x/bottts/png?seed=brainrotcat&backgroundColor=transparent"
+                  autoRotate={true}
+                />
+              </motion.div>
+            </div>
+
+            {/* Subtle UI Hint */}
+            <div className="absolute -bottom-6 lg:-bottom-2 left-1/2 -translate-x-1/2 z-20 pointer-events-none flex items-center gap-2 text-black/50">
+              <span className="animate-bounce text-sm">👆</span>
+              <span className="font-mono font-bold uppercase text-xs tracking-widest">Trascina per ruotare</span>
+            </div>
+          </div>
+
         </div>
-      </div>
-
-      {/* Right Pane - Visual */}
-      <div className="w-full md:w-[45%] bg-[#1a1a1a] relative flex flex-col min-h-[50vh] md:min-h-screen">
-        {/* 3D Background */}
-        <div className="absolute inset-0 z-10">
-          <Hero3D onReadyChange={setHero3DReady} />
-        </div>
-
-        <div className="absolute left-6 bottom-6 z-20 max-w-xs border-4 border-black bg-white/95 p-4 shadow-[8px_8px_0_0_rgba(0,0,0,1)]">
-          <p className="font-mono text-[10px] font-black uppercase tracking-[0.25em] text-black">
-            {hero3DReady ? '3D reactor online' : 'Fallback poster active'}
-          </p>
-          <p className="mt-2 text-sm font-bold uppercase text-black">
-            La hero resta leggibile anche se WebGL tarda o non parte.
-          </p>
-        </div>
-
-        {/* Floating Badges */}
-        <motion.div
-          animate={{ rotate: [0, 5, -5, 0], y: [0, -10, 10, 0] }}
-          transition={{ duration: 6, repeat: Infinity }}
-          className="absolute top-8 md:top-12 right-8 md:right-12 z-20 bg-pink-500 text-black border-4 border-black px-4 md:px-6 py-2 md:py-3 font-black uppercase text-sm md:text-xl shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] md:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transform rotate-6"
-        >
-          100% POST-IRONICO
-        </motion.div>
-
-        <motion.div
-          animate={{ rotate: [0, -5, 5, 0], y: [0, 10, -10, 0] }}
-          transition={{ duration: 5, repeat: Infinity, delay: 1 }}
-          className="absolute bottom-16 md:bottom-24 left-8 md:left-12 z-20 bg-cyan-400 text-black border-4 border-black px-4 md:px-6 py-2 md:py-3 font-black uppercase text-sm md:text-xl shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] md:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transform -rotate-3"
-        >
-          QUALITÀ SHITPOST
-        </motion.div>
       </div>
     </section>
   );

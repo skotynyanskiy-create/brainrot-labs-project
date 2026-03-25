@@ -47,7 +47,7 @@ export default function Marquee() {
       {/* Row 1 - Left to Right */}
       <div className="flex overflow-hidden bg-black text-[#a3e635] hover:bg-[#a3e635] hover:text-black transition-colors duration-500 border-b-4 border-black">
         <div className="flex w-full py-3 mask-[linear-gradient(to_right,transparent_0%,black_5%,black_95%,transparent_100%)]">
-          <div className="w-max animate-marquee flex items-center font-display uppercase font-black text-sm md:text-lg tracking-[0.2em] group-hover:[animation-play-state:paused]">
+          <div className="w-max animate-marquee flex items-center font-display uppercase font-black text-sm md:text-lg tracking-[0.2em] group-hover:[animation-play-state:paused] [animation-duration:50s] md:[animation-duration:70s]">
             {repeatedRow1.map((phrase, i) => (
               <span 
                 key={i} 
@@ -64,7 +64,7 @@ export default function Marquee() {
       {/* Row 2 - Right to Left */}
       <div className="flex overflow-hidden bg-[#a3e635] text-black hover:bg-black hover:text-white transition-colors duration-500 shadow-inner shadow-black/20">
         <div className="flex w-full py-2.5 mask-[linear-gradient(to_right,transparent_0%,black_5%,black_95%,transparent_100%)]">
-          <div className="w-max animate-marquee-reverse flex items-center font-sans font-extrabold uppercase text-xs md:text-sm tracking-[0.3em] group-hover:[animation-play-state:paused]">
+          <div className="w-max animate-marquee-reverse flex items-center font-sans font-extrabold uppercase text-xs md:text-sm tracking-[0.3em] group-hover:[animation-play-state:paused] [animation-duration:60s] md:[animation-duration:80s]">
             {repeatedRow2.map((phrase, i) => (
               <span 
                 key={i} 

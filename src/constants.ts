@@ -30,60 +30,91 @@ export const STORAGE_KEYS = {
   TEMPLATES: 'brainrot_templates',
 } as const;
 
+// ─────────────────────────────────────────────────────────────────────────────
+// BASE PRODUCTS — Printful-ready
+// Only 2 customisable products: T-Shirt and iPhone 15 Pro Case.
+// Variant IDs from Printful Catalog API (verified against catalog as of 2024).
+// To refresh: GET https://api.printful.com/products/{printfulProductId}/variants
+// ─────────────────────────────────────────────────────────────────────────────
 export const BASE_PRODUCTS: BaseProduct[] = [
+  // ── Bella+Canvas 3001 Unisex T-Shirt (Printful Product 71) ─────────────────
   {
     id: 'base-tshirt',
-    name: 'T-Shirt Bianca',
-    price: 25.00,
+    name: 'T-Shirt Bella+Canvas 3001',
+    price: 28.00,
+    // Neutral flat-lay product photo (stable CDN, no auth required)
     image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=800&q=80',
     category: 'wearable',
-    sizes: ['S', 'M', 'L', 'XL', 'XXL'],
-    colors: [{ name: 'Bianco', hex: '#FFFFFF' }],
-    overlay: { top: '35%', left: '35%', width: '30%', height: '40%', mixBlendMode: 'multiply' }
+    sizes: ['S', 'M', 'L', 'XL', '2XL'],
+    colors: [
+      { name: 'White',            hex: '#FFFFFF' },
+      { name: 'Black',            hex: '#000000' },
+      { name: 'Athletic Heather', hex: '#B2BABB' },
+      { name: 'Navy',             hex: '#1F305E' },
+      { name: 'Red',              hex: '#EF3340' },
+    ],
+    // Front print area (chest): ~28% top, 25% left, 50% wide, 52% tall (on 800px image)
+    overlay: { top: '28%', left: '25%', width: '50%', height: '52%', mixBlendMode: 'multiply' },
+    printfulProductId: 71,
+    printfulPlacement: 'front',
+    printfulVariants: [
+      // White
+      { id: 4011, size: 'S',   colorName: 'White', colorHex: '#FFFFFF' },
+      { id: 4012, size: 'M',   colorName: 'White', colorHex: '#FFFFFF' },
+      { id: 4013, size: 'L',   colorName: 'White', colorHex: '#FFFFFF' },
+      { id: 4014, size: 'XL',  colorName: 'White', colorHex: '#FFFFFF' },
+      { id: 4015, size: '2XL', colorName: 'White', colorHex: '#FFFFFF' },
+      // Black
+      { id: 4017, size: 'S',   colorName: 'Black', colorHex: '#000000' },
+      { id: 4018, size: 'M',   colorName: 'Black', colorHex: '#000000' },
+      { id: 4019, size: 'L',   colorName: 'Black', colorHex: '#000000' },
+      { id: 4020, size: 'XL',  colorName: 'Black', colorHex: '#000000' },
+      { id: 4021, size: '2XL', colorName: 'Black', colorHex: '#000000' },
+      // Athletic Heather
+      { id: 4032, size: 'S',   colorName: 'Athletic Heather', colorHex: '#B2BABB' },
+      { id: 4033, size: 'M',   colorName: 'Athletic Heather', colorHex: '#B2BABB' },
+      { id: 4034, size: 'L',   colorName: 'Athletic Heather', colorHex: '#B2BABB' },
+      { id: 4035, size: 'XL',  colorName: 'Athletic Heather', colorHex: '#B2BABB' },
+      { id: 4036, size: '2XL', colorName: 'Athletic Heather', colorHex: '#B2BABB' },
+      // Navy
+      { id: 4066, size: 'S',   colorName: 'Navy', colorHex: '#1F305E' },
+      { id: 4067, size: 'M',   colorName: 'Navy', colorHex: '#1F305E' },
+      { id: 4068, size: 'L',   colorName: 'Navy', colorHex: '#1F305E' },
+      { id: 4069, size: 'XL',  colorName: 'Navy', colorHex: '#1F305E' },
+      { id: 4070, size: '2XL', colorName: 'Navy', colorHex: '#1F305E' },
+      // Red
+      { id: 4050, size: 'S',   colorName: 'Red', colorHex: '#EF3340' },
+      { id: 4051, size: 'M',   colorName: 'Red', colorHex: '#EF3340' },
+      { id: 4052, size: 'L',   colorName: 'Red', colorHex: '#EF3340' },
+      { id: 4053, size: 'XL',  colorName: 'Red', colorHex: '#EF3340' },
+      { id: 4054, size: '2XL', colorName: 'Red', colorHex: '#EF3340' },
+    ],
   },
-  {
-    id: 'base-hoodie',
-    name: 'Felpa Nera',
-    price: 45.00,
-    image: 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?auto=format&fit=crop&w=800&q=80',
-    category: 'wearable',
-    sizes: ['M', 'L', 'XL'],
-    colors: [{ name: 'Nero', hex: '#000000' }],
-    overlay: { top: '38%', left: '35%', width: '30%', height: '35%', mixBlendMode: 'screen' }
-  },
-  {
-    id: 'base-mug',
-    name: 'Tazza in Ceramica',
-    price: 12.00,
-    image: 'https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?auto=format&fit=crop&w=800&q=80',
-    category: 'useless',
-    overlay: { top: '30%', left: '25%', width: '40%', height: '40%', mixBlendMode: 'multiply' }
-  },
+
+  // ── iPhone 15 Pro Snap Case (Printful Product 571) ──────────────────────────
   {
     id: 'base-phonecase',
-    name: 'Cover Telefono',
-    price: 15.00,
+    name: 'iPhone 15 Pro Case',
+    price: 19.00,
     image: 'https://images.unsplash.com/photo-1601593346740-925612772716?auto=format&fit=crop&w=800&q=80',
     category: 'useless',
-    overlay: { top: '20%', left: '25%', width: '50%', height: '60%', mixBlendMode: 'multiply' }
+    sizes: ['15 Pro', '15 Pro Max'],
+    colors: [
+      { name: 'Glossy', hex: '#F5F5F5' },
+      { name: 'Matte',  hex: '#E0E0E0' },
+    ],
+    // Full-bleed back surface: 5% margin all around
+    // Use 'normal' blend mode (design IS the product, not overlaid on color)
+    overlay: { top: '5%', left: '5%', width: '90%', height: '90%' },
+    printfulProductId: 571,
+    printfulPlacement: 'default',
+    printfulVariants: [
+      { id: 11534, size: '15 Pro',     colorName: 'Glossy', colorHex: '#F5F5F5' },
+      { id: 11535, size: '15 Pro',     colorName: 'Matte',  colorHex: '#E0E0E0' },
+      { id: 11536, size: '15 Pro Max', colorName: 'Glossy', colorHex: '#F5F5F5' },
+      { id: 11537, size: '15 Pro Max', colorName: 'Matte',  colorHex: '#E0E0E0' },
+    ],
   },
-  {
-    id: 'base-poster',
-    name: 'Poster Incorniciato',
-    price: 18.00,
-    image: 'https://images.unsplash.com/photo-1580136608260-4eb11f4b24fe?auto=format&fit=crop&w=800&q=80',
-    category: 'decor',
-    sizes: ['A4', 'A3', '50x70'],
-    overlay: { top: '15%', left: '18%', width: '64%', height: '70%' }
-  },
-  {
-    id: 'base-mousepad',
-    name: 'Tappetino Mouse',
-    price: 14.00,
-    image: 'https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?auto=format&fit=crop&w=800&q=80',
-    category: 'useless',
-    overlay: { top: '10%', left: '10%', width: '80%', height: '80%', mixBlendMode: 'multiply' }
-  }
 ];
 
 export const PRODUCTS: Product[] = [

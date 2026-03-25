@@ -1,7 +1,7 @@
 import { ShoppingCart, Menu, Zap, X, Wand2, Search, User, LogOut } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 import { useAuth } from '../../context/AuthContext';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'motion/react';
 import { useRef, useState } from 'react';
 import { playBlipSound } from '../../utils/sounds';
 
@@ -20,6 +20,17 @@ export default function Header({ onOpenCustomizer, onNavigateHome, searchQuery, 
   const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const mobileSearchRef = useRef<HTMLInputElement>(null);
+  const [isHidden, setIsHidden] = useState(false);
+  const { scrollY } = useScroll();
+
+  useMotionValueEvent(scrollY, "change", (latest) => {
+    const previous = scrollY.getPrevious() ?? 0;
+    if (latest > previous && latest > 150) {
+      setIsHidden(true);
+    } else {
+      setIsHidden(false);
+    }
+  });
 
   const menuItems = [
     { label: 'PRODOTTI', href: '#products' },
@@ -47,7 +58,12 @@ export default function Header({ onOpenCustomizer, onNavigateHome, searchQuery, 
 
   return (
     <>
-      <header className="sticky top-0 z-40 border-b-8 border-black p-4 md:p-6 lg:p-8 flex justify-between items-center bg-white shadow-[0_12px_0_0_rgba(0,0,0,1)]">
+      <motion.header 
+        variants={{ visible: { y: 0 }, hidden: { y: "-100%" } }}
+        animate={isHidden ? "hidden" : "visible"}
+        transition={{ duration: 0.3, ease: "easeInOut" }}
+        className="sticky top-0 z-40 border-b-8 border-black p-4 md:p-6 lg:p-8 flex justify-between items-center bg-white shadow-[0_12px_0_0_rgba(0,0,0,1)]"
+      >
         <button
           type="button"
           onClick={() => {
@@ -199,9 +215,14 @@ export default function Header({ onOpenCustomizer, onNavigateHome, searchQuery, 
             )}
           </motion.button>
         </div>
-      </header>
+      </motion.header>
 
-      <div className="xl:hidden sticky top-[84px] z-30 border-b-4 border-black bg-yellow-400 px-4 py-3 shadow-[0_8px_0_0_rgba(0,0,0,1)]">
+      <motion.div 
+        variants={{ visible: { y: 0 }, hidden: { y: -200 } }}
+        animate={isHidden ? "hidden" : "visible"}
+        transition={{ duration: 0.3, ease: "easeInOut" }}
+        className="xl:hidden sticky top-[84px] z-30 border-b-4 border-black bg-yellow-400 px-4 py-3 shadow-[0_8px_0_0_rgba(0,0,0,1)]"
+      >
         <div className="mx-auto max-w-7xl space-y-3">
           <label htmlFor="mobile-site-search" className="sr-only">
             Cerca prodotti e design community
@@ -250,7 +271,7 @@ export default function Header({ onOpenCustomizer, onNavigateHome, searchQuery, 
             )}
           </div>
         </div>
-      </div>
+      </motion.div>
 
       <AnimatePresence>
         {isMenuOpen && (

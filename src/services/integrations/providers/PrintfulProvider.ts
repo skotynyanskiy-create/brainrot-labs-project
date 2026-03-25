@@ -1,65 +1,66 @@
 import { OrderData, OrderResponse, OrderProvider } from '../types';
 import { logger } from '../../../utils/logger';
+import { BASE_PRODUCTS } from '../../../constants';
 
-// ── Printful Variant Map ─────────────────────────────────────────────────────
-// Variant IDs from Printful Catalog API (https://api.printful.com/products).
-// KEY format: `${brainrotBaseId}:${size}:${colorHex}`
-// Run `syncCatalog()` to refresh these from the live Printful catalog.
-// Fallback variant used when no exact match is found (Bella+Canvas 3001 White M).
+// ── Fallback variant ──────────────────────────────────────────────────────────
+// Bella+Canvas 3001 White M (product 71) — used when no exact match found.
 const VARIANT_FALLBACK = 4012;
 
-const VARIANT_MAP: Record<string, number> = {
-  // ── Bella+Canvas 3001 Unisex T-Shirt (Product 71) ──
-  'base-tshirt:S:#FFFFFF': 4011,
-  'base-tshirt:M:#FFFFFF': 4012,
-  'base-tshirt:L:#FFFFFF': 4013,
-  'base-tshirt:XL:#FFFFFF': 4014,
-  'base-tshirt:2XL:#FFFFFF': 4015,
-  'base-tshirt:S:#000000': 4017,
-  'base-tshirt:M:#000000': 4018,
-  'base-tshirt:L:#000000': 4019,
-  'base-tshirt:XL:#000000': 4020,
-  'base-tshirt:2XL:#000000': 4021,
-  // ── Gildan 18000 Heavy Blend Hoodie (Product 380) ──
-  'base-hoodie:S:#000000': 23393,
-  'base-hoodie:M:#000000': 23394,
-  'base-hoodie:L:#000000': 23395,
-  'base-hoodie:XL:#000000': 23396,
-  'base-hoodie:2XL:#000000': 23397,
-  'base-hoodie:S:#FFFFFF': 23388,
-  'base-hoodie:M:#FFFFFF': 23389,
-  'base-hoodie:L:#FFFFFF': 23390,
-  'base-hoodie:XL:#FFFFFF': 23391,
-  'base-hoodie:2XL:#FFFFFF': 23392,
-  // ── White Glossy Mug 11oz (Product 19) ──
-  'base-mug:ONE_SIZE:#FFFFFF': 1320,
-  // ── Poster (Matte, Horizontal) (Product 1) ──
-  'base-poster:18x24:#FFFFFF': 1,
-  'base-poster:24x36:#FFFFFF': 2,
-};
-
-// ── Helper ───────────────────────────────────────────────────────────────────
-
+// ── Helper ────────────────────────────────────────────────────────────────────
+/**
+ * Resolve the Printful variant_id for a cart item.
+ *
+ * Custom product IDs follow the pattern:  `custom-{baseId}-{timestamp}`
+ * e.g. `custom-base-tshirt-1712345678901`
+ *
+ * Resolution order:
+ *   1. Exact match on size + colorName
+ *   2. Size match only (first available color for that size)
+ *   3. First variant in the product (ultimate fallback)
+ */
 function resolveVariantId(productId: string, size?: string, color?: string): number {
-  // For custom products, strip the 'custom-timestamp-' prefix to get base ID
+  // Strip the 'custom-' prefix and trailing timestamp to recover baseId
+  // 'custom-base-tshirt-1712345678901' → 'base-tshirt'
   const baseId = productId.startsWith('custom-')
-    ? productId.split('-').slice(1, 3).join('-')
+    ? productId.replace(/^custom-/, '').replace(/-\d+$/, '')
     : productId;
 
-  const normalizedColor = (color ?? '#FFFFFF').toUpperCase();
-  const normalizedSize = (size ?? 'M').toUpperCase();
-  const key = `${baseId}:${normalizedSize}:${normalizedColor}`;
-
-  const variantId = VARIANT_MAP[key];
-  if (!variantId) {
-    logger.warn(`PrintfulProvider: variant non trovato per key "${key}", uso fallback ${VARIANT_FALLBACK}`);
+  const product = BASE_PRODUCTS.find(p => p.id === baseId);
+  if (!product) {
+    logger.warn(`PrintfulProvider: prodotto base "${baseId}" non trovato, uso fallback ${VARIANT_FALLBACK}`);
     return VARIANT_FALLBACK;
   }
-  return variantId;
+
+  const normalizedSize  = (size  ?? '').trim();
+  const normalizedColor = (color ?? '').trim();
+
+  // 1. Exact match: size + colorName
+  let variant = product.printfulVariants.find(
+    v => v.size === normalizedSize && v.colorName === normalizedColor
+  );
+
+  // 2. Size-only match (first color available for that size)
+  if (!variant && normalizedSize) {
+    variant = product.printfulVariants.find(v => v.size === normalizedSize);
+    if (variant) {
+      logger.warn(
+        `PrintfulProvider: colore "${normalizedColor}" non trovato per "${baseId}" taglia "${normalizedSize}", uso primo colore disponibile`
+      );
+    }
+  }
+
+  // 3. First variant in the product
+  if (!variant) {
+    variant = product.printfulVariants[0];
+    logger.warn(
+      `PrintfulProvider: taglia "${normalizedSize}" non trovata per "${baseId}", uso primo variant disponibile`
+    );
+  }
+
+  return variant?.id ?? VARIANT_FALLBACK;
 }
 
-// ── Provider ─────────────────────────────────────────────────────────────────
-
+// ── Provider ──────────────────────────────────────────────────────────────────
 export class PrintfulProvider implements OrderProvider {
   private apiKey: string;
   private baseUrl = 'https://api.printful.com';
@@ -74,33 +75,41 @@ export class PrintfulProvider implements OrderProvider {
 
       const printfulOrder = {
         recipient: {
-          name: order.customer.name,
-          email: order.customer.email,
-          address1: shipping.address1,
-          city: shipping.city,
-          state_code: shipping.state_code,
+          name:         order.customer.name,
+          email:        order.customer.email,
+          address1:     shipping.address1,
+          city:         shipping.city,
+          state_code:   shipping.state_code,
           country_code: shipping.country_code,
-          zip: shipping.zip,
+          zip:          shipping.zip,
           ...(shipping.phone ? { phone: shipping.phone } : {}),
         },
-        items: order.items.map((item) => ({
-          variant_id: resolveVariantId(item.productId, item.size, item.color),
-          quantity: item.quantity,
-          files: [
-            {
-              url:
-                item.customData?.designTextureUrl ||
-                'https://picsum.photos/seed/brainrot/1000/1000',
-              position: 'front',
-            },
-          ],
-        })),
+        items: order.items.map((item) => {
+          // Resolve the correct Printful placement per product type
+          const baseId = item.productId.startsWith('custom-')
+            ? item.productId.replace(/^custom-/, '').replace(/-\d+$/, '')
+            : item.productId;
+          const baseProduct  = BASE_PRODUCTS.find(p => p.id === baseId);
+          const placement    = baseProduct?.printfulPlacement ?? 'front';
+
+          return {
+            variant_id: resolveVariantId(item.productId, item.size, item.color),
+            quantity:   item.quantity,
+            files: [
+              {
+                url: item.customData?.designTextureUrl
+                  || 'https://picsum.photos/seed/brainrot/1000/1000',
+                position: placement,
+              },
+            ],
+          };
+        }),
       };
 
       const response = await fetch(`${this.baseUrl}/orders`, {
         method: 'POST',
         headers: {
-          Authorization: `Bearer ${this.apiKey}`,
+          Authorization:  `Bearer ${this.apiKey}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(printfulOrder),
@@ -108,7 +117,7 @@ export class PrintfulProvider implements OrderProvider {
 
       const data = (await response.json()) as {
         result?: { id: number };
-        error?: { message: string };
+        error?:  { message: string };
       };
 
       if (!response.ok) {
@@ -118,19 +127,34 @@ export class PrintfulProvider implements OrderProvider {
       }
 
       return {
-        success: true,
+        success:         true,
         providerOrderId: data.result?.id.toString() ?? order.id,
       };
     } catch (error) {
       logger.error('PrintfulProvider Exception:', error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Errore sconosciuto',
+        error:   error instanceof Error ? error.message : 'Errore sconosciuto',
       };
     }
   }
 
+  /**
+   * Sync catalog variants from Printful API.
+   * Call this if you suspect variant IDs have changed (rare for established products).
+   * Logs the raw API response — update BASE_PRODUCTS.printfulVariants manually from the output.
+   */
   async syncCatalog(): Promise<void> {
-    logger.log('PrintfulProvider: syncCatalog — chiama GET /products per aggiornare VARIANT_MAP');
+    for (const product of BASE_PRODUCTS) {
+      try {
+        const res = await fetch(`${this.baseUrl}/products/${product.printfulProductId}/variants`, {
+          headers: { Authorization: `Bearer ${this.apiKey}` },
+        });
+        const data = await res.json() as { result?: unknown };
+        logger.log(`PrintfulProvider syncCatalog — product ${product.id} (${product.printfulProductId}):`, data.result);
+      } catch (err) {
+        logger.error(`PrintfulProvider syncCatalog — errore per ${product.id}:`, err);
+      }
+    }
   }
 }

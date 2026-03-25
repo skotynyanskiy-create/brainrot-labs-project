@@ -88,6 +88,14 @@ export interface Meme {
   height: number;
 }
 
+/** Single Printful variant: ties a size+color combo to a Printful variant_id */
+export interface PrintfulVariant {
+  id: number;           // Printful catalog variant_id
+  size: string;         // e.g. 'S', 'M', 'L', '15 Pro', 'Matte'
+  colorName: string;    // e.g. 'White', 'Black', 'Navy'
+  colorHex: string;     // e.g. '#FFFFFF'
+}
+
 export interface BaseProduct {
   id: string;
   name: string;
@@ -104,6 +112,12 @@ export interface BaseProduct {
     rotate?: string;
     mixBlendMode?: string;
   };
+  /** Printful catalog product ID (e.g. 71 for Bella+Canvas 3001) */
+  printfulProductId: number;
+  /** Print placement used in the Printful files array */
+  printfulPlacement: 'front' | 'default' | 'back';
+  /** All variants for this product with their Printful IDs */
+  printfulVariants: PrintfulVariant[];
 }
 
 export interface CustomTemplate {
@@ -119,8 +133,15 @@ export interface CommunityDesign {
   id: string;
   authorId: string;
   authorName: string;
+  authorPhotoURL?: string;
   image: string;
   memeDescription: string;
+  productType?: 'wearable' | 'useless' | 'decor';
   createdAt: Timestamp;
   likes: number;
+  totalSales?: number;
+  totalEarnings?: number;
+  royaltyRate?: number; // percentage (e.g. 12 = 12%)
+  isPublished?: boolean;
+  tags?: string[];
 }

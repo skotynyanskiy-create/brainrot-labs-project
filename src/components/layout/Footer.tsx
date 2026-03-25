@@ -67,17 +67,18 @@ export default function Footer({ onNavigateHome, onOpenPrivacy, onOpenTerms }: F
     <footer className="bg-white overflow-hidden flex flex-col">
 
 
-      {/* Fotter Marquee */}
-      <div className="flex overflow-hidden bg-black text-white hover:bg-white hover:text-black transition-colors duration-500 border-y-4 border-black group" aria-label="Disclaimer e Slogan">
-        <div className="flex w-full py-5 mask-[linear-gradient(to_right,transparent_0%,black_5%,black_95%,transparent_100%)]">
-          <div className="w-max flex items-center font-display font-black uppercase text-xl md:text-2xl tracking-[0.25em] animate-marquee group-hover:[animation-play-state:paused]">
+      {/* Footer Marquee */}
+      <div className="flex overflow-hidden bg-yellow-400 text-black hover:bg-pink-500 hover:text-white transition-colors duration-300 border-y-4 md:border-y-8 border-black group" aria-label="Disclaimer e Slogan">
+        <div className="flex w-full py-4 md:py-6 mask-[linear-gradient(to_right,transparent_0%,black_5%,black_95%,transparent_100%)]">
+          <div className="w-max flex items-center font-black uppercase text-2xl md:text-4xl tracking-tighter italic animate-marquee group-hover:[animation-play-state:paused] [animation-duration:40s] md:[animation-duration:60s]">
             {repeatedFooterPhrases.map((phrase, i) => (
               <span 
                 key={i} 
-                className="mx-10 whitespace-nowrap"
+                className="mx-6 md:mx-10 whitespace-nowrap flex items-center gap-6 md:gap-10"
                 aria-hidden={i >= footerPhrases.length ? "true" : undefined}
               >
-                <span className="text-white group-hover:text-black transition-colors duration-500">☠</span> {phrase}
+                <span className="text-black group-hover:text-white transition-colors duration-300 text-3xl md:text-5xl">⚠</span>
+                <span>{phrase}</span>
               </span>
             ))}
           </div>
@@ -86,12 +87,12 @@ export default function Footer({ onNavigateHome, onOpenPrivacy, onOpenTerms }: F
 
       <div className="w-full grid grid-cols-1 md:grid-cols-3 divide-y-4 md:divide-y-0 md:divide-x-4 divide-black">
         {/* Colonna 1: Brand */}
-        <div className="p-10 md:p-20 bg-white flex flex-col justify-between">
+        <div className="p-8 md:p-20 bg-white flex flex-col justify-between">
           <div>
             <div className="cursor-pointer select-none" onClick={handleLogoClick}>
-              <h2 className="text-6xl md:text-8xl font-black uppercase tracking-tighter mb-8 leading-none transform -skew-x-6 hover:scale-105 transition-transform">
+              <h2 className="text-5xl md:text-8xl font-black uppercase tracking-tighter mb-8 leading-none transform -skew-x-6 hover:scale-105 transition-transform">
                 Brainrot<br/>
-                <span className="inline-block bg-pink-500 text-white px-6 py-2 border-4 border-black shadow-[8px_8px_0_0_rgba(0,0,0,1)] rotate-2 italic">Labs</span>
+                <span className="inline-block bg-pink-500 text-white px-4 md:px-6 py-2 border-4 border-black shadow-[6px_6px_0_0_rgba(0,0,0,1)] md:shadow-[8px_8px_0_0_rgba(0,0,0,1)] rotate-2 italic">Labs</span>
               </h2>
             </div>
             <p className="font-sans text-xl md:text-2xl font-medium text-black leading-relaxed border-l-8 border-black pl-6 italic">
@@ -105,9 +106,9 @@ export default function Footer({ onNavigateHome, onOpenPrivacy, onOpenTerms }: F
         </div>
 
         {/* Colonna 2: Links */}
-        <div className="p-10 md:p-20 bg-[#f0f0f0] flex flex-col gap-10">
-          <h3 className="text-3xl font-black uppercase mb-4 bg-black text-white inline-block px-4 py-2 w-max transform rotate-2 tracking-tighter">Burocrazia Inutile</h3>
-          <ul className="space-y-6 font-black text-3xl md:text-4xl uppercase tracking-tighter italic">
+        <div className="p-8 md:p-20 bg-[#f0f0f0] flex flex-col gap-8 md:gap-10">
+          <h3 className="text-2xl md:text-3xl font-black uppercase mb-4 bg-black text-white inline-block px-4 py-2 w-max transform rotate-2 tracking-tighter">Burocrazia Inutile</h3>
+          <ul className="space-y-6 font-black text-2xl md:text-4xl uppercase tracking-tighter italic">
             <li><a href="#faq" onClick={(e) => handleLinkClick(e, '#faq')} className="hover:bg-yellow-400 hover:pl-6 transition-all inline-block">→ FAQ</a></li>
             <li><a href="#shipping" onClick={(e) => handleLinkClick(e, '#shipping')} className="hover:bg-cyan-400 hover:pl-6 transition-all inline-block">→ Spedizioni</a></li>
             <li><a href="#returns" onClick={(e) => handleLinkClick(e, '#returns')} className="hover:bg-pink-500 hover:text-white hover:pl-6 transition-all inline-block">→ Resi</a></li>
@@ -131,8 +132,8 @@ export default function Footer({ onNavigateHome, onOpenPrivacy, onOpenTerms }: F
         </div>
 
         {/* Colonna 3: Socials */}
-        <div className="p-10 md:p-20 bg-white flex flex-col gap-10">
-          <h3 className="text-3xl font-black uppercase mb-4 bg-yellow-400 border-4 border-black inline-block px-4 py-2 w-max transform -rotate-2 shadow-[6px_6px_0_0_rgba(0,0,0,1)] tracking-tighter">Sorveglianza Digitale</h3>
+        <div className="p-8 md:p-20 bg-white flex flex-col gap-8 md:gap-10">
+          <h3 className="text-2xl md:text-3xl font-black uppercase mb-4 bg-yellow-400 border-4 border-black inline-block px-4 py-2 w-max transform -rotate-2 shadow-[6px_6px_0_0_rgba(0,0,0,1)] tracking-tighter">Sorveglianza Digitale</h3>
           <div className="flex flex-col gap-6">
             {SOCIAL_LINKS.map((social) => (
               <a

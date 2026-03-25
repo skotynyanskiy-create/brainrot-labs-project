@@ -16,7 +16,7 @@ export default function FAQ() {
   ];
 
   return (
-    <section className="py-32 px-6 md:px-12 bg-indigo-400 border-b-8 border-black relative overflow-hidden">
+    <section className="py-20 md:py-32 px-6 md:px-12 bg-indigo-400 border-b-8 border-black relative overflow-hidden">
       {/* Decorative Elements */}
       <motion.div
         animate={{ rotate: 360 }}
@@ -28,10 +28,10 @@ export default function FAQ() {
         <motion.h2
           initial={{ rotate: -5, scale: 0.9 }}
           whileInView={{ rotate: 0, scale: 1 }}
-          className="text-6xl md:text-9xl font-black uppercase mb-20 text-center tracking-tighter leading-[0.85]"
+          className="text-5xl md:text-9xl font-black uppercase mb-16 md:mb-20 text-center tracking-tighter leading-[0.85]"
         >
           Domande <br/>
-          <span className="inline-block bg-white text-black px-8 py-2 border-4 border-black shadow-[12px_12px_0_0_rgba(0,0,0,1)] rotate-2 italic">Esistenziali</span>
+          <span className="inline-block bg-white text-black px-6 md:px-8 py-2 border-4 border-black shadow-[8px_8px_0_0_rgba(0,0,0,1)] md:shadow-[12px_12px_0_0_rgba(0,0,0,1)] rotate-2 italic">Esistenziali</span>
         </motion.h2>
 
         <div className="space-y-6">
@@ -41,13 +41,13 @@ export default function FAQ() {
               initial={{ x: i % 2 === 0 ? -50 : 50, opacity: 0 }}
               whileInView={{ x: 0, opacity: 1 }}
               viewport={{ once: true }}
-              className="bg-white border-8 border-black shadow-[12px_12px_0_0_rgba(0,0,0,1)] overflow-hidden"
+              className="bg-white border-8 border-black shadow-[8px_8px_0_0_rgba(0,0,0,1)] md:shadow-[12px_12px_0_0_rgba(0,0,0,1)] overflow-hidden"
             >
               <button
                 onClick={() => { playBlipSound(); setOpenIndex(openIndex === i ? null : i); }}
-                className="w-full p-8 text-left flex justify-between items-center group"
+                className="w-full p-6 md:p-8 text-left flex justify-between items-center group"
               >
-                <span className="text-2xl md:text-3xl font-black uppercase leading-none group-hover:text-indigo-600 transition-colors">
+                <span className="text-xl md:text-3xl font-black uppercase leading-none group-hover:text-indigo-600 transition-colors">
                   {faq.q}
                 </span>
                 <motion.span
@@ -63,9 +63,9 @@ export default function FAQ() {
                     initial={{ height: 0, opacity: 0 }}
                     animate={{ height: "auto", opacity: 1 }}
                     exit={{ height: 0, opacity: 0 }}
-                    className="px-8 pb-8"
+                    className="px-6 md:px-8 pb-6 md:pb-8"
                   >
-                    <p className="text-xl md:text-2xl font-mono font-semibold text-gray-700 leading-relaxed border-t-4 border-black pt-6">
+                    <p className="text-lg md:text-2xl font-mono font-semibold text-gray-700 leading-relaxed border-t-4 border-black pt-4 md:pt-6">
                       {faq.a}
                     </p>
                   </motion.div>

@@ -230,6 +230,7 @@ function AppContent() {
             <CommunityPage
               onBack={() => setIsCommunityOpen(false)}
               onSelectProduct={setSelectedProduct}
+              onOpenCustomizer={() => { setIsCommunityOpen(false); setIsCustomizerOpen(true); }}
             />
           </motion.div>
         ) : selectedProduct ? (
@@ -366,7 +367,7 @@ function AppContent() {
             onOpenCustomizer={() => setIsCustomizerOpen(true)}
           />
 
-          <HowItWorks />
+          <HowItWorks onOpenCustomizer={() => setIsCustomizerOpen(true)} />
 
           <div id="features">
             <Features />
