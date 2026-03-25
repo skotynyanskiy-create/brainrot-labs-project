@@ -1,7 +1,7 @@
-// Vite replaces process.env.NODE_ENV at build time.
-// Firebase Functions reads it at runtime from the Node.js environment.
-const isDev: boolean = process.env.NODE_ENV !== 'production';
+// import.meta.env.DEV is set by Vite at build time (true in dev, false in prod).
+const isDev: boolean = import.meta.env.DEV;
 
+/* eslint-disable no-console */
 export const logger = {
   log: (...args: unknown[]) => {
     if (isDev) console.log(...args);
@@ -13,3 +13,4 @@ export const logger = {
     if (isDev) console.error(...args);
   },
 };
+/* eslint-enable no-console */

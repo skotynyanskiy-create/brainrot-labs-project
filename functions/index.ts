@@ -1,6 +1,6 @@
 import * as functions from 'firebase-functions/v2';
 import * as admin from 'firebase-admin';
-import { GoogleGenAI } from '@google/genai';
+import { GoogleGenAI, Type } from '@google/genai';
 import { IntegrationService } from '../src/services/integrations/IntegrationService';
 import { MockProvider } from '../src/services/integrations/providers/MockProvider';
 import { PrintfulProvider } from '../src/services/integrations/providers/PrintfulProvider';
@@ -54,6 +54,11 @@ function getGeminiClient() {
 
 // ── Validation ───────────────────────────────────────────────────────────────
 
+// Characters used in prompt injection attacks
+const PROMPT_INJECTION_PATTERN = /(\bignore\b|\bforget\b|\bsystem\b|\bpretend\b|\bact as\b|<\|.*?\|>|###|---\s*system)/i;
+// Extended patterns: XML tags, special tokens, base64 markers, encoded brackets
+const PROMPT_INJECTION_EXTRAS = /<[^>]+>|\[inst\]|`{3}system|<\|im_start\|>|base64/i;
+
 function validatePrompt(prompt: unknown): string {
   if (typeof prompt !== 'string') {
     throw new functions.https.HttpsError('invalid-argument', 'Il prompt deve essere una stringa.');
@@ -64,6 +69,11 @@ function validatePrompt(prompt: unknown): string {
   }
   if (trimmed.length > 240) {
     throw new functions.https.HttpsError('invalid-argument', 'Il prompt supera il limite di 240 caratteri.');
+  }
+  // Normalize Unicode to catch diacritic-bypass tricks (e.g. ɪɢɴᴏʀᴇ)
+  const normalized = trimmed.normalize('NFKD').replace(/[\u0300-\u036f]/g, '');
+  if (PROMPT_INJECTION_PATTERN.test(normalized) || PROMPT_INJECTION_EXTRAS.test(normalized)) {
+    throw new functions.https.HttpsError('invalid-argument', 'Il prompt contiene termini non consentiti.');
   }
   return trimmed;
 }
@@ -144,13 +154,10 @@ export const processOrder = functions.https.onCall(async (request) => {
       const parts = item.productId.split('-');
       const baseId = parts.length >= 3 ? `${parts[1]}-${parts[2]}` : '';
 
+      // MUST match BASE_PRODUCTS in src/constants.ts
       const basePrices: Record<string, number> = {
-        'base-tshirt': 25.0,
-        'base-hoodie': 45.0,
-        'base-mug': 12.0,
-        'base-phonecase': 15.0,
-        'base-poster': 18.0,
-        'base-mousepad': 14.0,
+        'base-tshirt': 28.0,
+        'base-phonecase': 19.0,
       };
       price = basePrices[baseId] ?? 0;
 
@@ -206,7 +213,7 @@ export const generateMemeImage = functions.https.onCall(async (request) => {
   const ai = getGeminiClient();
 
   const response = await ai.models.generateContent({
-    model: 'gemini-3.1-flash-image-preview',
+    model: 'gemini-2.0-flash-preview-image-generation',
     contents: {
       parts: [
         {
@@ -237,19 +244,51 @@ export const suggestMemeCaptions = functions.https.onCall(async (request) => {
   const ai = getGeminiClient();
 
   const response = await ai.models.generateContent({
-    model: 'gemini-3-flash-preview',
-    contents: `Suggest 3 short captions for a meme about: ${prompt}. Voice preset: ${voicePreset}. Return a simple comma-separated list with no quotes.`,
+    model: 'gemini-2.0-flash',
+    contents: `Suggest 3 short meme captions (max 12 words each) for: ${prompt}. Voice preset: ${voicePreset}.`,
+    config: {
+      responseMimeType: 'application/json',
+      responseSchema: {
+        type: Type.ARRAY,
+        items: { type: Type.STRING },
+        maxItems: 3,
+      },
+    },
   });
 
-  const suggestions = (response.text ?? '')
-    .split(',')
-    .map((value) => value.trim())
-    .filter(Boolean)
-    .slice(0, 3);
+  let suggestions: string[] = [];
+  try {
+    const parsed: unknown = JSON.parse(response.text ?? '[]');
+    suggestions = Array.isArray(parsed)
+      ? parsed.filter((s): s is string => typeof s === 'string' && s.length > 0).slice(0, 3)
+      : [];
+  } catch {
+    suggestions = [];
+  }
 
   if (suggestions.length === 0) {
     throw new functions.https.HttpsError('internal', 'Il modello non ha restituito caption valide. Riprova.');
   }
 
   return { suggestions };
+});
+
+export const subscribeNewsletter = functions.https.onCall(async (request) => {
+  const data = request.data as Record<string, unknown>;
+  const email = typeof data.email === 'string' ? data.email.trim().toLowerCase() : '';
+
+  const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+  if (!EMAIL_REGEX.test(email)) {
+    throw new functions.https.HttpsError('invalid-argument', 'Indirizzo email non valido.');
+  }
+
+  // Use base64url of the email as docId — same email always → same doc (idempotent)
+  const docId = Buffer.from(email).toString('base64url');
+
+  await admin.firestore().collection('subscribers').doc(docId).set(
+    { email, subscribedAt: admin.firestore.FieldValue.serverTimestamp() },
+    { merge: true }
+  );
+
+  return { success: true };
 });

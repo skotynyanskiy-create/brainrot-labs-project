@@ -7,24 +7,24 @@ export default function Policies() {
       title: "Speedrun Spedizioni",
       icon: Truck,
       headline: "3-5 giorni lavorativi IRL",
-      text: "Spediamo in tutta Europa con tracking live. Appena il corriere spawna nel tuo quartiere ti pinghiamo. Spedizione FREE se superi i 49€ (letteralmente un glitch nei soldi).",
-      fine: "* I tempi sono stime. Bug del server di Matrix, scioperi o invasioni aliene potrebbero causare lag nella consegna.",
+      text: "Spediamo con tracking e aggiornamenti chiari durante produzione e consegna. La logica del sito resta allineata: prima confermi il design, poi parte il flusso operativo.",
+      fine: "* I tempi indicati sono stime operative e possono variare in base a produzione, destinazione e disponibilita del corriere.",
       color: "bg-green-400"
     },
     {
       title: "Rage Quit (Resi)",
       icon: RotateCcw,
       headline: "14 giorni per ripensarci",
-      text: "Se il loot arriva buggato o con difetti di stampa, hai 14 giorni per fare Rage Quit senza sbatti. Ci prendiamo noi la L. Reso 100% gratuito per difetti.",
-      fine: "* Attenzione: i drop generati col Customizer AI non sono rimborsabili se ti accorgi che il meme faceva schifo (Art. 59 del Codice del Consumo). Abbi fede nelle tue scelte.",
+      text: "Se il prodotto arriva con difetti o problemi di stampa, puoi avviare la procedura di assistenza e reso seguendo i termini indicati nel sito.",
+      fine: "* Per i prodotti personalizzati valgono le limitazioni previste dalla normativa applicabile, salvo difetti di produzione o non conformita.",
       color: "bg-orange-400"
     },
     {
       title: "No Doxxing (Privacy)",
       icon: ShieldCheck,
       headline: "Dati al sicuro dagli NPC",
-      text: "Non siamo Mark Zuckerberg. Usiamo i tuoi dati solo per farti arrivare il merch e farti loggare in pace. Zero rivendita ai broker, la tua cronologia cringe è al sicuro con noi.",
-      fine: "* Pienamente conformi al boss finale: il GDPR (Reg. UE 2016/679). Puoi nuclearizzare e deletare il tuo account quando vuoi.",
+      text: "I dati vengono usati per account, ordini, logistica e funzioni essenziali del servizio. Il tono del brand puo essere ironico, ma il trattamento resta serio e circoscritto.",
+      fine: "* I dettagli completi sul trattamento dei dati sono disponibili nella Privacy Policy e seguono il quadro GDPR applicabile.",
       color: "bg-purple-400"
     }
   ];

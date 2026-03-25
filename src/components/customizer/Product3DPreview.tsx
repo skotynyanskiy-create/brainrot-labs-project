@@ -1,29 +1,32 @@
-import React, { Suspense, useState } from 'react';
+import React, { Suspense, useMemo, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
 import {
-  OrbitControls, PerspectiveCamera, Environment,
-  ContactShadows, Decal, useTexture, Float, RoundedBox,
+  ContactShadows,
+  Decal,
+  Environment,
+  Float,
+  OrbitControls,
+  PerspectiveCamera,
+  RoundedBox,
+  useTexture,
 } from '@react-three/drei';
+import * as THREE from 'three';
 
 export interface Product3DPreviewProps {
   baseProductId: 'base-tshirt' | 'base-phonecase';
   designTextureUrl: string | null;
   baseColor?: string;
-  /** 'neutral' = studio lighting (default), 'y2k' = neon Y2K lights */
   lightingMode?: 'neutral' | 'y2k';
-  /** When true the model auto-rotates and floats (use in Step 3 / confirm view) */
   autoRotate?: boolean;
 }
 
-// ── Minimal 1×1 transparent PNG used as placeholder texture ──────────────────
 const PLACEHOLDER_TEXTURE =
   'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=';
 
-// ── Lighting presets ──────────────────────────────────────────────────────────
 const NeutralLighting = () => (
   <>
     <ambientLight intensity={0.9} color="#ffffff" />
-    <directionalLight position={[3, 5, 4]}  intensity={1.4} color="#fff8f0" castShadow />
+    <directionalLight position={[3, 5, 4]} intensity={1.4} color="#fff8f0" castShadow />
     <directionalLight position={[-4, 3, -2]} intensity={0.5} color="#e8f0ff" />
     <Environment preset="studio" />
   </>
@@ -32,15 +35,40 @@ const NeutralLighting = () => (
 const Y2KLighting = () => (
   <>
     <ambientLight intensity={0.4} color="#ffffff" />
-    <directionalLight position={[5, 5, 5]}  intensity={1.5} color="#ff00ff" castShadow />
+    <directionalLight position={[5, 5, 5]} intensity={1.5} color="#ff00ff" castShadow />
     <directionalLight position={[-5, 5, -5]} intensity={1.5} color="#00ffff" />
-    <pointLight       position={[0, -5, 5]}  intensity={2}   color="#ffff00" />
+    <pointLight position={[0, -5, 5]} intensity={2} color="#ffff00" />
     <Environment preset="city" />
   </>
 );
 
-// ── T-Shirt Model ─────────────────────────────────────────────────────────────
-// Body: flat plane + two sleeve boxes + collar torus half-ring
+function createTshirtShape() {
+  const shape = new THREE.Shape();
+
+  shape.moveTo(-1.18, -1.95);
+  shape.lineTo(1.18, -1.95);
+  shape.lineTo(1.18, 0.7);
+  shape.bezierCurveTo(1.5, 0.76, 1.84, 1.0, 2.05, 1.3);
+  shape.lineTo(2.42, 1.9);
+  shape.lineTo(1.58, 2.12);
+  shape.lineTo(1.18, 1.48);
+  shape.bezierCurveTo(1.03, 1.22, 0.83, 1.08, 0.62, 1.01);
+  shape.bezierCurveTo(0.56, 1.54, 0.3, 1.9, 0, 1.9);
+  shape.bezierCurveTo(-0.3, 1.9, -0.56, 1.54, -0.62, 1.01);
+  shape.bezierCurveTo(-0.83, 1.08, -1.03, 1.22, -1.18, 1.48);
+  shape.lineTo(-1.58, 2.12);
+  shape.lineTo(-2.42, 1.9);
+  shape.lineTo(-2.05, 1.3);
+  shape.bezierCurveTo(-1.84, 1.0, -1.5, 0.76, -1.18, 0.7);
+  shape.lineTo(-1.18, -1.95);
+
+  const neckHole = new THREE.Path();
+  neckHole.absellipse(0, 1.65, 0.42, 0.24, 0, Math.PI, true, 0);
+  shape.holes.push(neckHole);
+
+  return shape;
+}
+
 const TshirtModel = ({
   textureUrl,
   baseColor,
@@ -49,55 +77,74 @@ const TshirtModel = ({
   baseColor: string;
 }) => {
   const texture = useTexture(textureUrl || PLACEHOLDER_TEXTURE);
-  const mat = { color: baseColor, roughness: 0.85, metalness: 0 } as const;
+  const tshirtShape = useMemo(() => createTshirtShape(), []);
 
   return (
-    <group>
-      {/* Body front face */}
-      <mesh castShadow receiveShadow position={[0, 0, 0]}>
-        <planeGeometry args={[2.8, 3.6]} />
-        <meshStandardMaterial {...mat} side={2} />
+    <group rotation={[0.08, 0.1, 0]} position={[0, -0.1, 0]}>
+      <mesh castShadow receiveShadow>
+        <extrudeGeometry
+          args={[
+            tshirtShape,
+            {
+              depth: 0.34,
+              bevelEnabled: true,
+              bevelSegments: 3,
+              steps: 1,
+              bevelSize: 0.05,
+              bevelThickness: 0.035,
+              curveSegments: 24,
+            },
+          ]}
+        />
+        <meshPhysicalMaterial
+          color={baseColor}
+          roughness={0.92}
+          metalness={0}
+          clearcoat={0.04}
+          sheen={0.25}
+          sheenRoughness={0.9}
+        />
+      </mesh>
+
+      <mesh position={[0, 0.15, 0.23]} castShadow receiveShadow>
+        <planeGeometry args={[1.7, 1.95]} />
+        <meshStandardMaterial color={baseColor} roughness={0.98} />
         {textureUrl && (
-          <Decal position={[0, 0.3, 0.01]} rotation={[0, 0, 0]} scale={[2.2, 2.2, 1]}>
+          <Decal position={[0, 0, 0.01]} rotation={[0, 0, 0]} scale={[1.55, 1.75, 1]}>
             <meshStandardMaterial
               map={texture}
               transparent
               polygonOffset
               polygonOffsetFactor={-1}
-              roughness={0.9}
+              roughness={0.88}
             />
           </Decal>
         )}
       </mesh>
 
-      {/* Body — thin box for depth */}
-      <mesh position={[0, 0, -0.06]}>
-        <boxGeometry args={[2.8, 3.6, 0.12]} />
-        <meshStandardMaterial {...mat} />
+      <mesh position={[0, -1.95, 0.16]}>
+        <boxGeometry args={[2.15, 0.09, 0.22]} />
+        <meshStandardMaterial color="#000000" transparent opacity={0.08} />
       </mesh>
 
-      {/* Left sleeve */}
-      <mesh castShadow position={[-1.95, 0.9, 0]} rotation={[0, 0, 0.45]}>
-        <boxGeometry args={[1.2, 0.75, 0.12]} />
-        <meshStandardMaterial {...mat} />
+      <mesh position={[0, 1.63, 0.18]} rotation={[Math.PI / 2, 0, 0]}>
+        <torusGeometry args={[0.44, 0.08, 10, 36, Math.PI]} />
+        <meshStandardMaterial color="#111111" roughness={0.75} metalness={0.05} />
       </mesh>
 
-      {/* Right sleeve */}
-      <mesh castShadow position={[1.95, 0.9, 0]} rotation={[0, 0, -0.45]}>
-        <boxGeometry args={[1.2, 0.75, 0.12]} />
-        <meshStandardMaterial {...mat} />
+      <mesh position={[-1.78, 1.45, 0.16]} rotation={[0, 0, 0.5]}>
+        <boxGeometry args={[0.72, 0.08, 0.22]} />
+        <meshStandardMaterial color="#000000" transparent opacity={0.08} />
       </mesh>
 
-      {/* Collar */}
-      <mesh position={[0, 1.75, 0.01]} rotation={[Math.PI / 2, 0, 0]}>
-        <torusGeometry args={[0.55, 0.1, 8, 24, Math.PI]} />
-        <meshStandardMaterial {...mat} />
+      <mesh position={[1.78, 1.45, 0.16]} rotation={[0, 0, -0.5]}>
+        <boxGeometry args={[0.72, 0.08, 0.22]} />
+        <meshStandardMaterial color="#000000" transparent opacity={0.08} />
       </mesh>
     </group>
   );
 };
 
-// ── iPhone 15 Pro Case Model ──────────────────────────────────────────────────
 const PhoneCaseModel = ({
   textureUrl,
   baseColor,
@@ -109,7 +156,6 @@ const PhoneCaseModel = ({
 
   return (
     <group>
-      {/* Case body — rounded box */}
       <RoundedBox args={[1.7, 3.4, 0.22]} radius={0.14} smoothness={6} castShadow receiveShadow>
         <meshPhysicalMaterial
           color={baseColor || '#f0f0f0'}
@@ -131,24 +177,23 @@ const PhoneCaseModel = ({
         )}
       </RoundedBox>
 
-      {/* Camera bump */}
       <mesh position={[-0.4, 1.1, 0.15]}>
         <boxGeometry args={[0.55, 0.55, 0.09]} />
         <meshPhysicalMaterial color="#1a1a1a" roughness={0.4} metalness={0.6} />
       </mesh>
-      {/* Camera lenses */}
-      {[[-0.22, 0.15], [0.15, 0.15], [-0.22, -0.17], [0.15, -0.17]].map(([x, y], i) => (
-        <mesh key={i} position={[-0.4 + x, 1.1 + y, 0.2]}>
+
+      {[[-0.22, 0.15], [0.15, 0.15], [-0.22, -0.17], [0.15, -0.17]].map(([x, y], index) => (
+        <mesh key={index} position={[-0.4 + x, 1.1 + y, 0.2]}>
           <cylinderGeometry args={[0.1, 0.1, 0.04, 16]} />
           <meshPhysicalMaterial color="#111111" roughness={0.05} metalness={0.9} />
         </mesh>
       ))}
 
-      {/* Side buttons */}
       <mesh position={[0.88, 0.4, 0]}>
         <boxGeometry args={[0.06, 0.35, 0.18]} />
         <meshPhysicalMaterial color="#aaaaaa" roughness={0.3} metalness={0.8} />
       </mesh>
+
       <mesh position={[-0.88, 0.0, 0]}>
         <boxGeometry args={[0.06, 0.22, 0.14]} />
         <meshPhysicalMaterial color="#aaaaaa" roughness={0.3} metalness={0.8} />
@@ -157,7 +202,6 @@ const PhoneCaseModel = ({
   );
 };
 
-// ── Main Component ────────────────────────────────────────────────────────────
 const Product3DPreview: React.FC<Product3DPreviewProps> = ({
   baseProductId,
   designTextureUrl,
@@ -170,39 +214,34 @@ const Product3DPreview: React.FC<Product3DPreviewProps> = ({
 
   const model = baseProductId === 'base-phonecase'
     ? <PhoneCaseModel textureUrl={designTextureUrl} baseColor={colorHex} />
-    : <TshirtModel    textureUrl={designTextureUrl} baseColor={colorHex} />;
+    : <TshirtModel textureUrl={designTextureUrl} baseColor={colorHex} />;
 
   const isPhoneCase = baseProductId === 'base-phonecase';
 
   return (
     <div
-      className="w-full h-full relative"
+      className="relative h-full w-full"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
       <Suspense
         fallback={
-          <div className="flex items-center justify-center w-full h-full bg-gray-900 text-white font-black uppercase tracking-widest text-sm animate-pulse">
+          <div className="flex h-full w-full items-center justify-center bg-gray-900 text-sm font-black uppercase tracking-widest text-white animate-pulse">
             3D Engine...
           </div>
         }
       >
-        <Canvas
-          shadows
-          dpr={[1, 1.5]}
-          performance={{ min: 0.5 }}
-          className="w-full h-full"
-        >
+        <Canvas shadows dpr={[1, 1.5]} performance={{ min: 0.5 }} className="h-full w-full">
           <PerspectiveCamera
             makeDefault
-            position={isPhoneCase ? [0, 0, 5.5] : [0, 0, 7]}
-            fov={45}
+            position={isPhoneCase ? [0, 0, 5.5] : [0, 0.1, 7.4]}
+            fov={isPhoneCase ? 45 : 42}
           />
 
           {lightingMode === 'y2k' ? <Y2KLighting /> : <NeutralLighting />}
 
           {autoRotate ? (
-            <Float speed={2} rotationIntensity={0.4} floatIntensity={0.6}>
+            <Float speed={2} rotationIntensity={0.35} floatIntensity={0.5}>
               {model}
             </Float>
           ) : (
@@ -230,10 +269,9 @@ const Product3DPreview: React.FC<Product3DPreviewProps> = ({
         </Canvas>
       </Suspense>
 
-      {/* Drag hint — only shown when not auto-rotating */}
       {!autoRotate && (
         <div
-          className={`absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/80 text-white px-4 py-2 text-xs font-black uppercase tracking-widest border border-white/20 transition-opacity duration-300 pointer-events-none ${
+          className={`pointer-events-none absolute bottom-4 left-1/2 -translate-x-1/2 border border-white/20 bg-black/80 px-4 py-2 text-xs font-black uppercase tracking-widest text-white transition-opacity duration-300 ${
             isHovered ? 'opacity-0' : 'opacity-70'
           }`}
         >
@@ -241,9 +279,8 @@ const Product3DPreview: React.FC<Product3DPreviewProps> = ({
         </div>
       )}
 
-      {/* Lighting mode badge */}
       {lightingMode === 'y2k' && (
-        <div className="absolute top-3 right-3 bg-yellow-400 text-black px-2 py-1 border-2 border-black font-black uppercase text-[10px] rotate-2 shadow-[3px_3px_0_0_rgba(0,0,0,1)] pointer-events-none">
+        <div className="pointer-events-none absolute right-3 top-3 rotate-2 border-2 border-black bg-yellow-400 px-2 py-1 text-[10px] font-black uppercase text-black shadow-[3px_3px_0_0_rgba(0,0,0,1)]">
           Y2K MODE
         </div>
       )}

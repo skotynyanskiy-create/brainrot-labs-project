@@ -77,9 +77,74 @@ service cloud.firestore {
       return data.keys().hasAll(['uid', 'email', 'role']) &&
              data.uid is string && data.uid.size() > 0 && data.uid.size() < 128 &&
              data.email is string && data.email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$") &&
-             data.role in ['admin', 'client'] &&
+             data.role in ['admin', 'client', 'creator'] &&
              (!('displayName' in data) || (data.displayName is string && data.displayName.size() < 100)) &&
-             (!('photoURL' in data) || (data.photoURL is string && data.photoURL.size() < 2048));
+             (!('photoURL' in data) || (data.photoURL is string && data.photoURL.size() < 2048)) &&
+             (!('username' in data) || (data.username is string && data.username.size() < 50)) &&
+             (!('creatorTagline' in data) || (data.creatorTagline is string && data.creatorTagline.size() < 140)) &&
+             (!('bio' in data) || (data.bio is string && data.bio.size() < 500)) &&
+             (!('location' in data) || (data.location is string && data.location.size() < 120)) &&
+             (!('portfolioUrl' in data) || (data.portfolioUrl is string && data.portfolioUrl.size() < 2048)) &&
+             (!('socialHandle' in data) || (data.socialHandle is string && data.socialHandle.size() < 80)) &&
+             (!('creatorCategory' in data) || (data.creatorCategory is string && data.creatorCategory.size() < 80)) &&
+             (!('legalName' in data) || (data.legalName is string && data.legalName.size() < 140)) &&
+             (!('payoutEmail' in data) || (data.payoutEmail is string && data.payoutEmail.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"))) &&
+             (!('phone' in data) || (data.phone is string && data.phone.size() < 30)) &&
+             (!('newsletterOptIn' in data) || (data.newsletterOptIn is bool)) &&
+             (!('authProvider' in data) || data.authProvider in ['google', 'password']) &&
+             (!('createdAt' in data) || data.createdAt is string) &&
+             (!('payoutSetup' in data) || (
+               data.payoutSetup is map &&
+               (!('provider' in data.payoutSetup) || data.payoutSetup.provider in ['none', 'stripe_connect', 'paypal', 'bank_transfer']) &&
+               (!('status' in data.payoutSetup) || data.payoutSetup.status in ['not_configured', 'pending_setup', 'pending_verification', 'active', 'restricted']) &&
+               (!('accountId' in data.payoutSetup) || (data.payoutSetup.accountId is string && data.payoutSetup.accountId.size() < 160)) &&
+               (!('accountLabel' in data.payoutSetup) || (data.payoutSetup.accountLabel is string && data.payoutSetup.accountLabel.size() < 160)) &&
+               (!('payoutCurrency' in data.payoutSetup) || (data.payoutSetup.payoutCurrency is string && data.payoutSetup.payoutCurrency.size() < 8)) &&
+               (!('minimumPayoutAmount' in data.payoutSetup) || (data.payoutSetup.minimumPayoutAmount is number && data.payoutSetup.minimumPayoutAmount >= 0)) &&
+               (!('connectedAt' in data.payoutSetup) || data.payoutSetup.connectedAt is string) &&
+               (!('onboardingReady' in data.payoutSetup) || data.payoutSetup.onboardingReady is bool)
+             )) &&
+             (!('taxProfile' in data) || (
+               data.taxProfile is map &&
+               (!('legalName' in data.taxProfile) || (data.taxProfile.legalName is string && data.taxProfile.legalName.size() < 140)) &&
+               (!('businessType' in data.taxProfile) || data.taxProfile.businessType in ['individual', 'business']) &&
+               (!('taxCountry' in data.taxProfile) || (data.taxProfile.taxCountry is string && data.taxProfile.taxCountry.size() < 100)) &&
+               (!('taxId' in data.taxProfile) || (data.taxProfile.taxId is string && data.taxProfile.taxId.size() < 80)) &&
+               (!('vatId' in data.taxProfile) || (data.taxProfile.vatId is string && data.taxProfile.vatId.size() < 80))
+             )) &&
+             (!('royaltyWallet' in data) || (
+               data.royaltyWallet is map &&
+               (!('available' in data.royaltyWallet) || (data.royaltyWallet.available is number && data.royaltyWallet.available >= 0)) &&
+               (!('pending' in data.royaltyWallet) || (data.royaltyWallet.pending is number && data.royaltyWallet.pending >= 0)) &&
+               (!('paidTotal' in data.royaltyWallet) || (data.royaltyWallet.paidTotal is number && data.royaltyWallet.paidTotal >= 0)) &&
+               (!('nextPayoutEstimate' in data.royaltyWallet) || data.royaltyWallet.nextPayoutEstimate is string) &&
+               (!('lastPayoutAt' in data.royaltyWallet) || data.royaltyWallet.lastPayoutAt is string)
+             )) &&
+             (!('legalAcceptances' in data) || (
+               data.legalAcceptances is map &&
+               (!('creatorTerms' in data.legalAcceptances) || (
+                 data.legalAcceptances.creatorTerms is map &&
+                 (!('accepted' in data.legalAcceptances.creatorTerms) || data.legalAcceptances.creatorTerms.accepted is bool) &&
+                 (!('version' in data.legalAcceptances.creatorTerms) || (data.legalAcceptances.creatorTerms.version is string && data.legalAcceptances.creatorTerms.version.size() < 40)) &&
+                 (!('acceptedAt' in data.legalAcceptances.creatorTerms) || data.legalAcceptances.creatorTerms.acceptedAt is string)
+               )) &&
+               (!('royaltyPolicy' in data.legalAcceptances) || (
+                 data.legalAcceptances.royaltyPolicy is map &&
+                 (!('accepted' in data.legalAcceptances.royaltyPolicy) || data.legalAcceptances.royaltyPolicy.accepted is bool) &&
+                 (!('version' in data.legalAcceptances.royaltyPolicy) || (data.legalAcceptances.royaltyPolicy.version is string && data.legalAcceptances.royaltyPolicy.version.size() < 40)) &&
+                 (!('acceptedAt' in data.legalAcceptances.royaltyPolicy) || data.legalAcceptances.royaltyPolicy.acceptedAt is string)
+               ))
+             )) &&
+             (!('shippingAddress' in data) || (
+               data.shippingAddress is map &&
+               (!('fullName' in data.shippingAddress) || (data.shippingAddress.fullName is string && data.shippingAddress.fullName.size() < 120)) &&
+               (!('address1' in data.shippingAddress) || (data.shippingAddress.address1 is string && data.shippingAddress.address1.size() < 200)) &&
+               (!('city' in data.shippingAddress) || (data.shippingAddress.city is string && data.shippingAddress.city.size() < 100)) &&
+               (!('province' in data.shippingAddress) || (data.shippingAddress.province is string && data.shippingAddress.province.size() < 20)) &&
+               (!('zip' in data.shippingAddress) || (data.shippingAddress.zip is string && data.shippingAddress.zip.size() < 20)) &&
+               (!('country' in data.shippingAddress) || (data.shippingAddress.country is string && data.shippingAddress.country.size() < 80)) &&
+               (!('phone' in data.shippingAddress) || (data.shippingAddress.phone is string && data.shippingAddress.phone.size() < 30))
+             ));
     }
 
     function isValidProduct(data) {
@@ -110,7 +175,10 @@ service cloud.firestore {
              data.authorName is string && data.authorName.size() > 0 && data.authorName.size() < 100 &&
              data.image is string && data.image.size() > 0 && data.image.size() < 2048 &&
              data.memeDescription is string && data.memeDescription.size() > 0 && data.memeDescription.size() < 1000 &&
-             (data.createdAt is timestamp || data.createdAt is string) &&
+             (
+               data.createdAt is timestamp ||
+               (resource != null && resource.data.createdAt is string && data.createdAt == resource.data.createdAt)
+             ) &&
              (!('likes' in data) || (data.likes is number && data.likes >= 0));
     }
 
@@ -121,9 +189,9 @@ service cloud.firestore {
     match /users/{userId} {
       allow read: if isOwner(userId) || isAdmin();
       allow create: if isAuthenticated() && isOwner(userId) && isValidUser(request.resource.data) && 
-                      (request.resource.data.role == 'client' || isAdmin());
+                      (request.resource.data.role in ['client', 'creator'] || isAdmin());
       allow update: if isAuthenticated() && isOwner(userId) && isValidUser(request.resource.data) && uidUnchanged() &&
-                      (request.resource.data.role == resource.data.role || isAdmin());
+                      (request.resource.data.role == resource.data.role || request.resource.data.role == 'creator' || isAdmin());
     }
 
     match /products/{productId} {
@@ -144,6 +212,20 @@ service cloud.firestore {
       allow create: if isAuthenticated() && isValidCommunityDesign(request.resource.data);
       allow update: if isAuthenticated() && (isAuthor(resource.data.authorId) || isAdmin()) && isValidCommunityDesign(request.resource.data) && request.resource.data.authorId == resource.data.authorId;
       allow delete: if isAuthenticated() && (isAuthor(resource.data.authorId) || isAdmin());
+    }
+
+    // Newsletter subscribers — write-only (append), no read access for clients
+    match /subscribers/{docId} {
+      allow create: if request.resource.data.keys().hasAll(['email', 'subscribedAt']) &&
+                       request.resource.data.email is string &&
+                       request.resource.data.email.matches("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$") &&
+                       request.resource.data.subscribedAt is string;
+      allow read, update, delete: if isAdmin();
+    }
+
+    // Rate limit counters — managed exclusively by Cloud Functions (Admin SDK)
+    match /_rateLimits/{doc} {
+      allow read, write: if false;
     }
   }
 }

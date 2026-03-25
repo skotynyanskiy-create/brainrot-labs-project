@@ -1,7 +1,49 @@
-import { useEffect, useRef, useState, Suspense } from 'react';
+import { Suspense, useEffect, useRef, useState } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { Float, Stars, PerspectiveCamera, Environment, ContactShadows, Decal, useTexture, RoundedBox } from '@react-three/drei';
 import * as THREE from 'three';
+
+interface Particle3D {
+  t: number;
+  factor: number;
+  speed: number;
+  xFactor: number;
+  yFactor: number;
+  zFactor: number;
+  mx: number;
+  my: number;
+}
+
+function pseudoRandom(seed: number) {
+  const value = Math.sin(seed * 12.9898) * 43758.5453;
+  return value - Math.floor(value);
+}
+
+function buildParticles(count: number): Particle3D[] {
+  return Array.from({ length: count }, (_, index) => {
+    const seed = index + 1;
+
+    return {
+      t: pseudoRandom(seed) * 100,
+      factor: 20 + pseudoRandom(seed + 11) * 100,
+      speed: 0.01 + pseudoRandom(seed + 23) / 200,
+      xFactor: -50 + pseudoRandom(seed + 31) * 100,
+      yFactor: -50 + pseudoRandom(seed + 47) * 100,
+      zFactor: -50 + pseudoRandom(seed + 59) * 100,
+      mx: 0,
+      my: 0,
+    };
+  });
+}
+
+function detectWebglSupport() {
+  if (typeof document === 'undefined') {
+    return false;
+  }
+
+  const canvas = document.createElement('canvas');
+  return Boolean(canvas.getContext('webgl') || canvas.getContext('webgl2'));
+}
 
 function Rig() {
   const { camera, mouse } = useThree();
@@ -72,24 +114,12 @@ function Particles({ count = 100 }) {
   const { viewport, mouse } = useThree();
 
   const dummy = new THREE.Object3D();
-  const particles = useRef<any[]>([]);
-
-  if (particles.current.length === 0) {
-    for (let i = 0; i < count; i++) {
-      const t = Math.random() * 100;
-      const factor = 20 + Math.random() * 100;
-      const speed = 0.01 + Math.random() / 200;
-      const xFactor = -50 + Math.random() * 100;
-      const yFactor = -50 + Math.random() * 100;
-      const zFactor = -50 + Math.random() * 100;
-      particles.current.push({ t, factor, speed, xFactor, yFactor, zFactor, mx: 0, my: 0 });
-    }
-  }
+  const particles = useRef<Particle3D[]>(buildParticles(count));
 
   useFrame((_state) => {
     particles.current.forEach((particle, i) => {
-      let { t, factor, speed, xFactor, yFactor, zFactor } = particle;
-      t = particle.t += speed / 2;
+      particle.t += particle.speed / 2;
+      const { t, factor, xFactor, yFactor, zFactor } = particle;
       const a = Math.cos(t) + Math.sin(t * 1) / 10;
       const b = Math.sin(t) + Math.cos(t * 2) / 10;
       const s = Math.cos(t);
@@ -124,18 +154,14 @@ interface Hero3DProps {
 }
 
 export default function Hero3D({ onReadyChange }: Hero3DProps) {
-  const [supportsWebgl, setSupportsWebgl] = useState(true);
+  const [supportsWebgl] = useState(detectWebglSupport);
   const [isSceneReady, setIsSceneReady] = useState(false);
 
   useEffect(() => {
-    const canvas = document.createElement('canvas');
-    const context = canvas.getContext('webgl') || canvas.getContext('webgl2');
-    const supported = Boolean(context);
-    setSupportsWebgl(supported);
-    if (!supported) {
+    if (!supportsWebgl) {
       onReadyChange?.(false);
     }
-  }, [onReadyChange]);
+  }, [onReadyChange, supportsWebgl]);
 
   return (
     <div className="absolute inset-0 z-0">
@@ -146,8 +172,8 @@ export default function Hero3D({ onReadyChange }: Hero3DProps) {
           <div className="border-4 border-white bg-white p-3 shadow-[8px_8px_0_0_rgba(0,0,0,1)]">
             <div className="aspect-[4/5] overflow-hidden border-4 border-black bg-yellow-300">
               <img
-                src="https://picsum.photos/seed/brainrot-hero-fallback/900/1200"
-                alt="Poster Brainrot Labs"
+                src="https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=900&q=80&fm=webp"
+                alt="Base product Brainrot Labs"
                 className="h-full w-full object-cover mix-blend-multiply"
               />
             </div>

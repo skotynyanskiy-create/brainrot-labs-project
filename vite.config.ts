@@ -16,7 +16,7 @@ export default defineConfig(() => {
       hmr: process.env.DISABLE_HMR !== 'true',
     },
     build: {
-      chunkSizeWarningLimit: 600,
+      chunkSizeWarningLimit: 1300,
       minify: 'terser',
       terserOptions: {
         compress: {

@@ -1,53 +1,59 @@
 import { ImageOff, TrendingUp, Trash2, Zap, Skull, Ghost } from 'lucide-react';
 import { motion } from 'motion/react';
+import { CREATOR_ROYALTY_RATE } from '../../constants';
+import { playBlipSound } from '../../utils/sounds';
 
 const FEATURES = [
   {
     icon: ImageOff,
-    title: "Curatela del Cringe",
-    desc: "Niente normie trash qui bro. Selezioniamo solo meme God-Tier e li stampiamo in HD. L'appropriazione culturale di internet, ma fatta incredibilmente bene.",
+    title: "Basi Curate",
+    desc: "Le immagini di partenza non sono riempitivi casuali: ogni base viene scelta per funzionare davvero su prodotto, card e sezione.",
     color: "bg-cyan-400",
     size: "md:col-span-2"
   },
   {
     icon: TrendingUp,
-    title: "Economia Basata",
-    desc: "L'inflazione è un complotto degli NPC. Prezzi onesti per farti flexare senza dover grindare su due lavori diversi.",
+    title: "Workflow Coerente",
+    desc: "Customizer, schede prodotto e community raccontano lo stesso processo: scegli, costruisci, controlli la preview, acquisti o pubblichi.",
     color: "bg-pink-400",
     size: "md:col-span-1"
   },
   {
     icon: Skull,
-    title: "Drip Eterno",
-    desc: "Stampe che sopravvivono a lavaggi nucleari. Il tuo fit sarà ancora fresco quando i server di TikTok chiuderanno.",
+    title: "Preview Reale",
+    desc: "L'anteprima 3D e i visual di dettaglio servono a confermare la resa finale, non a coprire buchi di contenuto.",
     color: "bg-purple-500",
     size: "md:col-span-1",
     textColor: "text-white"
   },
   {
     icon: Trash2,
-    title: "Tessuti Non Tossici",
-    desc: "Niente poliestere cinese radioattivo che ti fa sudare al primo boss fight su Elden Ring. Solo cotone premium per veri Chad.",
+    title: "Produzione On Demand",
+    desc: "Ogni prodotto nasce dal design scelto o creato nel laboratorio e passa poi nel flusso di acquisto senza cambiare logica o tono.",
     color: "bg-yellow-400",
     size: "md:col-span-2"
   },
   {
     icon: Ghost,
-    title: "Assistenza (Quasi) Umana",
-    desc: "Se il server lagga e l'ordine si incanta, non ti ghostiamo. Il nostro team di supporto ha maxato la stat dell'empatia.",
+    title: "Community Credibile",
+    desc: "I design community usano seed, copy e metriche costruite per categoria, evitando l'effetto demo improvvisata o gallery piena di placeholder.",
     color: "bg-orange-400",
     size: "md:col-span-1"
   },
   {
     icon: Zap,
-    title: "Delivery Speedrun",
-    desc: "Logistica maxata. Spedizioni così veloci che il pacco ti arriva a casa prima che tu possa pentirti del carrello fatto alle 4 di notte.",
+    title: "Royalty Chiare",
+    desc: `Se pubblichi un design in community, la promessa resta semplice e leggibile: ${CREATOR_ROYALTY_RATE}% di royalty automatiche su ogni vendita.`,
     color: "bg-green-400",
     size: "md:col-span-2"
   }
 ];
 
-export default function Features() {
+interface FeaturesProps {
+  onOpenCustomizer?: () => void;
+}
+
+export default function Features({ onOpenCustomizer }: FeaturesProps) {
   return (
     <section id="features" className="py-20 md:py-32 px-6 md:px-12 border-b-8 border-black bg-white relative overflow-hidden">
       {/* Background Pattern */}
@@ -68,7 +74,7 @@ export default function Features() {
             <span className="inline-block bg-cyan-400 text-black px-6 md:px-8 py-2 md:py-3 border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] md:shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] rotate-2 italic">NON SKIPPARCI?</span>
           </h2>
           <p className="text-xl md:text-2xl font-sans font-medium text-black leading-relaxed max-w-2xl">
-            "Prendiamo il degrado di internet, ci buttiamo sopra un po' di magia AI, e lo trasformiamo in merch fisico di altissima qualità. Baseato."
+            "Prendiamo meme, copy e visual di internet e li trasformiamo in un catalogo coerente, con editor AI, preview credibili e community monetizzabile."
           </p>
         </div>
 
@@ -100,6 +106,20 @@ export default function Features() {
               </div>
             </motion.div>
           ))}
+        </div>
+
+        <div className="mt-16 md:mt-20 flex justify-center">
+          <motion.button
+            whileHover={{ scale: 1.02, y: -3 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={() => {
+              playBlipSound();
+              onOpenCustomizer?.();
+            }}
+            className="border-4 border-black bg-cyan-400 px-8 py-4 text-lg font-black uppercase italic shadow-[8px_8px_0_0_rgba(0,0,0,1)] transition-all hover:translate-x-1 hover:translate-y-1 hover:bg-black hover:text-cyan-400 hover:shadow-none"
+          >
+            Inizia a creare il tuo design →
+          </motion.button>
         </div>
       </div>
     </section>

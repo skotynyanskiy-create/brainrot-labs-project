@@ -1,4 +1,4 @@
-import { Timestamp } from './firebase';
+import type { Timestamp } from './firebase';
 
 declare global {
   interface Window {
@@ -14,7 +14,73 @@ export interface UserProfile {
   email: string;
   displayName: string | null;
   photoURL: string | null;
-  role: 'admin' | 'client';
+  role: 'admin' | 'client' | 'creator';
+  username?: string;
+  creatorTagline?: string;
+  bio?: string;
+  location?: string;
+  portfolioUrl?: string;
+  socialHandle?: string;
+  creatorCategory?: string;
+  legalName?: string;
+  payoutEmail?: string;
+  phone?: string;
+  newsletterOptIn?: boolean;
+  authProvider?: 'google' | 'password';
+  createdAt?: string;
+  shippingAddress?: AccountShippingAddress;
+  payoutSetup?: AccountPayoutSetup;
+  taxProfile?: AccountTaxProfile;
+  royaltyWallet?: RoyaltyWallet;
+  legalAcceptances?: UserLegalAcceptances;
+}
+
+export interface LegalAcceptance {
+  accepted: boolean;
+  version: string;
+  acceptedAt?: string;
+}
+
+export interface UserLegalAcceptances {
+  creatorTerms?: LegalAcceptance;
+  royaltyPolicy?: LegalAcceptance;
+}
+
+export interface AccountShippingAddress {
+  fullName: string;
+  address1: string;
+  city: string;
+  province: string;
+  zip: string;
+  country: string;
+  phone?: string;
+}
+
+export interface AccountPayoutSetup {
+  provider: 'none' | 'stripe_connect' | 'paypal' | 'bank_transfer';
+  status: 'not_configured' | 'pending_setup' | 'pending_verification' | 'active' | 'restricted';
+  accountId?: string;
+  accountLabel?: string;
+  payoutCurrency?: string;
+  minimumPayoutAmount?: number;
+  connectedAt?: string;
+  onboardingReady?: boolean;
+}
+
+export interface AccountTaxProfile {
+  legalName: string;
+  businessType: 'individual' | 'business';
+  taxCountry: string;
+  taxId: string;
+  vatId?: string;
+}
+
+export interface RoyaltyWallet {
+  available: number;
+  pending: number;
+  paidTotal: number;
+  nextPayoutEstimate?: string;
+  lastPayoutAt?: string;
 }
 
 export interface LayerData {
@@ -129,6 +195,15 @@ export interface CustomTemplate {
   previewImage: string;
 }
 
+export interface MemeBase {
+  id: string;
+  name: string;
+  url: string;
+  category: 'reaction' | 'format' | 'dank' | 'italian';
+  usageCount: number;
+  tags: string[];
+}
+
 export interface CommunityDesign {
   id: string;
   authorId: string;
@@ -141,7 +216,7 @@ export interface CommunityDesign {
   likes: number;
   totalSales?: number;
   totalEarnings?: number;
-  royaltyRate?: number; // percentage (e.g. 12 = 12%)
+  royaltyRate?: number; // percentage (e.g. 6.9 = 6.9%)
   isPublished?: boolean;
   tags?: string[];
 }

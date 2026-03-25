@@ -11,6 +11,10 @@ interface UIContextType {
   setIsPrivacyOpen: (isOpen: boolean) => void;
   isTermsOpen: boolean;
   setIsTermsOpen: (isOpen: boolean) => void;
+  isCreatorTermsOpen: boolean;
+  setIsCreatorTermsOpen: (isOpen: boolean) => void;
+  isRoyaltyPolicyOpen: boolean;
+  setIsRoyaltyPolicyOpen: (isOpen: boolean) => void;
 }
 
 const UIContext = createContext<UIContextType | undefined>(undefined);
@@ -21,6 +25,8 @@ export const UIProvider: React.FC<{ children: React.ReactNode }> = ({ children }
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isPrivacyOpen, setIsPrivacyOpen] = useState(false);
   const [isTermsOpen, setIsTermsOpen] = useState(false);
+  const [isCreatorTermsOpen, setIsCreatorTermsOpen] = useState(false);
+  const [isRoyaltyPolicyOpen, setIsRoyaltyPolicyOpen] = useState(false);
 
   return (
     <UIContext.Provider value={{
@@ -34,12 +40,17 @@ export const UIProvider: React.FC<{ children: React.ReactNode }> = ({ children }
       setIsPrivacyOpen,
       isTermsOpen,
       setIsTermsOpen,
+      isCreatorTermsOpen,
+      setIsCreatorTermsOpen,
+      isRoyaltyPolicyOpen,
+      setIsRoyaltyPolicyOpen,
     }}>
       {children}
     </UIContext.Provider>
   );
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useUI = () => {
   const context = useContext(UIContext);
   if (!context) throw new Error('useUI must be used within a UIProvider');

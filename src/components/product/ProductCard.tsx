@@ -1,11 +1,15 @@
 import React, { useState } from 'react';
-import { Product } from '../../types';
+import type { Product } from '../../types';
 import { useCart } from '../../context/CartContext';
 import { useToast } from '../../context/ToastContext';
+import { useAuth } from '../../context/AuthContext';
 import { motion } from 'motion/react';
 import { Heart } from 'lucide-react';
 import { playCoinSound, playBlipSound } from '../../utils/sounds';
 import { Skeleton } from '../ui/Skeleton';
+import { db, doc, updateDoc } from '../../firebase';
+import { increment } from 'firebase/firestore';
+import { logger } from '../../utils/logger';
 
 interface ProductCardProps {
   product: Product;
@@ -16,7 +20,9 @@ interface ProductCardProps {
 const ProductCard: React.FC<ProductCardProps> = React.memo(({ product, onSelect, bgColor = 'bg-white' }) => {
   const { addToCart } = useCart();
   const { addToast } = useToast();
+  const { user } = useAuth();
   const [isLoaded, setIsLoaded] = useState(false);
+  const [hasLiked, setHasLiked] = useState(false);
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -28,8 +34,18 @@ const ProductCard: React.FC<ProductCardProps> = React.memo(({ product, onSelect,
   const handleLike = async (e: React.MouseEvent) => {
     e.stopPropagation();
     if (product.category !== 'community') return;
+    if (hasLiked) return;
+    if (!user) { addToast('Accedi per mettere like.', 'info'); return; }
     playBlipSound();
-    addToast('Hai dato un like a questo disagio. +1 aura.');
+    setHasLiked(true);
+    try {
+      await updateDoc(doc(db, 'communityDesigns', product.id), { likes: increment(1) });
+      addToast('Hai dato un like a questo design. +1 aura.', 'success');
+    } catch (error) {
+      setHasLiked(false);
+      logger.error('Like failed:', error);
+      addToast('Errore nel salvare il like. Riprova.', 'error');
+    }
   };
 
   const handleCardClick = () => {
@@ -53,7 +69,10 @@ const ProductCard: React.FC<ProductCardProps> = React.memo(({ product, onSelect,
       aria-label={`Apri la scheda di ${product.name}`}
       className={`brutalist-card p-4 md:p-6 flex flex-col h-full relative overflow-hidden cursor-pointer group border-4 md:border-8 border-black shadow-[8px_8px_0_0_rgba(0,0,0,1)] md:shadow-[12px_12px_0_0_rgba(0,0,0,1)] hover:shadow-[4px_4px_0_0_rgba(0,0,0,1)] md:hover:shadow-[6px_6px_0_0_rgba(0,0,0,1)] hover:translate-x-1 hover:translate-y-1 transition-all z-30 ${bgColor}`}
     >
-      <div className={`w-full flex-1 min-h-[200px] md:min-h-[250px] border-4 md:border-8 border-black mb-4 md:mb-6 overflow-hidden relative ${product.color} group-hover:bg-black transition-colors`}>
+      <div
+        className={`image-glitch-container w-full flex-1 min-h-[200px] md:min-h-[250px] border-4 md:border-8 border-black mb-4 md:mb-6 overflow-hidden relative ${product.color} group-hover:bg-black transition-colors`}
+        style={{ '--product-img': `url(${product.image})` } as React.CSSProperties}
+      >
         {!isLoaded && <Skeleton className="absolute inset-0 z-0 m-4" />}
 
         <div className={`absolute top-3 left-3 md:top-4 md:left-4 z-30 px-2 md:px-3 py-1 border-2 md:border-4 border-black font-black text-[10px] md:text-xs uppercase italic shadow-[4px_4px_0_0_rgba(0,0,0,1)] transform -rotate-3 ${
@@ -67,23 +86,14 @@ const ProductCard: React.FC<ProductCardProps> = React.memo(({ product, onSelect,
           transition={{ type: 'spring', stiffness: 300, damping: 20 }}
           src={product.image}
           alt={product.name}
+          width={400}
+          height={400}
           loading="lazy"
           decoding="async"
           onLoad={() => setIsLoaded(true)}
+          onError={(e) => { const img = e.target as HTMLImageElement; img.onerror = null; img.style.opacity = '0.3'; setIsLoaded(true); }}
           className={`w-full h-full object-cover mix-blend-multiply relative z-10 transition-all duration-500 group-hover:mix-blend-normal group-hover:scale-110 ${!isLoaded ? 'opacity-0' : 'opacity-100'}`}
           referrerPolicy="no-referrer"
-        />
-        <img
-          src={product.image}
-          alt=""
-          aria-hidden="true"
-          className="image-glitch-layer absolute inset-0 z-20 h-full w-full object-cover opacity-0 mix-blend-screen group-hover:opacity-50 group-hover:animate-[glitch-shift-cyan_180ms_steps(2,end)_infinite]"
-        />
-        <img
-          src={product.image}
-          alt=""
-          aria-hidden="true"
-          className="image-glitch-layer absolute inset-0 z-20 h-full w-full object-cover opacity-0 mix-blend-lighten group-hover:opacity-40 group-hover:animate-[glitch-shift-pink_160ms_steps(2,end)_infinite]"
         />
 
         <div className="absolute bottom-2 left-2 z-20 bg-black text-white px-2 py-1 text-xs font-mono uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">
@@ -103,11 +113,12 @@ const ProductCard: React.FC<ProductCardProps> = React.memo(({ product, onSelect,
               whileHover={{ scale: 1.1, rotate: -5 }}
               whileTap={{ scale: 0.9 }}
               onClick={handleLike}
+              disabled={hasLiked}
               aria-label={`Metti like a ${product.name}`}
-              className="flex items-center gap-1.5 bg-white border-2 md:border-4 border-black px-2 py-1 shadow-[2px_2px_0_0_rgba(0,0,0,1)] md:shadow-[4px_4px_0_0_rgba(0,0,0,1)] hover:bg-pink-500 hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1"
+              className="flex items-center gap-1.5 bg-white border-2 md:border-4 border-black px-2 py-1 shadow-[2px_2px_0_0_rgba(0,0,0,1)] md:shadow-[4px_4px_0_0_rgba(0,0,0,1)] hover:bg-pink-500 hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1 disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              <Heart className={`w-3 h-3 md:w-4 md:h-4 ${product.likes ? 'fill-current' : ''}`} />
-              <span className="text-xs md:text-sm font-black">{product.likes || 0}</span>
+              <Heart className={`w-3 h-3 md:w-4 md:h-4 ${hasLiked ? 'fill-current text-pink-500' : ''}`} />
+              <span className="text-xs md:text-sm font-black">{(product.likes || 0) + (hasLiked ? 1 : 0)}</span>
             </motion.button>
           )}
         </div>
@@ -133,7 +144,7 @@ const ProductCard: React.FC<ProductCardProps> = React.memo(({ product, onSelect,
           <div className="flex flex-col">
             <span className="text-[10px] md:text-xs font-mono uppercase text-gray-600 line-through font-black mb-1">EUR {(product.price * 1.5).toFixed(2)}</span>
             <div className="bg-yellow-400 border-4 border-black px-3 py-1 shadow-[4px_4px_0_0_rgba(0,0,0,1)] transform rotate-2 w-max">
-              <span className="text-2xl md:text-3xl font-black text-black italic leading-none">€{product.price.toFixed(2)}</span>
+              <span className="text-2xl md:text-3xl font-black text-black italic leading-none">EUR {product.price.toFixed(2)}</span>
             </div>
           </div>
         </div>
@@ -145,7 +156,7 @@ const ProductCard: React.FC<ProductCardProps> = React.memo(({ product, onSelect,
           aria-label={`Aggiungi ${product.name} al carrello`}
           className="bg-black text-white hover:bg-cyan-400 hover:text-black w-full px-4 py-3 md:py-4 text-xl md:text-2xl font-black italic uppercase border-4 border-black shadow-[6px_6px_0_0_rgba(0,0,0,1)] md:shadow-[8px_8px_0_0_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] transition-all focus:outline-none focus:ring-4 focus:ring-offset-2 flex items-center justify-center gap-2"
         >
-          COMPRA ORA 🛒
+          COMPRA ORA
         </motion.button>
       </div>
     </motion.div>

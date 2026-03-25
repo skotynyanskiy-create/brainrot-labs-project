@@ -1,7 +1,8 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
-import { Product, CommunityDesign } from '../types';
-import { PRODUCTS } from '../constants';
+import type { Product, CommunityDesign } from '../types';
+import { COMMUNITY_SEED_DESIGNS, PRODUCTS } from '../constants';
 import { db, collection, onSnapshot, Timestamp } from '../firebase';
+import { logger } from '../utils/logger';
 
 interface ProductContextType {
   products: Product[];
@@ -17,98 +18,41 @@ interface ProductContextType {
 
 const ProductContext = createContext<ProductContextType | undefined>(undefined);
 
-const FALLBACK_COMMUNITY_DESIGNS: CommunityDesign[] = [
-  {
-    id: 'fallback-1',
-    authorId: 'seed-1',
-    authorName: 'MemeLord99',
-    image: 'https://picsum.photos/seed/brainrot-community-1/900/900',
-    memeDescription: 'La Gioconda in modalita streetwear. Nessuno l ha chiesto, tutti la vogliono.',
-    createdAt: Timestamp.now(),
-    likes: 420,
-    totalSales: 34,
-    totalEarnings: 122.46,
-    royaltyRate: 12,
-    isPublished: true,
-    productType: 'wearable',
-    tags: ['art', 'streetwear', 'iconic'],
-  },
-  {
-    id: 'fallback-2',
-    authorId: 'seed-2',
-    authorName: 'SigmaPixel',
-    image: 'https://picsum.photos/seed/brainrot-community-2/900/900',
-    memeDescription: 'Un toast cosmico che fissa l abisso. Molto niche, molto potente.',
-    createdAt: Timestamp.now(),
-    likes: 314,
-    totalSales: 18,
-    totalEarnings: 64.76,
-    royaltyRate: 12,
-    isPublished: true,
-    productType: 'decor',
-    tags: ['cosmic', 'niche', 'deep'],
-  },
-  {
-    id: 'fallback-3',
-    authorId: 'seed-3',
-    authorName: 'CringeQueen',
-    image: 'https://picsum.photos/seed/brainrot-community-3/900/900',
-    memeDescription: 'Il gatto manager che approva solo meme ad alto rendimento emotivo.',
-    createdAt: Timestamp.now(),
-    likes: 777,
-    totalSales: 61,
-    totalEarnings: 219.38,
-    royaltyRate: 12,
-    isPublished: true,
-    productType: 'useless',
-    tags: ['cat', 'corporate', 'meme'],
-  },
-  {
-    id: 'fallback-4',
-    authorId: 'seed-4',
-    authorName: 'ToiletOracle',
-    image: 'https://picsum.photos/seed/brainrot-community-4/900/900',
-    memeDescription: 'Una reliquia post ironica uscita direttamente dal laboratorio.',
-    createdAt: Timestamp.now(),
-    likes: 999,
-    totalSales: 88,
-    totalEarnings: 316.44,
-    royaltyRate: 12,
-    isPublished: true,
-    productType: 'wearable',
-    tags: ['postirony', 'legendary', 'lab'],
-  },
-  {
-    id: 'fallback-5',
-    authorId: 'seed-5',
-    authorName: 'VibeCheck404',
-    image: 'https://picsum.photos/seed/brainrot-community-5/900/900',
-    memeDescription: 'Skibidi vibes encoded in cotton. Solo per intenditori.',
-    createdAt: Timestamp.now(),
-    likes: 256,
-    totalSales: 22,
-    totalEarnings: 79.12,
-    royaltyRate: 12,
-    isPublished: true,
-    productType: 'wearable',
-    tags: ['skibidi', 'gen-z', 'vibes'],
-  },
-  {
-    id: 'fallback-6',
-    authorId: 'seed-6',
-    authorName: 'NpcEnergy',
-    image: 'https://picsum.photos/seed/brainrot-community-6/900/900',
-    memeDescription: 'NPC behavior at 120fps. Il tuo cervello in loop infinito.',
-    createdAt: Timestamp.now(),
-    likes: 512,
-    totalSales: 45,
-    totalEarnings: 161.82,
-    royaltyRate: 12,
-    isPublished: true,
-    productType: 'decor',
-    tags: ['npc', 'loop', 'meta'],
-  },
-];
+const FALLBACK_COMMUNITY_DESIGNS: CommunityDesign[] = COMMUNITY_SEED_DESIGNS.map((design) => ({
+  ...design,
+  tags: [...design.tags],
+  createdAt: Timestamp.now(),
+}));
+
+const normalizeCreatedAt = (value: unknown): Timestamp => {
+  if (value instanceof Timestamp) {
+    return value;
+  }
+
+  if (value && typeof value === 'object' && 'seconds' in value && typeof (value as { seconds?: unknown }).seconds === 'number') {
+    const raw = value as { seconds: number; nanoseconds?: number };
+    return new Timestamp(raw.seconds, raw.nanoseconds ?? 0);
+  }
+
+  if (typeof value === 'string') {
+    const parsedDate = new Date(value);
+    if (!Number.isNaN(parsedDate.getTime())) {
+      return Timestamp.fromDate(parsedDate);
+    }
+  }
+
+  return Timestamp.now();
+};
+
+const normalizeCommunityDesign = (design: Partial<CommunityDesign> & { id: string }): CommunityDesign => ({
+  authorId: '',
+  authorName: 'Creator',
+  image: '',
+  memeDescription: '',
+  likes: 0,
+  ...design,
+  createdAt: normalizeCreatedAt(design.createdAt),
+});
 
 export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [products, setProducts] = useState<Product[]>(PRODUCTS);
@@ -118,7 +62,10 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
   useEffect(() => {
-    const unsubscribeProducts = onSnapshot(
+    let unsubscribeProducts = () => {};
+    let unsubscribeDesigns = () => {};
+
+    unsubscribeProducts = onSnapshot(
       collection(db, 'products'),
       (snapshot) => {
         const productsData = snapshot.docs.map((doc) => ({
@@ -128,22 +75,22 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
         setProducts(productsData.length > 0 ? productsData : PRODUCTS);
       },
       (error) => {
-        console.warn('Falling back to local products:', error);
+        logger.warn('Falling back to local products:', error);
         setProducts(PRODUCTS);
       }
     );
 
-    const unsubscribeDesigns = onSnapshot(
+    unsubscribeDesigns = onSnapshot(
       collection(db, 'communityDesigns'),
       (snapshot) => {
-        const designsData = snapshot.docs.map((doc) => ({
+        const designsData = snapshot.docs.map((doc) => normalizeCommunityDesign({
           ...doc.data(),
           id: doc.id,
-        })) as CommunityDesign[];
+        }));
         setCommunityDesigns(designsData.length > 0 ? designsData : FALLBACK_COMMUNITY_DESIGNS);
       },
       (error) => {
-        console.warn('Falling back to local community designs:', error);
+        logger.warn('Falling back to local community designs:', error);
         setCommunityDesigns(FALLBACK_COMMUNITY_DESIGNS);
       }
     );
@@ -186,6 +133,7 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
   );
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useProduct = () => {
   const context = useContext(ProductContext);
   if (!context) throw new Error('useProduct must be used within a ProductProvider');

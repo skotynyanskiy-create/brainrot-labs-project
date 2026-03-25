@@ -16,7 +16,7 @@ interface HeaderProps {
 
 export default function Header({ onOpenCustomizer, onNavigateHome, searchQuery, setSearchQuery, onOpenCommunity, onOpenProfile }: HeaderProps) {
   const { items, setIsCartOpen } = useCart();
-  const { user, login, logout } = useAuth();
+  const { user, logout } = useAuth();
   const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const mobileSearchRef = useRef<HTMLInputElement>(null);
@@ -99,7 +99,7 @@ export default function Header({ onOpenCustomizer, onNavigateHome, searchQuery, 
           <div className="relative w-full group">
             <input
               type="text"
-              placeholder="CERCA IL DISAGIO..."
+              placeholder="CERCA NEL CATALOGO..."
               value={searchQuery}
               onChange={(e) => setSearchQuery?.(e.target.value)}
               aria-label="Cerca prodotti e design community"
@@ -186,10 +186,10 @@ export default function Header({ onOpenCustomizer, onNavigateHome, searchQuery, 
               <motion.button 
                 whileHover={{ scale: 1.05, y: -2 }}
                 whileTap={{ scale: 0.95 }}
-                onClick={() => { playBlipSound(); login(); }}
+                onClick={() => { playBlipSound(); onOpenProfile?.(); }}
                 aria-label="Accedi all'account"
                 className="flex items-center gap-2 p-2 md:p-3 border-4 border-black bg-green-500 hover:bg-black hover:text-green-500 transition-colors shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] focus:outline-none focus:ring-4 focus:ring-offset-2"
-                title="Login"
+                title="Account"
               >
                 <User className="w-5 h-5 md:w-6 md:h-6" />
               </motion.button>
@@ -221,7 +221,7 @@ export default function Header({ onOpenCustomizer, onNavigateHome, searchQuery, 
         variants={{ visible: { y: 0 }, hidden: { y: -200 } }}
         animate={isHidden ? "hidden" : "visible"}
         transition={{ duration: 0.3, ease: "easeInOut" }}
-        className="xl:hidden sticky top-[84px] z-30 border-b-4 border-black bg-yellow-400 px-4 py-3 shadow-[0_8px_0_0_rgba(0,0,0,1)]"
+        className="sticky top-[84px] z-30 border-b-4 border-black bg-yellow-400 px-4 py-3 shadow-[0_8px_0_0_rgba(0,0,0,1)] md:hidden"
       >
         <div className="mx-auto max-w-7xl space-y-3">
           <label htmlFor="mobile-site-search" className="sr-only">
@@ -241,7 +241,7 @@ export default function Header({ onOpenCustomizer, onNavigateHome, searchQuery, 
             <Search className="absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-black" />
           </div>
 
-          <div className="flex gap-2 overflow-x-auto pb-1">
+          <div className="flex gap-2 overflow-x-auto pb-1 md:hidden">
             {onOpenCommunity && (
               <button
                 onClick={() => { playBlipSound(); onOpenCommunity(); }}
@@ -260,13 +260,13 @@ export default function Header({ onOpenCustomizer, onNavigateHome, searchQuery, 
                 Crea
               </button>
             )}
-            {user && onOpenProfile && (
+            {onOpenProfile && (
               <button
                 onClick={() => { playBlipSound(); onOpenProfile(); }}
-                aria-label="Apri il profilo"
+                aria-label={user ? "Apri il profilo" : "Apri il login account"}
                 className="shrink-0 border-4 border-black bg-white px-4 py-2 font-black uppercase shadow-[4px_4px_0_0_rgba(0,0,0,1)]"
               >
-                Profilo
+                {user ? 'Profilo' : 'Accedi'}
               </button>
             )}
           </div>
@@ -287,7 +287,7 @@ export default function Header({ onOpenCustomizer, onNavigateHome, searchQuery, 
               animate={{ y: 0 }} 
               exit={{ y: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              className="fixed bottom-0 left-0 right-0 bg-white border-t-4 border-black p-6 rounded-t-3xl"
+              className="fixed bottom-0 left-0 right-0 bg-white border-t-4 border-black p-6"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex justify-between items-center mb-6">
@@ -312,7 +312,7 @@ export default function Header({ onOpenCustomizer, onNavigateHome, searchQuery, 
                     className="flex items-center justify-center gap-3 text-lg font-black uppercase border-2 border-black bg-pink-400 p-4 hover:bg-black hover:text-pink-400 transition-all"
                   >
                     <Wand2 className="w-6 h-6" />
-                    CREA IL TUO DISAGIO
+                    CREA IL TUO DESIGN
                   </button>
                 )}
                 {menuItems.map((item) => (

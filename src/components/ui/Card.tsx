@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion } from 'motion/react';
+import { motion, type HTMLMotionProps } from 'motion/react';
 import { cn } from '../../utils/cn';
 
 interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -27,7 +27,7 @@ export const Card = React.forwardRef<HTMLDivElement, CardProps>(
           viewport={{ once: true }}
           whileHover={isHoverable ? { y: -4 } : {}}
           className={classes}
-          {...(props as any)}
+          {...(props as HTMLMotionProps<'div'>)}
         >
           {children}
         </motion.div>

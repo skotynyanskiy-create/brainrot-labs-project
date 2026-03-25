@@ -1,4 +1,4 @@
-import { OrderData, OrderResponse, OrderProvider } from '../types';
+import type { OrderData, OrderResponse, OrderProvider } from '../types';
 import { logger } from '../../../utils/logger';
 
 export class MockProvider implements OrderProvider {

@@ -28,7 +28,7 @@
     --color-warning: #F97316;
     --color-text-primary: #000000;
     --color-text-secondary: #4B5563;
-    --color-text-tertiary: #9CA3AF;
+    --color-text-tertiary: #6B7280;
     --color-border: #000000;
 
     /* Typography Scale */
@@ -117,6 +117,22 @@
 
   h1, h2, h3, h4, h5, h6 {
     @apply font-display font-black tracking-tighter uppercase leading-[1.05];
+  }
+
+  .focus-ring {
+    @apply focus:outline-none focus-visible:ring-4 focus-visible:ring-black focus-visible:ring-offset-2;
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
   }
 
   /* Typography Scale */
@@ -449,6 +465,33 @@
   will-change: transform, opacity;
 }
 
+.image-glitch-container::before,
+.image-glitch-container::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: var(--product-img);
+  background-size: cover;
+  background-position: center;
+  pointer-events: none;
+  filter: saturate(1.6) contrast(1.15);
+  will-change: transform, opacity;
+  z-index: 20;
+  opacity: 0;
+}
+
+.group:hover .image-glitch-container::before {
+  mix-blend-mode: screen;
+  animation: glitch-shift-cyan 180ms steps(2, end) infinite;
+  opacity: 0.5;
+}
+
+.group:hover .image-glitch-container::after {
+  mix-blend-mode: lighten;
+  animation: glitch-shift-pink 160ms steps(2, end) infinite;
+  opacity: 0.4;
+}
+
 @keyframes gradient-x {
   0%, 100% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
@@ -469,4 +512,25 @@
 
 ::-webkit-scrollbar-thumb:hover {
   @apply bg-yellow-400;
+}
+
+/* ── Checkout progress animation ─────────────────────────────────────────── */
+@keyframes checkout-progress {
+  0%   { width: 0%; }
+  60%  { width: 75%; }
+  90%  { width: 92%; }
+  100% { width: 100%; }
+}
+
+/* ── Accessibility: respect reduced-motion preference ────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+  .animate-marquee,
+  .animate-marquee-reverse {
+    animation: none !important;
+  }
 }

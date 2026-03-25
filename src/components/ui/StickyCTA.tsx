@@ -33,7 +33,7 @@ export default function StickyCTA({ onOpenCustomizer }: StickyCTAProps) {
             onClick={() => { playBlipSound(); onOpenCustomizer(); }}
             className="bg-pink-500 text-white font-black uppercase text-xl px-8 py-4 border-4 border-black shadow-[8px_8px_0_0_rgba(0,0,0,1)]"
           >
-            Crea il tuo Disagio
+            Crea il tuo design
           </motion.button>
         </motion.div>
       )}

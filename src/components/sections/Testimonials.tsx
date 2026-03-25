@@ -1,17 +1,21 @@
 import { motion, useInView } from 'motion/react';
 import { Star, MessageSquare, ShieldCheck } from 'lucide-react';
 import { useEffect, useRef, useState, type ComponentType } from 'react';
+import { CREATOR_ROYALTY_RATE } from '../../constants';
+import { playBlipSound } from '../../utils/sounds';
 
 interface CounterProps {
   target: number;
   label: string;
   icon: ComponentType<{ className?: string }>;
+  suffix?: string;
 }
 
-const AnimatedCounter = ({ target, label, icon: Icon }: CounterProps) => {
+const AnimatedCounter = ({ target, label, icon: Icon, suffix = '' }: CounterProps) => {
   const [count, setCount] = useState(0);
   const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref);
+  const inView = useInView(ref, { once: true });
+  const hasDecimals = target % 1 !== 0;
 
   useEffect(() => {
     if (!inView) return;
@@ -26,12 +30,16 @@ const AnimatedCounter = ({ target, label, icon: Icon }: CounterProps) => {
         setCount(target);
         clearInterval(timer);
       } else {
-        setCount(Math.floor(current));
+        setCount(hasDecimals ? Number(current.toFixed(1)) : Math.floor(current));
       }
     }, 1000 / 60);
 
     return () => clearInterval(timer);
-  }, [inView, target]);
+  }, [hasDecimals, inView, target]);
+
+  const formattedCount = hasDecimals
+    ? count.toLocaleString('it-IT', { minimumFractionDigits: 1, maximumFractionDigits: 1 })
+    : count.toLocaleString('it-IT');
 
   return (
     <div ref={ref} className="flex flex-col items-center gap-4">
@@ -45,36 +53,40 @@ const AnimatedCounter = ({ target, label, icon: Icon }: CounterProps) => {
         animate={{ scale: inView ? 1 : 0.5 }}
         className="text-5xl md:text-6xl font-black text-black"
       >
-        {count.toLocaleString('it-IT')}+
+        {formattedCount}{suffix}
       </motion.div>
       <p className="text-sm md:text-base font-black uppercase text-gray-700 text-center tracking-wide">{label}</p>
     </div>
   );
 };
 
-export default function Testimonials() {
+interface TestimonialsProps {
+  onOpenCommunity?: () => void;
+}
+
+export default function Testimonials({ onOpenCommunity }: TestimonialsProps) {
   const reviews = [
     {
-      name: 'Chad_Based_99',
-      role: 'Sigma Grindset CEO',
-      avatar: 'https://api.dicebear.com/9.x/thumbs/svg?seed=Chad',
-      text: 'Ho messo la t-shirt "This is Fine" al pranzo coi parenti. Nessuno ha capito niente, ma la mia aura è salita di +10000. Tessuto assurdo, zero poliestere radioattivo.',
+      name: 'Marco R.',
+      role: 'Creator early adopter',
+      avatar: 'https://api.dicebear.com/9.x/thumbs/svg?seed=Marco',
+      text: 'Ho usato una base già curata, ho sistemato il copy nel customizer e il risultato finale è rimasto coerente dalla preview al prodotto consegnato.',
       rating: 5,
       color: 'bg-pink-100',
     },
     {
-      name: 'Doomer.Girl',
-      role: 'Scroller Professionista',
-      avatar: 'https://api.dicebear.com/9.x/thumbs/svg?seed=Doomer',
-      text: 'Ho generato un meme alle 4 di notte in preda a una crisi esistenziale. Il pacco ha spawnato in 3 giorni. Adesso questa felpa è letteralmente la mia skin predefinita.',
+      name: 'Giulia P., Milano',
+      role: 'Cliente repeat',
+      avatar: 'https://api.dicebear.com/9.x/thumbs/svg?seed=Giulia',
+      text: 'La parte migliore è che il sito non usa immagini riempitive: quello che scegli in editor è quello che percepisci anche nella scheda prodotto.',
       rating: 5,
       color: 'bg-cyan-100',
     },
     {
-      name: 'Crypto_Bro_ETH',
-      role: 'Sopravvissuto al Bear Market',
-      avatar: 'https://api.dicebear.com/9.x/thumbs/svg?seed=Crypto',
-      text: 'Droppato 50 euro per la felpa del Doge. Miglior investimento dell\'anno, fa più ROI del mio portafoglio crypto. Spedizione speedrun vera. W assoluta.',
+      name: 'Luca F., Torino',
+      role: 'Creator community',
+      avatar: 'https://api.dicebear.com/9.x/thumbs/svg?seed=Luca',
+      text: 'Per la community il salto di qualità si vede: seed credibili, visual pertinenti e promessa royalty finalmente spiegata in modo semplice.',
       rating: 5,
       color: 'bg-yellow-100',
     },
@@ -130,9 +142,23 @@ export default function Testimonials() {
         </div>
 
         <div className="mt-20 md:mt-32 grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-16">
-          <AnimatedCounter target={12400} label="Meme Generati con AI" icon={MessageSquare} />
-          <AnimatedCounter target={3200} label="Ordini Completati" icon={Star} />
-          <AnimatedCounter target={98} label="Clienti Soddisfatti %" icon={ShieldCheck} />
+          <AnimatedCounter target={2} label="Prodotti Base nel Customizer" icon={MessageSquare} />
+          <AnimatedCounter target={8} label="Basi Curate da Cui Partire" icon={Star} />
+          <AnimatedCounter target={CREATOR_ROYALTY_RATE} label="Royalty Creator per Vendita" icon={ShieldCheck} suffix="%" />
+        </div>
+
+        <div className="mt-16 md:mt-20 flex justify-center">
+          <motion.button
+            whileHover={{ scale: 1.02, y: -3 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={() => {
+              playBlipSound();
+              onOpenCommunity?.();
+            }}
+            className="border-4 border-black bg-yellow-400 px-8 py-4 text-lg font-black uppercase italic shadow-[8px_8px_0_0_rgba(0,0,0,1)] transition-all hover:translate-x-1 hover:translate-y-1 hover:bg-black hover:text-yellow-400 hover:shadow-none"
+          >
+            Unisciti alla community →
+          </motion.button>
         </div>
       </div>
     </section>

@@ -4,13 +4,14 @@ import { useProduct } from '../../context/ProductContext';
 import { useCart } from '../../context/CartContext';
 import { useToast } from '../../context/ToastContext';
 import { playCoinSound, playBlipSound } from '../../utils/sounds';
+import type { CommunityDesign } from '../../types';
 
 export default function CommunityMarketplace() {
   const { communityDesigns } = useProduct();
   const { addToCart } = useCart();
   const { addToast } = useToast();
 
-  const handleAddToCart = (design: any) => {
+  const handleAddToCart = (design: CommunityDesign) => {
     playCoinSound();
     // Assuming community designs can be added to cart as a product
     addToCart({

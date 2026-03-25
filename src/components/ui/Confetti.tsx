@@ -9,6 +9,7 @@ interface Particle {
   size: number;
   angle: number;
   velocity: number;
+  duration: number;
 }
 
 const COLORS = ['#ef4444', '#f97316', '#facc15', '#4ade80', '#06b6d4', '#ec4899', '#a855f7'];
@@ -28,6 +29,7 @@ export default function Confetti() {
           size: Math.random() * 10 + 5,
           angle: Math.random() * 360,
           velocity: Math.random() * 20 + 10,
+          duration: Math.random() * 1 + 1.5,
         });
       }
       setParticles(prev => [...prev, ...newParticles]);
@@ -62,7 +64,7 @@ export default function Confetti() {
             }}
             exit={{ opacity: 0 }}
             transition={{ 
-              duration: Math.random() * 1 + 1.5,
+              duration: p.duration,
               ease: "linear"
             }}
             className="absolute rounded-sm border border-black shadow-[2px_2px_0_0_rgba(0,0,0,1)]"

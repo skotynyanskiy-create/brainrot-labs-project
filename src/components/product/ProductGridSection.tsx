@@ -1,12 +1,24 @@
+import { useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import ProductCard from './ProductCard';
+import type { Product } from '../../types';
 
 interface ProductGridSectionProps {
-  products: any[];
-  onSelectProduct: (product: any) => void;
+  products: Product[];
+  onSelectProduct: (product: Product) => void;
+  onResetFilters?: () => void;
 }
 
-export default function ProductGridSection({ products, onSelectProduct }: ProductGridSectionProps) {
+export default function ProductGridSection({ products, onSelectProduct, onResetFilters }: ProductGridSectionProps) {
+  const productIds = products.map(p => p.id).join(',');
+  const stableRotations = useMemo(
+    () => products.map(() => ({
+      initial: (Math.random() - 0.5) * 5,
+      exit: (Math.random() - 0.5) * 10,
+    })),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [productIds]
+  );
   if (products.length === 0) {
     return (
       <motion.div 
@@ -14,10 +26,18 @@ export default function ProductGridSection({ products, onSelectProduct }: Produc
         animate={{ opacity: 1 }}
         className="py-20 text-center border-4 border-black bg-white p-12 shadow-[8px_8px_0_0_rgba(0,0,0,1)]"
       >
-        <h3 className="text-4xl font-black uppercase mb-4">ERRORE 404: MEME NON TROVATO 🤡</h3>
+        <h3 className="text-4xl font-black uppercase mb-4">Nessun Prodotto Trovato</h3>
         <p className="text-xl font-mono text-gray-600">
-          La tua ricerca è troppo 'normie' per i nostri standard. Prova con qualcosa di più degenerato.
+          Prova a cambiare filtro o categoria. Il catalogo mostra solo prodotti con copy e visual coerenti con il contesto.
         </p>
+        {onResetFilters && (
+          <button
+            onClick={onResetFilters}
+            className="mt-8 border-4 border-black bg-yellow-400 px-6 py-3 font-black uppercase shadow-[6px_6px_0_0_rgba(0,0,0,1)] transition-all hover:translate-x-1 hover:translate-y-1 hover:bg-black hover:text-yellow-400 hover:shadow-none"
+          >
+            Rimuovi filtri
+          </button>
+        )}
       </motion.div>
     );
   }
@@ -58,9 +78,9 @@ export default function ProductGridSection({ products, onSelectProduct }: Produc
             <motion.div
               key={product.id}
               layout
-              initial={{ opacity: 0, y: 40, scale: 0.9, rotate: (Math.random() - 0.5) * 5 }}
+              initial={{ opacity: 0, y: 40, scale: 0.9, rotate: stableRotations[i]?.initial ?? 0 }}
               animate={{ opacity: 1, y: 0, scale: 1, rotate: 0 }}
-              exit={{ opacity: 0, scale: 0.8, rotate: (Math.random() - 0.5) * 10 }}
+              exit={{ opacity: 0, scale: 0.8, rotate: stableRotations[i]?.exit ?? 0 }}
               transition={{ 
                 delay: i * 0.08,
                 duration: 0.5,

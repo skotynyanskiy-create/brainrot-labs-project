@@ -1,18 +1,19 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { playBlipSound } from '../../utils/sounds';
+import { CREATOR_ROYALTY_RATE } from '../../constants';
 
 export default function FAQ() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   const faqs = [
-    { q: "Come vestono i vostri capi?", a: "Le nostre taglie seguono la geometria non euclidea. Una L potrebbe starti come un crop top o come un paracadute. È il brivido dell'acquisto al buio." },
-    { q: "Siete un brand eco-sostenibile?", a: "I nostri capi sono realizzati al 100% con meme riciclati, sogni infranti e promesse non mantenute. (E forse un po' di poliestere)." },
-    { q: "Perché i prezzi sono così alti?", a: "Perché l'inflazione è un costrutto sociale, il capitalismo è una menzogna, e noi abbiamo bisogno di liquidità per comprare shitcoin." },
-    { q: "Accettate pagamenti in Crypto?", a: "Accettiamo solo Dogecoin, bonifici in Lire italiane, o scambi alla pari con carte Charizard olografiche prima edizione." },
-    { q: "Sono un Influencer, mi fate lo sconto?", a: "Solo se hai più di 1 milione di follower veri e sei disposto a tatuarti il nostro logo in fronte in diretta streaming. Altrimenti paga il prezzo pieno, mortale." },
-    { q: "E per quanto riguarda il Copyright?", a: "Noi non abbiamo visto niente. Tu non hai visto niente. Se gli avvocati della Disney bussano alla porta, tu non hai mai sentito parlare di noi." },
-    { q: "Come devo lavare questi capolavori?", a: "Lavare a freddo, al rovescio. O meglio ancora, non lavarli mai. Abbraccia il vero stile di vita da gamer e lascia che la natura faccia il suo corso." }
+    { q: "Come scelgo il prodotto giusto?", a: "Nel customizer parti dai prodotti base disponibili, poi definisci colore, taglia e design. La preview serve proprio a verificare se il contenuto funziona davvero su quel supporto." },
+    { q: "Posso partire da una base meme invece che da zero?", a: "Sì. La sezione delle basi curate ti permette di iniziare da template già selezionati, così eviti immagini casuali o poco leggibili sul prodotto finale." },
+    { q: "Il customizer usa davvero l'AI?", a: "Sì. Puoi usare prompt, suggerimenti testuali e composizione manuale nello stesso workflow. Il design resta comunque modificabile prima del checkout." },
+    { q: "Come funziona la preview 3D?", a: "La preview mostra come il design si adatta al prodotto scelto prima dell'acquisto. Serve a ridurre incoerenze tra editor, scheda prodotto e resa percepita." },
+    { q: "Posso pubblicare il mio design nella community?", a: "Sì. Dopo aver creato e finalizzato il design puoi renderlo pubblico, così entra nella community vault ed è acquistabile anche da altri utenti." },
+    { q: "Come funzionano le royalty?", a: `Per ogni vendita di un design pubblicato in community il creator riceve il ${CREATOR_ROYALTY_RATE}% di royalty. La percentuale e gestita in modo coerente tra customizer, community e dashboard account.` },
+    { q: "Se il prodotto arriva con un difetto?", a: "In caso di problemi di stampa o produzione puoi fare riferimento alle policy di spedizione e reso. I dettagli operativi sono riepilogati nelle sezioni del sito e nelle pagine legali." }
   ];
 
   return (

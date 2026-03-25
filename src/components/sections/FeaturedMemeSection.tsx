@@ -1,9 +1,10 @@
 import { motion } from 'motion/react';
 import { playBlipSound } from '../../utils/sounds';
+import type { Product } from '../../types';
 
 interface FeaturedMemeSectionProps {
-  product: any;
-  onSelectProduct: (product: any) => void;
+  product: Product;
+  onSelectProduct: (product: Product) => void;
   onOpenCustomizer: () => void;
 }
 

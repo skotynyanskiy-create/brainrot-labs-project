@@ -1,10 +1,6 @@
-import { OrderData, OrderResponse, OrderProvider } from '../types';
+import type { OrderData, OrderResponse, OrderProvider } from '../types';
 import { logger } from '../../../utils/logger';
 import { BASE_PRODUCTS } from '../../../constants';
-
-// ── Fallback variant ──────────────────────────────────────────────────────────
-// Bella+Canvas 3001 White M (product 71) — used when no exact match found.
-const VARIANT_FALLBACK = 4012;
 
 // ── Helper ────────────────────────────────────────────────────────────────────
 /**
@@ -16,7 +12,9 @@ const VARIANT_FALLBACK = 4012;
  * Resolution order:
  *   1. Exact match on size + colorName
  *   2. Size match only (first available color for that size)
- *   3. First variant in the product (ultimate fallback)
+ *   3. First variant in the product
+ *
+ * Throws if the base product is not found — never silently substitutes.
  */
 function resolveVariantId(productId: string, size?: string, color?: string): number {
   // Strip the 'custom-' prefix and trailing timestamp to recover baseId
@@ -27,8 +25,7 @@ function resolveVariantId(productId: string, size?: string, color?: string): num
 
   const product = BASE_PRODUCTS.find(p => p.id === baseId);
   if (!product) {
-    logger.warn(`PrintfulProvider: prodotto base "${baseId}" non trovato, uso fallback ${VARIANT_FALLBACK}`);
-    return VARIANT_FALLBACK;
+    throw new Error(`Prodotto base "${baseId}" non trovato nel catalogo. Ordine annullato.`);
   }
 
   const normalizedSize  = (size  ?? '').trim();
@@ -57,13 +54,18 @@ function resolveVariantId(productId: string, size?: string, color?: string): num
     );
   }
 
-  return variant?.id ?? VARIANT_FALLBACK;
+  if (!variant) {
+    throw new Error(`Nessun variant disponibile per il prodotto "${baseId}". Ordine annullato.`);
+  }
+
+  return variant.id;
 }
 
 // ── Provider ──────────────────────────────────────────────────────────────────
 export class PrintfulProvider implements OrderProvider {
   private apiKey: string;
   private baseUrl = 'https://api.printful.com';
+  private readonly FETCH_TIMEOUT_MS = 15000;
 
   constructor(apiKey: string) {
     this.apiKey = apiKey;
@@ -74,6 +76,7 @@ export class PrintfulProvider implements OrderProvider {
       const { shipping } = order.customer;
 
       const printfulOrder = {
+        external_id: order.id, // idempotency — prevents duplicate orders on retry
         recipient: {
           name:         order.customer.name,
           email:        order.customer.email,
@@ -92,13 +95,17 @@ export class PrintfulProvider implements OrderProvider {
           const baseProduct  = BASE_PRODUCTS.find(p => p.id === baseId);
           const placement    = baseProduct?.printfulPlacement ?? 'front';
 
+          const designUrl = item.customData?.designTextureUrl;
+          if (!designUrl) {
+            throw new Error(`Nessun design trovato per l'articolo "${item.productId}". Carica il design prima di procedere.`);
+          }
+
           return {
             variant_id: resolveVariantId(item.productId, item.size, item.color),
             quantity:   item.quantity,
             files: [
               {
-                url: item.customData?.designTextureUrl
-                  || 'https://picsum.photos/seed/brainrot/1000/1000',
+                url:      designUrl,
                 position: placement,
               },
             ],
@@ -106,14 +113,24 @@ export class PrintfulProvider implements OrderProvider {
         }),
       };
 
-      const response = await fetch(`${this.baseUrl}/orders`, {
-        method: 'POST',
-        headers: {
-          Authorization:  `Bearer ${this.apiKey}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(printfulOrder),
-      });
+      // Fetch with timeout via AbortController
+      const controller = new AbortController();
+      const timeoutId  = setTimeout(() => controller.abort(), this.FETCH_TIMEOUT_MS);
+
+      let response: Response;
+      try {
+        response = await fetch(`${this.baseUrl}/orders`, {
+          method:  'POST',
+          headers: {
+            Authorization:  `Bearer ${this.apiKey}`,
+            'Content-Type': 'application/json',
+          },
+          body:   JSON.stringify(printfulOrder),
+          signal: controller.signal,
+        });
+      } finally {
+        clearTimeout(timeoutId);
+      }
 
       const data = (await response.json()) as {
         result?: { id: number };
@@ -131,6 +148,10 @@ export class PrintfulProvider implements OrderProvider {
         providerOrderId: data.result?.id.toString() ?? order.id,
       };
     } catch (error) {
+      if (error instanceof Error && error.name === 'AbortError') {
+        logger.error('PrintfulProvider: timeout dopo', this.FETCH_TIMEOUT_MS, 'ms');
+        return { success: false, error: 'Timeout connessione Printful. Riprova tra poco.' };
+      }
       logger.error('PrintfulProvider Exception:', error);
       return {
         success: false,

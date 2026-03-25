@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import type { BaseProduct, Meme, Product, LayerData as Layer, CustomTemplate } from '../../types';
-import { BASE_PRODUCTS, STORAGE_KEYS } from '../../constants';
-import { db, collection, addDoc, auth, storage } from '../../firebase';
+import { BASE_PRODUCTS, CREATOR_ROYALTY_RATE, STORAGE_KEYS, MEME_BASES } from '../../constants';
+import { db, collection, addDoc, serverTimestamp, storage } from '../../firebase';
 import { ref, uploadString, getDownloadURL } from 'firebase/storage';
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import { useCart } from '../../context/CartContext';
@@ -21,6 +21,7 @@ import { toPng } from 'html-to-image';
 import { cn } from '../../utils/cn';
 import { logger } from '../../utils/logger';
 import Product3DPreview from './Product3DPreview';
+import BrainrotMeter from './BrainrotMeter';
 import type {
   GenerateImageRequest, GenerateImageResponse,
   SuggestCaptionRequest, SuggestCaptionResponse, VoicePreset,
@@ -29,6 +30,7 @@ import type {
 // ─── Props ────────────────────────────────────────────────────────────────────
 interface ProductCustomizerProps {
   onBack: () => void;
+  initialMeme?: { url: string; name: string };
 }
 
 // ─── Voice presets ────────────────────────────────────────────────────────────
@@ -76,7 +78,7 @@ const STICKERS = [
 ];
 
 // ─── Component ───────────────────────────────────────────────────────────────
-const ProductCustomizer: React.FC<ProductCustomizerProps> = ({ onBack }) => {
+const ProductCustomizer: React.FC<ProductCustomizerProps> = ({ onBack, initialMeme }) => {
   const { addToCart } = useCart();
   const { addToast } = useToast();
   const { user } = useAuth();
@@ -120,7 +122,7 @@ const ProductCustomizer: React.FC<ProductCustomizerProps> = ({ onBack }) => {
   const [templateName,   setTemplateName]  = useState('');
 
   // ── Publish ─────────────────────────────────────────────────────────────────
-  const [isPublic, setIsPublic] = useState(false);
+  const [isPublishing, setIsPublishing] = useState(false);
 
   // ── Canvas refs ─────────────────────────────────────────────────────────────
   const canvasRef    = useRef<HTMLDivElement>(null);
@@ -129,6 +131,20 @@ const ProductCustomizer: React.FC<ProductCustomizerProps> = ({ onBack }) => {
   // ── Init ─────────────────────────────────────────────────────────────────────
   useEffect(() => {
     window.aistudio?.hasSelectedApiKey().then(setHasApiKey).catch(() => setHasApiKey(false));
+  }, []);
+
+  // ── Auto-load meme base from TrendingSection entry ────────────────────────
+  useEffect(() => {
+    if (!initialMeme) return;
+    setLayers([{
+      id: `meme-${Date.now()}`,
+      type: 'meme',
+      content: initialMeme.url,
+      x: 50, y: 30,
+      width: 300, height: 300,
+      rotate: 0, opacity: 1,
+    }]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -155,7 +171,7 @@ const ProductCustomizer: React.FC<ProductCustomizerProps> = ({ onBack }) => {
       setIsTextureUpdating(false);
     }, 500);
     return () => clearTimeout(timer);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+   
   }, [layers, selectedBase]);
 
   // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -170,6 +186,12 @@ const ProductCustomizer: React.FC<ProductCustomizerProps> = ({ onBack }) => {
 
   const canGoToStep2 = selectedBase !== null && selectedSize !== '' && selectedColor !== '';
   const canGoToStep3 = layers.length > 0;
+
+  const brainrotLevel = Math.min(100, Math.round(
+    (layers.length * 12) +
+    (isBrainrotMode ? 30 : 0) +
+    layers.reduce((sum, l) => sum + Math.abs(l.rotate ?? 0) / 36, 0)
+  ));
 
   const goToStep = (step: Step) => {
     if (step === 2 && !canGoToStep2) {
@@ -388,41 +410,70 @@ const ProductCustomizer: React.FC<ProductCustomizerProps> = ({ onBack }) => {
   };
 
   // ─── Add to cart ──────────────────────────────────────────────────────────
+  const uploadDesignAsset = async (): Promise<string | null> => {
+    const texture = await captureDesignTexture();
+    if (!texture) {
+      addToast('Errore nella cattura del design. Riprova.', 'error');
+      return null;
+    }
+
+    let finalUrl = texture;
+    try {
+      const storageRef = ref(storage, `designs/${Date.now()}.png`);
+      await uploadString(storageRef, texture, 'data_url');
+      finalUrl = await getDownloadURL(storageRef);
+    } catch (error) {
+      logger.error('Storage upload failed, using data URL fallback', error);
+    }
+
+    return finalUrl;
+  };
+
+  const handlePublishToCommunity = async () => {
+    if (layers.length === 0) {
+      addToast('Aggiungi almeno un elemento al design.');
+      return;
+    }
+    if (!user) {
+      addToast('Devi essere loggato per pubblicare!', 'warning');
+      return;
+    }
+
+    playBlipSound();
+    setIsPublishing(true);
+    try {
+      const finalUrl = await uploadDesignAsset();
+      if (!finalUrl) return;
+
+      await addDoc(collection(db, 'communityDesigns'), {
+        authorId: user.uid,
+        authorName: user.displayName || 'Anonimo',
+        image: finalUrl,
+        memeDescription: aiPrompt.trim() || `Design ${selectedBase.name}`,
+        createdAt: serverTimestamp(),
+        likes: 0,
+        totalSales: 0,
+        totalEarnings: 0,
+        royaltyRate: CREATOR_ROYALTY_RATE,
+        isPublished: true,
+        productType: selectedBase.category,
+      });
+      addToast('Design pubblicato nella community!');
+    } catch (error) {
+      logger.error('handlePublishToCommunity error', error);
+      addToast('Errore durante la pubblicazione.', 'error');
+    } finally {
+      setIsPublishing(false);
+    }
+  };
+
   const handleAddToCart = async () => {
     if (layers.length === 0) { addToast('Aggiungi almeno un elemento al design.'); return; }
     playCoinSound();
     setIsExporting(true);
     try {
-      const texture = await captureDesignTexture();
-      let finalUrl = texture;
-      try {
-        const storageRef = ref(storage, `designs/${Date.now()}.png`);
-        await uploadString(storageRef, texture ?? '', 'data_url');
-        finalUrl = await getDownloadURL(storageRef);
-      } catch (e) {
-        logger.error('Storage upload failed, using data URL fallback', e);
-      }
-
-      if (isPublic) {
-        if (!auth.currentUser) {
-          addToast('Devi essere loggato per pubblicare!');
-        } else {
-          await addDoc(collection(db, 'communityDesigns'), {
-            authorId:        auth.currentUser.uid,
-            authorName:      auth.currentUser.displayName || 'Anonimo',
-            image:           finalUrl,
-            memeDescription: aiPrompt || 'Design personalizzato',
-            createdAt:       new Date().toISOString(),
-            likes:           0,
-            totalSales:      0,
-            totalEarnings:   0,
-            royaltyRate:     12,
-            isPublished:     true,
-            productType:     selectedBase.category,
-          });
-          addToast('Design pubblicato nella community!');
-        }
-      }
+      const finalUrl = await uploadDesignAsset();
+      if (!finalUrl) return;
 
       const containerWidth  = containerRef.current?.offsetWidth  || 500;
       const containerHeight = containerRef.current?.offsetHeight || 500;
@@ -471,6 +522,7 @@ const ProductCustomizer: React.FC<ProductCustomizerProps> = ({ onBack }) => {
       exit={{ opacity: 0 }}
       className="min-h-screen bg-[#f0f0f0] flex flex-col font-sans"
     >
+      <BrainrotMeter level={brainrotLevel} />
       {/* ── HEADER ─────────────────────────────────────────────────────────── */}
       <header className="bg-white border-b-4 border-black sticky top-0 z-50 flex items-center justify-between px-4 py-3 gap-4">
         {/* Left: back + branding */}
@@ -564,6 +616,18 @@ const ProductCustomizer: React.FC<ProductCustomizerProps> = ({ onBack }) => {
             {/* ─── STEP 1: Product selection ──────────────────────────────── */}
             {currentStep === 1 && (
               <>
+                {/* Base meme indicator */}
+                {initialMeme && (
+                  <div className="flex items-center gap-3 bg-green-100 border-4 border-green-500 p-3">
+                    <CheckCircle2 className="w-5 h-5 text-green-600 shrink-0" />
+                    <div>
+                      <p className="font-black uppercase text-xs text-green-700">BASE MEME CARICATA</p>
+                      <p className="font-mono text-xs text-green-600">"{initialMeme.name}" — scegli il prodotto e avanza al design</p>
+                    </div>
+                    <img src={initialMeme.url} alt={initialMeme.name} className="w-10 h-10 object-cover border-2 border-green-500 shrink-0 ml-auto" />
+                  </div>
+                )}
+
                 {/* Product cards */}
                 <div>
                   <p className="font-black uppercase text-xs tracking-widest mb-3">Scegli il prodotto base</p>
@@ -710,6 +774,33 @@ const ProductCustomizer: React.FC<ProductCustomizerProps> = ({ onBack }) => {
                 {/* ── MEME LIBRARY ── */}
                 {designTab === 'meme' && (
                   <div>
+                    {/* Basi trending */}
+                    <div className="mb-4">
+                      <p className="font-black uppercase text-xs tracking-widest mb-2 flex items-center gap-2">
+                        🔥 BASI TRENDING
+                        <span className="font-mono text-[10px] text-gray-400 normal-case tracking-normal">clicca per aggiungere</span>
+                      </p>
+                      <div className="grid grid-cols-4 gap-1.5">
+                        {MEME_BASES.map(base => (
+                          <button
+                            key={base.id}
+                            onClick={() => addLayer('meme', base.url)}
+                            title={`${base.name} · usato ${base.usageCount.toLocaleString()}x`}
+                            className="aspect-square border-2 border-black overflow-hidden bg-gray-100 hover:border-cyan-500 hover:scale-105 transition-all relative group"
+                          >
+                            <img src={base.url} alt={base.name} className="w-full h-full object-cover" loading="lazy" />
+                            <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                              <span className="text-white text-[8px] font-black uppercase text-center leading-tight px-1">{base.name}</span>
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="border-t-2 border-black/10 pt-3 mb-3">
+                      <p className="font-black uppercase text-xs tracking-widest mb-2 text-gray-500">LIBRERIA IMGFLIP</p>
+                    </div>
+
                     <div className="relative mb-3">
                       <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                       <input
@@ -1029,21 +1120,25 @@ const ProductCustomizer: React.FC<ProductCustomizerProps> = ({ onBack }) => {
 
                   {/* Publish to community */}
                   <div className="border-4 border-black p-4 bg-green-50">
-                    <label className="flex items-start gap-3 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={isPublic}
-                        onChange={e => setIsPublic(e.target.checked)}
-                        className="mt-1 w-5 h-5 border-4 border-black accent-green-500 shrink-0"
-                      />
-                      <div>
-                        <p className="font-black uppercase text-sm">Pubblica nella Community</p>
-                        <p className="font-mono text-xs text-gray-500 mt-0.5">
-                          Ogni volta che qualcuno acquista il tuo design, guadagni il 12% di royalty.
-                          {!user && ' (richiede login)'}
-                        </p>
-                      </div>
-                    </label>
+                    <div>
+                      <p className="font-black uppercase text-sm">Pubblica nella community</p>
+                      <p className="font-mono text-xs text-gray-500 mt-0.5">
+                        La pubblicazione avviene solo con questa azione esplicita. Ogni vendita attiva il {CREATOR_ROYALTY_RATE}% di royalty.
+                        {!user && ' (richiede login)'}
+                      </p>
+                    </div>
+                    <motion.button
+                      whileHover={{ scale: 1.01, x: 2 }}
+                      whileTap={{ scale: 0.99 }}
+                      onClick={handlePublishToCommunity}
+                      disabled={isPublishing}
+                      className="mt-4 flex w-full items-center justify-center gap-3 border-4 border-black bg-green-400 px-4 py-3 text-sm font-black uppercase shadow-[6px_6px_0_0_rgba(0,0,0,1)] transition-all hover:translate-x-1 hover:translate-y-1 hover:bg-black hover:text-green-400 hover:shadow-none disabled:opacity-60"
+                    >
+                      {isPublishing
+                        ? <><Loader2 className="w-5 h-5 animate-spin" /> Pubblico...</>
+                        : <><Upload className="w-5 h-5" /> Pubblica nella community</>
+                      }
+                    </motion.button>
                   </div>
 
                   {/* Total */}
@@ -1275,38 +1370,43 @@ const ProductCustomizer: React.FC<ProductCustomizerProps> = ({ onBack }) => {
       {/* ── HIDDEN CANVAS for texture export ─────────────────────────────────── */}
       <div className="fixed -left-[9999px] -top-[9999px] pointer-events-none" aria-hidden>
         <div ref={canvasRef} className="w-[512px] h-[512px] bg-transparent overflow-hidden relative">
-          {layers.map(layer => (
-            <div
-              key={layer.id}
-              style={{
-                position: 'absolute',
-                left:    `${(layer.x / 500) * 512}px`,
-                top:     `${(layer.y / 500) * 512}px`,
-                width:   `${(layer.width  / 500) * 512}px`,
-                height:  `${(layer.height / 500) * 512}px`,
-                opacity:  layer.opacity,
-                filter:   layer.filter,
-                transform:`rotate(${layer.rotate}deg) scaleX(${layer.flipX ? -1 : 1}) scaleY(${layer.flipY ? -1 : 1})`,
-              }}
-            >
-              {layer.type === 'text' ? (
-                <div
-                  className="w-full h-full flex items-center justify-center text-center font-black"
-                  style={{
-                    fontSize:        `${(layer.fontSize! / 500) * 512}px`,
-                    fontFamily:      layer.fontFamily,
-                    color:           layer.color,
-                    WebkitTextStroke:`${(layer.strokeWidth! / 500) * 512}px ${layer.strokeColor}`,
-                    lineHeight: 1,
-                  }}
-                >
-                  {layer.content}
-                </div>
-              ) : (
-                <img src={layer.content} alt="" className="w-full h-full object-contain" />
-              )}
-            </div>
-          ))}
+          {layers.map(layer => {
+            const fontSize = layer.fontSize ?? 32;
+            const strokeWidth = layer.strokeWidth ?? 0;
+
+            return (
+              <div
+                key={layer.id}
+                style={{
+                  position: 'absolute',
+                  left:    `${(layer.x / 500) * 512}px`,
+                  top:     `${(layer.y / 500) * 512}px`,
+                  width:   `${(layer.width  / 500) * 512}px`,
+                  height:  `${(layer.height / 500) * 512}px`,
+                  opacity:  layer.opacity,
+                  filter:   layer.filter,
+                  transform:`rotate(${layer.rotate}deg) scaleX(${layer.flipX ? -1 : 1}) scaleY(${layer.flipY ? -1 : 1})`,
+                }}
+              >
+                {layer.type === 'text' ? (
+                  <div
+                    className="w-full h-full flex items-center justify-center text-center font-black"
+                    style={{
+                      fontSize:        `${(fontSize / 500) * 512}px`,
+                      fontFamily:      layer.fontFamily,
+                      color:           layer.color,
+                      WebkitTextStroke:`${(strokeWidth / 500) * 512}px ${layer.strokeColor}`,
+                      lineHeight: 1,
+                    }}
+                  >
+                    {layer.content}
+                  </div>
+                ) : (
+                  <img src={layer.content} alt="" className="w-full h-full object-contain" />
+                )}
+              </div>
+            );
+          })}
         </div>
       </div>
 

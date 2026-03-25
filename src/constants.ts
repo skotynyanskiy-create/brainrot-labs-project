@@ -1,24 +1,24 @@
-import { Product, BaseProduct } from './types';
+import type { Product, BaseProduct, MemeBase } from './types';
 
 export const SOCIAL_LINKS = [
   {
     label: 'Instagram',
     url: 'https://instagram.com/brainrotlabs',
-    emoji: '📸',
+    icon: 'instagram',
     color: 'bg-pink-500 text-white',
     ariaLabel: 'Visita il nostro profilo Instagram',
   },
   {
     label: 'TikTok',
     url: 'https://tiktok.com/@brainrotlabs',
-    emoji: '📱',
+    icon: 'tiktok',
     color: 'bg-black text-white',
     ariaLabel: 'Visita il nostro profilo TikTok',
   },
   {
     label: 'X / Twitter',
     url: 'https://x.com/brainrotlabs',
-    emoji: '🐦',
+    icon: 'x',
     color: 'bg-cyan-400 text-black',
     ariaLabel: 'Visita il nostro profilo X (Twitter)',
   },
@@ -29,6 +29,8 @@ export const STORAGE_KEYS = {
   ORDER_HISTORY: 'brainrot_order_history',
   TEMPLATES: 'brainrot_templates',
 } as const;
+
+export const CREATOR_ROYALTY_RATE = 6.9;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // BASE PRODUCTS — Printful-ready
@@ -43,7 +45,7 @@ export const BASE_PRODUCTS: BaseProduct[] = [
     name: 'T-Shirt Bella+Canvas 3001',
     price: 28.00,
     // Neutral flat-lay product photo (stable CDN, no auth required)
-    image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=800&q=80&fm=webp',
     category: 'wearable',
     sizes: ['S', 'M', 'L', 'XL', '2XL'],
     colors: [
@@ -96,7 +98,7 @@ export const BASE_PRODUCTS: BaseProduct[] = [
     id: 'base-phonecase',
     name: 'iPhone 15 Pro Case',
     price: 19.00,
-    image: 'https://images.unsplash.com/photo-1601593346740-925612772716?auto=format&fit=crop&w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1601593346740-925612772716?auto=format&fit=crop&w=800&q=80&fm=webp',
     category: 'useless',
     sizes: ['15 Pro', '15 Pro Max'],
     colors: [
@@ -122,9 +124,9 @@ export const PRODUCTS: Product[] = [
     id: '1',
     name: 'T-Shirt "This is Fine"',
     price: 29.99,
-    image: 'https://i.imgflip.com/1iruch.jpg',
+    image: 'https://i.imgflip.com/wxica.jpg',
     category: 'wearable',
-    memeDescription: 'Il cane nel fuoco che sorride. Stampa fronte ad alta resa su cotone 180g. Per chi affronta ogni lunedì con la stessa energia stoica e distaccata.',
+    memeDescription: 'Il cane nel fuoco che sorride. Stampa fronte ad alta resa su cotone 180g, pensata per chi affronta il caos con calma sospetta e ottimo tempismo ironico.',
     rarity: 'Epic',
     color: 'bg-orange-400',
     sizes: ['S', 'M', 'L', 'XL', 'XXL'],
@@ -132,11 +134,11 @@ export const PRODUCTS: Product[] = [
   },
   {
     id: '2',
-    name: 'Mug "Stonks"',
+    name: 'Mug "You Guys Are Getting Paid?"',
     price: 15.50,
     image: 'https://i.imgflip.com/2xscjb.png',
     category: 'useless',
-    memeDescription: 'Tazza in ceramica 330ml con stampa perimetrale. Il grafico sale. Il tuo portafoglio no. Ma almeno il caffè è caldo e l\'ironia è gratuita.',
+    memeDescription: 'Tazza in ceramica 330ml con stampa perimetrale. Perfetta per call, ufficio e chat interne in cui qualcuno scopre troppo tardi come funziona davvero il budget.',
     rarity: 'Legendary',
     color: 'bg-cyan-400',
     sizes: ['330ml'],
@@ -146,9 +148,9 @@ export const PRODUCTS: Product[] = [
     id: '3',
     name: 'Cuscino "Hide the Pain Harold"',
     price: 24.99,
-    image: 'https://i.imgflip.com/1g8my4.jpg',
+    image: 'https://i.imgflip.com/gk5el.jpg',
     category: 'decor',
-    memeDescription: 'Harold sorride. Harold soffre. Stampa fronte-retro su cuscino 40x40cm con imbottitura inclusa. Il simbolo definitivo dell\'uomo che regge tutto in silenzio.',
+    memeDescription: 'Harold sorride. Harold soffre. Cuscino 40x40 con stampa fronte-retro e imbottitura inclusa, per salotti, scrivanie e riunioni affrontate con dignita apparente.',
     rarity: 'Rare',
     color: 'bg-yellow-400',
     sizes: ['40x40', '50x50'],
@@ -172,7 +174,7 @@ export const PRODUCTS: Product[] = [
     price: 19.99,
     image: 'https://i.imgflip.com/345v97.jpg',
     category: 'decor',
-    memeDescription: 'Stampa fine art su carta 200g, formato A3 o 50x70. Il contrasto tra caos umano e equanimità felina — un\'opera che fa conversazione e divide le famiglie.',
+    memeDescription: 'Stampa fine art su carta 200g, formato A3 o 50x70. Il contrasto tra caos umano e calma felina funziona bene in studio, cucina o uffici che vivono di escalation passive aggressive.',
     rarity: 'Epic',
     color: 'bg-pink-400',
     sizes: ['A4', 'A3', '50x70'],
@@ -180,11 +182,11 @@ export const PRODUCTS: Product[] = [
   },
   {
     id: '6',
-    name: 'Tappetino Mouse "Chad"',
+    name: 'Tappetino Mouse "Buff Doge vs Cheems"',
     price: 12.99,
-    image: 'https://i.imgflip.com/5c7lwq.png',
+    image: 'https://i.imgflip.com/43a45p.png',
     category: 'useless',
-    memeDescription: 'Superficie microforata 60x30cm, base antiscivolo in gomma naturale. Il Chad ti osserva mentre lavori. Lui approva ogni tua decisione. Lui non dubita mai.',
+    memeDescription: 'Superficie microforata 60x30cm con base antiscivolo. Una parte della scrivania lavora in modalita best case, l altra vive nel panico: equilibrio perfetto per ogni giornata online.',
     rarity: 'Legendary',
     color: 'bg-stone-400',
     sizes: ['60x30cm'],
@@ -208,7 +210,7 @@ export const PRODUCTS: Product[] = [
     price: 24.99,
     image: 'https://i.imgflip.com/1bhk.jpg',
     category: 'wearable',
-    memeDescription: 'Stampa petto su cotone organico 180g. Il pugno chiuso, la mascella determinata. Per ogni piccola vittoria quotidiana che nessuno commemora — tranne te.',
+    memeDescription: 'Stampa petto su cotone organico 180g. Il pugno chiuso e la faccia da piccola vittoria rendono questa t-shirt ideale per chi vuole celebrare anche i successi minimi, ma reali.',
     rarity: 'Rare',
     color: 'bg-green-400',
     sizes: ['S', 'M', 'L', 'XL'],
@@ -218,12 +220,114 @@ export const PRODUCTS: Product[] = [
     id: '9',
     name: 'Poster "Two Buttons"',
     price: 18.99,
-    image: 'https://i.imgflip.com/1g8sqw.jpg',
+    image: 'https://i.imgflip.com/1g8my4.jpg',
     category: 'decor',
-    memeDescription: 'Stampa fine art 200g. Due bottoni. Entrambi importanti. Nessuno dei due chiaramente giusto. Un manifesto esistenziale per chi prende decisioni — o finge di farlo.',
+    memeDescription: 'Stampa fine art 200g. Due opzioni, nessuna semplice. Un poster che sintetizza bene briefing contraddittori, backlog infiniti e decisioni prese all ultimo minuto.',
     rarity: 'Common',
     color: 'bg-red-400',
     sizes: ['A4', 'A3'],
     colors: [{ name: 'Standard', hex: '#FFFFFF' }]
   }
 ];
+
+// ─────────────────────────────────────────────────────────────────────────────
+// MEME BASES — Template di partenza per la creazione di design
+// Curati dall'admin. Sostituire url e usageCount con i dati reali.
+// ─────────────────────────────────────────────────────────────────────────────
+export const MEME_BASES: MemeBase[] = [
+  { id: 'drake',            name: 'Drake Approve',          url: 'https://i.imgflip.com/30b1gx.jpg',  category: 'reaction', usageCount: 847, tags: ['approvazione', 'scelta'] },
+  { id: 'distracted-bf',    name: 'Ragazzo Distratto',      url: 'https://i.imgflip.com/1ur9b0.jpg',  category: 'reaction', usageCount: 634, tags: ['tradimento', 'distrazione'] },
+  { id: 'brain-size',       name: 'Cervello in Espansione', url: 'https://i.imgflip.com/1jwhww.jpg',  category: 'format',   usageCount: 521, tags: ['intelligenza', 'livelli'] },
+  { id: 'this-is-fine',     name: 'This Is Fine',           url: 'https://i.imgflip.com/wxica.jpg',   category: 'reaction', usageCount: 489, tags: ['caos', 'ignorare'] },
+  { id: 'roll-safe',        name: 'Roll Safe',              url: 'https://i.imgflip.com/1h7in3.jpg',  category: 'reaction', usageCount: 412, tags: ['logica', 'furbo'] },
+  { id: 'surprised-pikachu',name: 'Pikachu Sorpreso',       url: 'https://i.imgflip.com/2kbn1e.jpg',  category: 'reaction', usageCount: 398, tags: ['sorpresa', 'shocked'] },
+  { id: 'doge',             name: 'Doge',                   url: 'https://i.imgflip.com/4t0m5.jpg',   category: 'dank',     usageCount: 376, tags: ['wow', 'doge'] },
+  { id: 'two-buttons',      name: 'Due Pulsanti',           url: 'https://i.imgflip.com/1g8my4.jpg',  category: 'format',   usageCount: 301, tags: ['dilemma', 'scelta'] },
+];
+
+export const COMMUNITY_SEED_DESIGNS = [
+  {
+    id: 'fallback-1',
+    authorId: 'seed-1',
+    authorName: 'MemeLord99',
+    image: 'https://i.imgflip.com/30b1gx.jpg',
+    memeDescription: 'Drop reaction basato sul format Drake, pensato per t-shirt e hoodie dove la punchline vive tutta nel confronto tra due scelte.',
+    likes: 420,
+    totalSales: 34,
+    totalEarnings: 122.46,
+    royaltyRate: CREATOR_ROYALTY_RATE,
+    isPublished: true,
+    productType: 'wearable' as const,
+    tags: ['reaction', 'choice', 'streetwear'],
+  },
+  {
+    id: 'fallback-2',
+    authorId: 'seed-2',
+    authorName: 'SigmaPixel',
+    image: 'https://i.imgflip.com/1h7in3.jpg',
+    memeDescription: 'Poster e sticker pack costruiti sul template Roll Safe, ideale per copy asciutti, insight da ufficio e ironia da chat interna.',
+    likes: 314,
+    totalSales: 18,
+    totalEarnings: 64.76,
+    royaltyRate: CREATOR_ROYALTY_RATE,
+    isPublished: true,
+    productType: 'decor' as const,
+    tags: ['office', 'dry-humor', 'reaction'],
+  },
+  {
+    id: 'fallback-3',
+    authorId: 'seed-3',
+    authorName: 'CringeQueen',
+    image: 'https://i.imgflip.com/345v97.jpg',
+    memeDescription: 'Design ad alto contrasto emotivo per poster e tazze, con un visual immediato che funziona bene anche senza testo aggiuntivo.',
+    likes: 777,
+    totalSales: 61,
+    totalEarnings: 219.38,
+    royaltyRate: CREATOR_ROYALTY_RATE,
+    isPublished: true,
+    productType: 'decor' as const,
+    tags: ['cat', 'chaos', 'poster'],
+  },
+  {
+    id: 'fallback-4',
+    authorId: 'seed-4',
+    authorName: 'ToiletOracle',
+    image: 'https://i.imgflip.com/43a45p.png',
+    memeDescription: 'Layout comparativo Buff Doge vs Cheems, perfetto per mousepad e apparel dove il contrasto tra prima e dopo guida tutta la gag.',
+    likes: 999,
+    totalSales: 88,
+    totalEarnings: 316.44,
+    royaltyRate: CREATOR_ROYALTY_RATE,
+    isPublished: true,
+    productType: 'wearable' as const,
+    tags: ['comparison', 'doge', 'gaming'],
+  },
+  {
+    id: 'fallback-5',
+    authorId: 'seed-5',
+    authorName: 'VibeCheck404',
+    image: 'https://i.imgflip.com/gk5el.jpg',
+    memeDescription: 'Cuscino e poster su base Hide the Pain Harold, scelti per ambienti in cui il design deve reggere bene anche da lontano.',
+    likes: 256,
+    totalSales: 22,
+    totalEarnings: 79.12,
+    royaltyRate: CREATOR_ROYALTY_RATE,
+    isPublished: true,
+    productType: 'decor' as const,
+    tags: ['harold', 'office', 'deadpan'],
+  },
+  {
+    id: 'fallback-6',
+    authorId: 'seed-6',
+    authorName: 'NpcEnergy',
+    image: 'https://i.imgflip.com/wxica.jpg',
+    memeDescription: 'Versione community di This is Fine, ottima per hoodie e tee con messaggi sul caos quotidiano e caption corte ad alta leggibilita.',
+    likes: 512,
+    totalSales: 45,
+    totalEarnings: 161.82,
+    royaltyRate: CREATOR_ROYALTY_RATE,
+    isPublished: true,
+    productType: 'wearable' as const,
+    tags: ['chaos', 'tee', 'reaction'],
+  },
+] as const;

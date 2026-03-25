@@ -15,7 +15,7 @@ export default function PrivacyPolicyPage({ onBack }: PrivacyPolicyPageProps) {
       title: '2. Dati Raccolti',
       content: `Raccogliamo esclusivamente i dati necessari per l'erogazione del servizio:
 
-• Dati di autenticazione: nome, cognome, indirizzo email e foto profilo forniti da Google OAuth al momento del login.
+• Dati di autenticazione: nome profilo, indirizzo email, foto profilo e provider di accesso (Google o email/password) al momento del login o della registrazione.
 • Dati di ordine: indirizzo di spedizione, numero di telefono (opzionale), contenuto del carrello.
 • Dati tecnici: indirizzo IP, tipo di browser e sistema operativo, esclusivamente per scopi di sicurezza e diagnostica.
 • Contenuti generati: design personalizzati caricati su Firebase Storage.`,

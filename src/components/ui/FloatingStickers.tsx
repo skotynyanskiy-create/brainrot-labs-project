@@ -1,5 +1,16 @@
 import { motion } from 'motion/react';
-import { useState, useEffect } from 'react';
+import { useMemo } from 'react';
+
+interface FloatingSticker {
+  id: number;
+  emoji: string;
+  size: string;
+  top: string;
+  left: string;
+  rotate: number;
+  delay: number;
+  duration: number;
+}
 
 const STICKERS = [
   { emoji: "🗿", size: "text-6xl" },
@@ -12,21 +23,27 @@ const STICKERS = [
   { emoji: "🧠", size: "text-6xl" },
 ];
 
-export default function FloatingStickers() {
-  const [stickers, setStickers] = useState<any[]>([]);
+const pseudoRandom = (seed: number) => {
+  const value = Math.sin(seed * 12.9898) * 43758.5453;
+  return value - Math.floor(value);
+};
 
-  useEffect(() => {
-    const newStickers = Array.from({ length: 12 }).map((_, i) => ({
+const buildStickers = (): FloatingSticker[] =>
+  Array.from({ length: 12 }, (_, i) => {
+    const stickerIndex = Math.floor(pseudoRandom(i + 1) * STICKERS.length);
+    return {
       id: i,
-      ...STICKERS[Math.floor(Math.random() * STICKERS.length)],
-      top: `${Math.random() * 100}%`,
-      left: `${Math.random() * 100}%`,
-      rotate: Math.random() * 360,
-      delay: Math.random() * 5,
-      duration: 10 + Math.random() * 20,
-    }));
-    setStickers(newStickers);
-  }, []);
+      ...STICKERS[stickerIndex],
+      top: `${pseudoRandom(i + 11) * 100}%`,
+      left: `${pseudoRandom(i + 21) * 100}%`,
+      rotate: pseudoRandom(i + 31) * 360,
+      delay: pseudoRandom(i + 41) * 5,
+      duration: 10 + pseudoRandom(i + 51) * 20,
+    };
+  });
+
+export default function FloatingStickers() {
+  const stickers = useMemo(() => buildStickers(), []);
 
   return (
     <div className="fixed inset-0 pointer-events-none z-40 overflow-hidden">

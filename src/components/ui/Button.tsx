@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion } from 'motion/react';
+import { motion, type HTMLMotionProps } from 'motion/react';
 import { cn } from '../../utils/cn';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -50,7 +50,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           whileTap={{ scale: 0.98 }}
           className={classes}
           disabled={isLoading || props.disabled}
-          {...(props as any)}
+          {...(props as HTMLMotionProps<'button'>)}
         >
           {content}
         </motion.button>

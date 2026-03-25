@@ -1,6 +1,7 @@
 import { motion, useInView } from 'motion/react';
 import { useRef } from 'react';
 import { ShoppingBag, Wand2, Box, CreditCard, TrendingUp, ArrowRight } from 'lucide-react';
+import { CREATOR_ROYALTY_RATE } from '../../constants';
 
 interface HowItWorksProps {
   onOpenCustomizer?: () => void;
@@ -10,8 +11,8 @@ const steps = [
   {
     number: '01',
     icon: ShoppingBag,
-    title: 'Seleziona l\'Armor',
-    desc: 'T-shirt, cover, poster o mug. Scegli su quale supporto fisico spawnare il tuo disagio mentale.',
+    title: 'Scegli il supporto',
+    desc: 'Parti da uno dei prodotti base disponibili nel customizer e definisci subito formato, colore e destinazione del design.',
     color: 'bg-yellow-400',
     textColor: 'text-black',
     accent: 'border-yellow-400',
@@ -20,8 +21,8 @@ const steps = [
   {
     number: '02',
     icon: Wand2,
-    title: 'Evoca il Meme (AI)',
-    desc: 'Usa il nostro Customizer AI. Scrivi un prompt delirante, aggiungi sticker e lascia che Gemini cucini per te.',
+    title: 'Costruisci il design',
+    desc: 'Usa una base meme, genera una variante con AI oppure combina testo, sticker e upload manuali nello stesso editor.',
     color: 'bg-pink-500',
     textColor: 'text-white',
     accent: 'border-pink-500',
@@ -30,8 +31,8 @@ const steps = [
   {
     number: '03',
     icon: Box,
-    title: 'Vibe Check in 3D',
-    desc: "Ruota e ispeziona il tuo capolavoro in tempo reale sul modello 3D. Se è abbastanza cringe, si va avanti.",
+    title: 'Controlla la preview',
+    desc: 'Verifica la resa in 2D e 3D prima di acquistare, cosi il contenuto che vedi resta coerente con il prodotto finale.',
     color: 'bg-cyan-400',
     textColor: 'text-black',
     accent: 'border-cyan-400',
@@ -40,8 +41,8 @@ const steps = [
   {
     number: '04',
     icon: CreditCard,
-    title: 'Striscia la Carta',
-    desc: 'Checkout a prova di boomer. Stampa on-demand ad altissima risoluzione e spedizione dritta a casa tua.',
+    title: 'Acquista il prodotto',
+    desc: 'Conferma taglia, colore e quantità. Il prodotto entra nel flusso di stampa on-demand e parte con tracking dedicato.',
     color: 'bg-black',
     textColor: 'text-white',
     accent: 'border-black',
@@ -50,12 +51,12 @@ const steps = [
   {
     number: '05',
     icon: TrendingUp,
-    title: 'Farming di Soldi',
-    desc: 'Droppa il tuo design nella Community Vault. Qualcuno lo compra? Boom, prendi il 12% di royalty automatiche.',
+    title: 'Pubblica e monetizza',
+    desc: `Se rendi pubblico il design, può entrare nella community e generare il ${CREATOR_ROYALTY_RATE}% di royalty su ogni vendita successiva.`,
     color: 'bg-green-400',
     textColor: 'text-black',
     accent: 'border-green-400',
-    tag: '12% ROYALTY',
+    tag: `${CREATOR_ROYALTY_RATE}% ROYALTY`,
     highlight: true,
   },
 ];
@@ -73,7 +74,7 @@ export default function HowItWorks({ onOpenCustomizer }: HowItWorksProps) {
 
       <div className="max-w-7xl mx-auto relative z-10">
         {/* Header */}
-        <div className="mb-20 flex flex-col md:flex-row items-start md:items-end justify-between gap-8">
+        <div className="mb-20 flex flex-col items-start gap-8">
           <div>
             <motion.div
               initial={{ opacity: 0, y: -20 }}
@@ -96,14 +97,6 @@ export default function HowItWorks({ onOpenCustomizer }: HowItWorksProps) {
             </motion.h2>
           </div>
 
-          <motion.p
-            initial={{ opacity: 0, x: 40 }}
-            animate={isInView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-xl md:text-2xl font-sans font-medium max-w-sm leading-relaxed text-gray-700"
-          >
-            Dal brainstorming alle 4 di notte, fino a guadagnare passivamente dal tuo livello di Rizz.
-          </motion.p>
         </div>
 
         {/* Steps — desktop horizontal timeline */}
@@ -194,10 +187,10 @@ export default function HowItWorks({ onOpenCustomizer }: HowItWorksProps) {
             </div>
             <h3 className="text-4xl md:text-5xl font-black uppercase italic tracking-tighter leading-tight mb-3">
               Ogni vendita del tuo design<br />
-              <span className="inline-block bg-black text-green-400 px-4 py-1 mt-1">= 12% nelle tue tasche</span>
+              <span className="inline-block bg-black text-green-400 px-4 py-1 mt-1">= {CREATOR_ROYALTY_RATE}% nelle tue tasche</span>
             </h3>
             <p className="font-mono text-lg text-black/70 max-w-xl">
-              Pubblica il tuo meme nella community. Quando altri lo acquistano, tu guadagni royalty automatiche. Senza limiti.
+              Pubblica un design solo quando è davvero pronto. Se altri utenti lo acquistano dalla community, il sistema registra automaticamente le tue royalty.
             </p>
           </div>
 
@@ -209,7 +202,7 @@ export default function HowItWorks({ onOpenCustomizer }: HowItWorksProps) {
               className="shrink-0 bg-black text-white border-4 border-black px-10 py-5 text-xl font-black uppercase shadow-[8px_8px_0_0_rgba(0,0,0,0.3)] hover:shadow-none hover:translate-x-2 hover:translate-y-2 transition-all flex items-center gap-3 italic"
             >
               <Wand2 className="w-6 h-6" />
-              INIZIA ORA
+              APRI IL CUSTOMIZER
             </motion.button>
           )}
         </motion.div>

@@ -92,3 +92,34 @@ APP_URL=
 - `src/utils/firestoreErrorHandler.ts` duplica codice di `src/firebase.ts` — da unificare
 - `lazy`/`Suspense` importati in `App.tsx` ma non usati — da implementare per code splitting
 - Le immagini prodotto provengono da servizi esterni (Unsplash, imgflip) — dipendenza fragile
+
+---
+
+## Brand Identity & Design System
+
+### Chi è Brainrot Labs
+Brand digitale moderno: e-commerce (abbigliamento + gadget personalizzati), esperienze interattive (3D, configuratori), design premium e innovativo.
+
+### Obiettivo prodotto
+Costruire un ecosistema visivamente premium, altamente convertente e scalabile.
+
+### Target utenti
+- Età 16–35, digital-first
+- Interessati a design, meme culture, personalizzazione
+
+### Stile visivo
+- Moderno / minimal / high-tech
+- Palette: nero, bianco, accenti neon o premium
+- UI pulita, spaziosa, non caotica
+
+### Principi di design (applicare sempre)
+- **Niente design generico** — ogni elemento deve sembrare progettato da un senior designer
+- **Conversione prima di tutto** — ogni scelta UI deve supportare l'azione dell'utente
+- **Coerenza del sistema** — font, spacing, border-radius, shadow devono essere consistenti in tutto il progetto
+- **No decorazioni vuote** — ogni elemento visivo ha una funzione
+
+### Regole operative per Claude
+- Ogni modifica UI deve rispettare la palette e lo stile sopra
+- Quando proponi componenti nuovi, allinearli al design system esistente (brutalist neomorph: border-4 border-black, shadow-[Xpx_Xpx_0_0_rgba(0,0,0,1)])
+- Le copy (testi) devono essere dirette, energiche, in tono con il brand — no testi placeholder generici
+- Priorità: UX reale > estetica > feature aggiuntive

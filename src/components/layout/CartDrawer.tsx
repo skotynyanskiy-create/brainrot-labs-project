@@ -1,15 +1,17 @@
 import { X, Trash2, AlertTriangle, CheckCircle2, Skull, LogIn, MapPin } from 'lucide-react';
 import { logger } from '../../utils/logger';
+import { STORAGE_KEYS } from '../../constants';
 import { useCart } from '../../context/CartContext';
+import { useToast } from '../../context/ToastContext';
 import { useAuth } from '../../context/AuthContext';
 import { motion, AnimatePresence } from 'motion/react';
 import { useState, useEffect } from 'react';
 import { playBlipSound, playCoinSound } from '../../utils/sounds';
-import { db, collection, addDoc, Timestamp } from '../../firebase';
+import { db, collection, addDoc, serverTimestamp } from '../../firebase';
 import type { LayerData } from '../../types';
 import { getFunctions, httpsCallable } from 'firebase/functions';
 
-const ORDER_HISTORY_STORAGE_KEY = 'brainrot_order_history';
+const ORDER_HISTORY_STORAGE_KEY = STORAGE_KEYS.ORDER_HISTORY;
 
 interface ShippingAddress {
   name: string;
@@ -36,8 +38,8 @@ const EMPTY_ADDRESS: ShippingAddress = {
 export default function CartDrawer() {
   const { items, isCartOpen, setIsCartOpen, updateQuantity, removeFromCart, clearCart, total } = useCart();
   const { user, login } = useAuth();
+  const { addToast } = useToast();
   const [checkoutState, setCheckoutState] = useState<'idle' | 'address' | 'loading' | 'success' | 'error' | 'needs-login'>('idle');
-  const [loadingProgress, setLoadingProgress] = useState(0);
   const [shippingAddress, setShippingAddress] = useState<ShippingAddress>(EMPTY_ADDRESS);
   const [addressErrors, setAddressErrors] = useState<Partial<ShippingAddress>>({});
 
@@ -47,21 +49,6 @@ export default function CartDrawer() {
     }
   }, [checkoutState, clearCart]);
 
-  useEffect(() => {
-    if (checkoutState === 'loading') {
-      const interval = setInterval(() => {
-        setLoadingProgress(prev => {
-          if (prev >= 100) {
-            clearInterval(interval);
-            return 100;
-          }
-          return prev + Math.floor(Math.random() * 15) + 5;
-        });
-      }, 300);
-      return () => clearInterval(interval);
-    }
-    return undefined;
-  }, [checkoutState]);
 
   const validateAddress = (): boolean => {
     const errors: Partial<ShippingAddress> = {};
@@ -70,7 +57,11 @@ export default function CartDrawer() {
     if (!shippingAddress.address.trim()) errors.address = 'Obbligatorio';
     if (!shippingAddress.city.trim()) errors.city = 'Obbligatorio';
     if (!shippingAddress.zip.trim()) errors.zip = 'Obbligatorio';
-    else if (!/^\d{5}$/.test(shippingAddress.zip.trim())) errors.zip = 'CAP non valido (5 cifre)';
+    else {
+      const isItalian = shippingAddress.country.toLowerCase().includes('ital');
+      const zipOk = isItalian ? /^\d{5}$/.test(shippingAddress.zip.trim()) : shippingAddress.zip.trim().length >= 2;
+      if (!zipOk) errors.zip = isItalian ? 'CAP non valido (5 cifre)' : 'CAP non valido';
+    }
     if (!shippingAddress.province.trim()) errors.province = 'Obbligatorio';
     setAddressErrors(errors);
     return Object.keys(errors).length === 0;
@@ -90,10 +81,9 @@ export default function CartDrawer() {
     playBlipSound();
 
     setCheckoutState('loading');
-    setLoadingProgress(0);
 
     try {
-      const orderId = `order-${Date.now()}`;
+      const orderId = `order-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 
       // Prepare order data
       const orderData = {
@@ -129,6 +119,7 @@ export default function CartDrawer() {
         providerOrderId = (response.data as { providerOrderId?: string } | undefined)?.providerOrderId || providerOrderId;
       } catch (functionError) {
         logger.warn('Cloud function unavailable, using local order fallback:', functionError);
+        addToast('Ordine salvato localmente — contattaci se non ricevi conferma email.', 'warning');
       }
 
       const localOrderRecord = {
@@ -153,7 +144,8 @@ export default function CartDrawer() {
       let parsedOrders: unknown[] = [];
       if (existingOrders) {
         try {
-          parsedOrders = JSON.parse(existingOrders);
+          const raw: unknown = JSON.parse(existingOrders);
+          parsedOrders = Array.isArray(raw) ? raw : [];
         } catch (storageError) {
           logger.warn('Invalid local order history, resetting:', storageError);
         }
@@ -169,13 +161,12 @@ export default function CartDrawer() {
           ...orderData,
           providerOrderId,
           status: 'pending',
-          createdAt: Timestamp.now()
+          createdAt: serverTimestamp()
         });
       } catch (firestoreError) {
         logger.warn('Firestore order save skipped:', firestoreError);
+        addToast('Ordine confermato, ma il salvataggio online non è riuscito. Conserva l\'ID ordine.', 'warning');
       }
-      
-      setLoadingProgress(100);
       
       setTimeout(() => {
         setCheckoutState('success');
@@ -194,7 +185,6 @@ export default function CartDrawer() {
     setIsCartOpen(false);
     setTimeout(() => {
       setCheckoutState('idle');
-      setLoadingProgress(0);
       setShippingAddress(EMPTY_ADDRESS);
       setAddressErrors({});
     }, 300);
@@ -216,7 +206,7 @@ export default function CartDrawer() {
           >
             <div className="p-8 border-b-8 border-black flex justify-between items-center bg-yellow-400">
               <h2 className="text-4xl md:text-5xl font-black uppercase tracking-tighter leading-none">
-                IL TUO <span className="bg-pink-500 text-white px-4 py-1 border-4 border-black shadow-[6px_6px_0_0_rgba(0,0,0,1)] italic">DISAGIO</span>
+                IL TUO <span className="bg-pink-500 text-white px-4 py-1 border-4 border-black shadow-[6px_6px_0_0_rgba(0,0,0,1)] italic">CARRELLO</span>
               </h2>
               <button onClick={handleClose} aria-label="Chiudi carrello" className="p-3 border-4 border-black bg-white hover:bg-black hover:text-white transition-colors shadow-[4px_4px_0_0_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-1 hover:translate-y-1">
                 <X className="w-8 h-8" />
@@ -272,13 +262,24 @@ export default function CartDrawer() {
                       { key: 'phone', label: 'Telefono (opzionale)', placeholder: '+39 333 1234567', col: 2 },
                     ] as { key: keyof ShippingAddress; label: string; placeholder: string; col: 1 | 2 }[]).map(({ key, label, placeholder, col }) => (
                       <div key={key} className={col === 2 ? 'col-span-2' : 'col-span-1'}>
-                        <label className="block text-xs font-mono font-black uppercase tracking-widest mb-1">{label}</label>
+                        <label htmlFor={`cart-field-${key}`} className="block text-xs font-mono font-black uppercase tracking-widest mb-1">{label}</label>
                         <input
+                          id={`cart-field-${key}`}
                           type="text"
                           value={shippingAddress[key]}
                           onChange={e => {
                             setShippingAddress(prev => ({ ...prev, [key]: e.target.value }));
                             if (addressErrors[key]) setAddressErrors(prev => ({ ...prev, [key]: undefined }));
+                          }}
+                          onBlur={() => {
+                            const errors: Partial<ShippingAddress> = {};
+                            if (key !== 'phone' && !shippingAddress[key].trim()) errors[key] = 'Obbligatorio';
+                            if (key === 'zip' && shippingAddress[key].trim()) {
+                              const isItalian = shippingAddress.country.toLowerCase().includes('ital');
+                              const zipOk = isItalian ? /^\d{5}$/.test(shippingAddress[key].trim()) : shippingAddress[key].trim().length >= 2;
+                              if (!zipOk) errors[key] = isItalian ? 'CAP non valido (5 cifre)' : 'CAP non valido';
+                            }
+                            if (Object.keys(errors).length > 0) setAddressErrors(prev => ({ ...prev, ...errors }));
                           }}
                           placeholder={placeholder}
                           className={`w-full border-4 ${addressErrors[key] ? 'border-red-500' : 'border-black'} px-3 py-2 font-mono font-bold text-sm focus:outline-none focus:ring-4 focus:ring-yellow-400 bg-white`}
@@ -314,9 +315,9 @@ export default function CartDrawer() {
                   <AlertTriangle className="w-20 h-20 mb-8 animate-pulse text-yellow-400" />
                   <h3 className="text-3xl font-black mb-6 text-center uppercase tracking-tighter">HACKERANDO IL TUO CONTO IN BANCA...</h3>
                   <div className="w-full h-12 border-8 border-green-400 p-2 bg-green-900/20">
-                    <div className="h-full bg-green-400 transition-all duration-200 shadow-[0_0_20px_rgba(74,222,128,0.5)]" style={{ width: `${loadingProgress}%` }}></div>
+                    <div className="h-full bg-green-400 shadow-[0_0_20px_rgba(74,222,128,0.5)] animate-[checkout-progress_3s_ease-in-out_forwards]"></div>
                   </div>
-                  <p className="mt-6 text-lg font-bold uppercase tracking-widest">SCARICANDO PIÙ RAM: {loadingProgress}%</p>
+                  <p className="mt-6 text-lg font-bold uppercase tracking-widest">SCARICANDO PIÙ RAM...</p>
                   <div className="mt-12 text-[10px] opacity-50 text-left w-full space-y-1">
                     <p>{`> INITIALIZING_BRAINROT_PROTOCOL`}</p>
                     <p>{`> BYPASSING_COMMON_SENSE_FIREWALL`}</p>
@@ -395,7 +396,7 @@ export default function CartDrawer() {
                         exit={{ opacity: 0, scale: 0.8, x: -50, transition: { duration: 0.2 } }}
                         className="flex gap-4 border-4 border-black p-3 bg-white shadow-[4px_4px_0_0_rgba(0,0,0,1)] md:shadow-[6px_6px_0_0_rgba(0,0,0,1)] hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all group"
                       >
-                        <div className={`w-24 h-24 border-4 border-black shrink-0 ${item.color} relative overflow-hidden bg-white group-hover:rotate-2 transition-transform`}>
+                        <div className={`w-20 h-20 md:w-24 md:h-24 border-4 border-black shrink-0 ${item.color} relative overflow-hidden bg-white group-hover:rotate-2 transition-transform`}>
                           {item.customData ? (
                             <div 
                               className="absolute origin-top-left"
@@ -488,6 +489,9 @@ export default function CartDrawer() {
                   <span className="text-xl md:text-2xl font-black uppercase italic tracking-tighter">TOTALE DANNI:</span>
                   <span className="text-4xl md:text-5xl font-black text-pink-500 tracking-tighter italic leading-none">€{total.toFixed(2)}</span>
                 </div>
+                <p className="mb-6 font-mono text-xs font-black uppercase tracking-[0.2em] text-gray-500">
+                  + Spedizione calcolata al checkout
+                </p>
                 <motion.button 
                   animate={{ scale: [1, 1.02, 1] }}
                   transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
