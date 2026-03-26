@@ -1,0 +1,83 @@
+{
+  "entities": {
+    "Product": {
+      "title": "Product",
+      "description": "A meme product available for purchase.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "description": "Name of the product" },
+        "description": { "type": "string", "description": "Detailed description" },
+        "price": { "type": "number", "description": "Price in EUR" },
+        "image": { "type": "string", "description": "URL to the product image" },
+        "category": { "type": "string", "description": "Category ID" },
+        "rarity": { "type": "string", "description": "Rarity level (e.g., Common, Rare)" },
+        "color": { "type": "string", "description": "Tailwind color class" },
+        "memeDescription": { "type": "string", "description": "Funny meme-related description" }
+      },
+      "required": ["name", "price", "image", "category"]
+    },
+    "Order": {
+      "title": "Order",
+      "description": "A customer order.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "description": "UID of the user who placed the order" },
+        "items": { 
+          "type": "array", 
+          "items": { "type": "object" },
+          "description": "List of items in the order" 
+        },
+        "total": { "type": "number", "description": "Total order amount" },
+        "status": { "type": "string", "enum": ["pending", "paid", "shipped", "cancelled"], "description": "Current status of the order" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Timestamp of order creation" },
+        "shippingAddress": { "type": "object", "description": "Shipping details" }
+      },
+      "required": ["userId", "items", "total", "status", "createdAt"]
+    },
+    "User": {
+      "title": "User",
+      "description": "User profile information.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "Firebase Auth UID" },
+        "email": { "type": "string", "format": "email", "description": "User email address" },
+        "displayName": { "type": "string", "description": "User display name" },
+        "photoURL": { "type": "string", "description": "User profile picture URL" },
+        "role": { "type": "string", "enum": ["admin", "client"], "description": "User role" }
+      },
+      "required": ["uid", "email", "role"]
+    },
+    "CommunityDesign": {
+      "title": "CommunityDesign",
+      "description": "A design shared by a user.",
+      "type": "object",
+      "properties": {
+        "authorId": { "type": "string", "description": "UID of the author" },
+        "authorName": { "type": "string", "description": "Name of the author" },
+        "image": { "type": "string", "description": "URL to the design image" },
+        "memeDescription": { "type": "string", "description": "Description of the design" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Timestamp of creation" },
+        "likes": { "type": "number", "description": "Number of likes" }
+      },
+      "required": ["authorId", "authorName", "image", "memeDescription", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/products": {
+      "schema": "Product",
+      "description": "Collection of available meme products."
+    },
+    "/orders": {
+      "schema": "Order",
+      "description": "Collection of customer orders."
+    },
+    "/users": {
+      "schema": "User",
+      "description": "Collection of user profiles."
+    },
+    "/communityDesigns": {
+      "schema": "CommunityDesign",
+      "description": "Collection of designs shared by the community."
+    }
+  }
+}
