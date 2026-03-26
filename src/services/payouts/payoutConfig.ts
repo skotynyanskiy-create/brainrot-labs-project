@@ -66,11 +66,9 @@ export function getProfileCompletionScore(profile: UserProfile | null) {
     Boolean(profile.creatorTagline?.trim()),
     Boolean(profile.bio?.trim()),
     Boolean(profile.location?.trim()),
-    Boolean(profile.portfolioUrl?.trim()),
+    Boolean(profile.socialHandle?.trim()),
     Boolean(profile.payoutSetup?.provider && profile.payoutSetup.provider !== 'none'),
     Boolean(profile.payoutEmail?.trim()),
-    Boolean(profile.taxProfile?.legalName?.trim()),
-    Boolean(profile.taxProfile?.taxCountry?.trim()),
     Boolean(profile.shippingAddress?.address1?.trim()),
     Boolean(profile.shippingAddress?.city?.trim()),
     Boolean(profile.legalAcceptances?.creatorTerms?.accepted),
@@ -87,11 +85,12 @@ export function getPayoutReadinessIssues(profile: UserProfile | null) {
   }
 
   const issues: string[] = [];
+  if (!profile.displayName?.trim()) issues.push('Completa il nome profilo.');
+  if (!profile.username?.trim()) issues.push('Scegli uno username pubblico.');
   if (!profile.payoutSetup || profile.payoutSetup.provider === 'none') issues.push('Seleziona un metodo payout.');
   if (!profile.payoutEmail?.trim()) issues.push('Inserisci un recapito payout.');
-  if (!profile.legalName?.trim() && !profile.taxProfile?.legalName?.trim()) issues.push('Completa il nominativo legale.');
-  if (!profile.taxProfile?.taxCountry?.trim()) issues.push('Definisci il paese fiscale.');
-  if (!profile.taxProfile?.taxId?.trim()) issues.push('Aggiungi codice fiscale o tax ID.');
+  if (!profile.shippingAddress?.fullName?.trim()) issues.push('Completa il destinatario predefinito.');
+  if (!profile.shippingAddress?.address1?.trim() || !profile.shippingAddress?.city?.trim()) issues.push('Aggiungi un indirizzo di spedizione valido.');
   if (!profile.legalAcceptances?.creatorTerms?.accepted) issues.push('Accetta i Creator Terms.');
   if (!profile.legalAcceptances?.royaltyPolicy?.accepted) issues.push('Accetta la Royalty Policy.');
 

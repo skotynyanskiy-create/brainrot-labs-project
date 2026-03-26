@@ -10,6 +10,7 @@ import { Skeleton } from '../ui/Skeleton';
 import { db, doc, updateDoc } from '../../firebase';
 import { increment } from 'firebase/firestore';
 import { logger } from '../../utils/logger';
+import { buildCartItemId, resolveCatalogVariantBySelection } from '../../services/commerce/helpers';
 
 interface ProductCardProps {
   product: Product;
@@ -27,7 +28,42 @@ const ProductCard: React.FC<ProductCardProps> = React.memo(({ product, onSelect,
   const handleAddToCart = (e: React.MouseEvent) => {
     e.stopPropagation();
     playCoinSound();
-    addToCart(product, 1, product.sizes?.[0], product.colors?.[0]?.name);
+    if (product.category === 'community' && product.baseProductId) {
+      const selectedSize = product.sizes?.[0];
+      const selectedColor = product.colors?.[0]?.name;
+      const catalogVariant = resolveCatalogVariantBySelection(product.baseProductId, selectedSize, selectedColor);
+      if (!catalogVariant) {
+        addToast('Variante non disponibile per questo design.', 'error');
+        return;
+      }
+
+      addToCart({
+        cartItemId: buildCartItemId({
+          sourceType: 'community',
+          productId: product.id,
+          communityDesignId: product.communityDesignId ?? product.id,
+          catalogVariantRef: catalogVariant.id,
+        }),
+        sourceType: 'community',
+        productId: product.id,
+        baseProductId: product.baseProductId,
+        communityDesignId: product.communityDesignId ?? product.id,
+        designId: product.designId,
+        catalogVariantRef: catalogVariant.id,
+        quantity: 1,
+        price: catalogVariant.price,
+        name: product.name,
+        image: product.image,
+        category: product.category,
+        memeDescription: product.memeDescription,
+        color: product.color,
+        selectedSize,
+        selectedColor,
+        authorName: product.authorName,
+      });
+    } else {
+      addToCart(product, 1, product.sizes?.[0], product.colors?.[0]?.name);
+    }
     addToast('Aggiunto al carrello. Il tuo conto in banca piange.');
   };
 

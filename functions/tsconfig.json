@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "ES2022",
-    "module": "CommonJS",
+    "module": "ES2022",
     "moduleResolution": "node",
     "lib": ["ES2022"],
     "strict": true,
@@ -15,6 +15,6 @@
     "resolveJsonModule": true,
     "outDir": "dist"
   },
-  "include": ["index.ts", "../src/services/**/*", "../src/utils/logger.ts"],
+  "include": ["index.ts", "commerce.ts", "../src/services/commerce/**/*", "../src/services/aiTypes.ts", "../src/vite-env.d.ts"],
   "exclude": ["node_modules", "dist"]
 }

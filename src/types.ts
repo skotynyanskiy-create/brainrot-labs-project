@@ -1,4 +1,12 @@
 import type { Timestamp } from './firebase';
+import type {
+  BaseProductId,
+  CartItemRecord,
+  CatalogSelectionMode,
+  PrintPlacement,
+  ProductOverlayConfig,
+  RendererType,
+} from './services/commerce/types';
 
 declare global {
   interface Window {
@@ -137,14 +145,15 @@ export interface Product {
   customData?: CustomData;
   likes?: number;
   authorName?: string;
+  sourceType?: 'catalog' | 'customizer' | 'community';
+  baseProductId?: BaseProductId;
+  communityDesignId?: string;
+  designId?: string;
+  catalogVariantRef?: string;
+  model3dPath?: string; // path relativo a /public, es. "/models/mug.stl" o "/models/cap.glb"
 }
 
-export interface CartItem extends Product {
-  quantity: number;
-  selectedSize?: string;
-  selectedColor?: string;
-  cartItemId: string;
-}
+export type CartItem = CartItemRecord;
 
 export interface Meme {
   id: string;
@@ -163,27 +172,26 @@ export interface PrintfulVariant {
 }
 
 export interface BaseProduct {
-  id: string;
+  id: BaseProductId;
   name: string;
+  slug?: string;
   price: number;
   image: string;
   category: 'wearable' | 'useless' | 'decor' | 'community';
+  rendererType?: RendererType;
+  modelPath?: string;
+  selectionMode?: CatalogSelectionMode;
   sizes?: string[];
   colors?: { name: string; hex: string }[];
-  overlay: {
-    top: string;
-    left: string;
-    width: string;
-    height: string;
-    rotate?: string;
-    mixBlendMode?: string;
-  };
+  variantOptions?: Array<{ label: string; value: string }>;
+  overlay: ProductOverlayConfig;
   /** Printful catalog product ID (e.g. 71 for Bella+Canvas 3001) */
   printfulProductId: number;
+  printTemplateKey?: string;
   /** Print placement used in the Printful files array */
-  printfulPlacement: 'front' | 'default' | 'back';
+  printfulPlacement: PrintPlacement;
   /** All variants for this product with their Printful IDs */
-  printfulVariants: PrintfulVariant[];
+  printfulVariants?: PrintfulVariant[];
 }
 
 export interface CustomTemplate {
@@ -202,10 +210,21 @@ export interface MemeBase {
   category: 'reaction' | 'format' | 'dank' | 'italian';
   usageCount: number;
   tags: string[];
+  trendScore?: number; // calcolato: usageCount*0.6 + likes_sum*0.4
+}
+
+export interface CreatorInfo {
+  authorId: string;
+  name: string;
+  designs: number;
+  likes: number;
+  earnings: number;
+  rank: number;
 }
 
 export interface CommunityDesign {
   id: string;
+  designId?: string;
   authorId: string;
   authorName: string;
   authorPhotoURL?: string;
@@ -219,4 +238,15 @@ export interface CommunityDesign {
   royaltyRate?: number; // percentage (e.g. 6.9 = 6.9%)
   isPublished?: boolean;
   tags?: string[];
+  // Tracciamento origine — salvati come snapshot al momento del publish
+  baseProductId?: BaseProductId;
+  baseProductName?: string;        // snapshot nome prodotto base
+  baseProductPrice?: number;       // snapshot prezzo prodotto base
+  memeBaseId?: string | null;      // es. 'drake', null se nessun meme base usato
+  memeBaseName?: string | null;    // snapshot nome meme base
+  memeBaseCategory?: MemeBase['category'] | null;
+  // Metadati layer
+  layerCount?: number;
+  hasCustomText?: boolean;
+  hasAILayer?: boolean;
 }

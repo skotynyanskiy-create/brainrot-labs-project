@@ -1,46 +1,14 @@
-import { motion, useInView } from 'motion/react';
-import { useEffect, useRef, useState } from 'react';
-import { Wand2, Users, Sparkles, Shirt, ShoppingBag } from 'lucide-react';
+import { motion } from 'motion/react';
+import { Wand2, Archive } from 'lucide-react';
 import { playBlipSound } from '../../utils/sounds';
+import { getSiteCtaClasses } from '../../styles/siteCta';
 import Product3DViewer from '../product/Product3DViewer';
-import { CREATOR_ROYALTY_RATE } from '../../constants';
+import { TSHIRT_MODEL_PATH } from '../product/Tshirt3DModel';
 
 interface HeroProps {
   onOpenCustomizer?: () => void;
   onOpenCommunity?: () => void;
 }
-
-function useCountUp(target: number, duration = 1000, start = false) {
-  const [count, setCount] = useState(0);
-
-  useEffect(() => {
-    if (!start) return;
-
-    let startTime: number | null = null;
-    const step = (timestamp: number) => {
-      if (!startTime) startTime = timestamp;
-      const progress = Math.min((timestamp - startTime) / duration, 1);
-      setCount(progress * target);
-      if (progress < 1) requestAnimationFrame(step);
-    };
-
-    requestAnimationFrame(step);
-  }, [duration, start, target]);
-
-  return count;
-}
-
-const STATS: { target: number; suffix: string; label: string }[] = [
-  { target: 2, suffix: '', label: 'prodotti base' },
-  { target: 8, suffix: '', label: 'basi curate' },
-  { target: CREATOR_ROYALTY_RATE, suffix: '%', label: 'royalty creator' },
-];
-
-const STEPS = [
-  { Icon: Sparkles, label: 'Genera AI' },
-  { Icon: Shirt, label: 'Personalizza' },
-  { Icon: ShoppingBag, label: 'Ordina' },
-];
 
 const container = {
   hidden: {},
@@ -54,26 +22,9 @@ const item = {
   show: { opacity: 1, y: 0, transition: { duration: 0.45, ease: EASE } },
 };
 
-function StatItem({ target, suffix, label, animate }: { target: number; suffix: string; label: string; animate: boolean }) {
-  const raw = useCountUp(target, 950, animate);
-  const display = target % 1 !== 0
-    ? `${raw.toFixed(1)}${suffix}`
-    : `${Math.floor(raw)}${suffix}`;
-
-  return (
-    <div className="flex flex-col">
-      <span className="text-xl font-black text-black leading-none tabular-nums">{animate ? display : '-'}</span>
-      <span className="mt-0.5 text-[10px] font-mono uppercase tracking-wider text-gray-500">{label}</span>
-    </div>
-  );
-}
-
 export default function Hero({ onOpenCustomizer, onOpenCommunity }: HeroProps) {
-  const statsRef = useRef<HTMLDivElement>(null);
-  const statsInView = useInView(statsRef, { once: true, margin: '-60px' });
-
   return (
-    <section className="relative flex min-h-[90vh] items-center overflow-hidden border-b-4 border-black bg-white px-6 pb-16 pt-24 md:px-12 md:pb-20 md:pt-32">
+    <section className="relative flex min-h-[calc(100vh-88px)] items-center overflow-hidden border-b-4 border-black bg-white px-6 pb-14 pt-10 md:px-12 md:pb-16 md:pt-14">
       <div
         className="absolute inset-0 z-0 pointer-events-none"
         style={{ backgroundImage: 'radial-gradient(circle, #00000012 1px, transparent 1px)', backgroundSize: '28px 28px' }}
@@ -98,56 +49,33 @@ export default function Hero({ onOpenCustomizer, onOpenCommunity }: HeroProps) {
               </span>
             </motion.h1>
 
-            <motion.p
-              variants={item}
-              className="mb-7 max-w-md border-l-4 border-black pl-4 text-base font-semibold leading-relaxed text-gray-700 sm:text-lg md:text-xl"
-            >
-              Crea un design con AI o basi curate, controllalo in anteprima 3D e trasformalo in un prodotto fisico pronto per il checkout o per la community.
-            </motion.p>
+            <motion.div variants={item} className="mb-8 max-w-[42rem] border-l-4 border-black pl-5">
+              <p className="text-lg font-semibold leading-relaxed text-gray-800 sm:text-xl md:text-[1.42rem]">
+                Prendi un'idea assurda, costruiscila bene e falla uscire dal feed:
+                qui i meme diventano design, prodotti fisici e drop che puoi davvero far girare.
+              </p>
+            </motion.div>
 
-            <motion.div variants={item} className="mb-7 flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
+            <motion.div variants={item} className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
               <motion.button
                 whileHover={{ y: -2 }}
                 whileTap={{ scale: 0.97 }}
                 onClick={() => { playBlipSound(); onOpenCustomizer?.(); }}
-                className="group flex items-center justify-center gap-2.5 border-4 border-black bg-cyan-400 px-7 py-4 text-lg font-black uppercase italic text-black shadow-[5px_5px_0_0_rgba(0,0,0,1)] transition-all hover:translate-x-[3px] hover:translate-y-[3px] hover:shadow-[2px_2px_0_0_rgba(0,0,0,1)]"
+                className={getSiteCtaClasses('create', 'lg', 'group w-full sm:w-auto')}
               >
                 <Wand2 className="h-5 w-5 transition-transform group-hover:rotate-12" />
-                Apri Customizer
+                Crea il tuo design
               </motion.button>
 
               <motion.button
                 whileHover={{ y: -2 }}
                 whileTap={{ scale: 0.97 }}
                 onClick={() => { playBlipSound(); onOpenCommunity?.(); }}
-                className="group flex items-center justify-center gap-2.5 border-4 border-black bg-white px-7 py-4 text-lg font-black uppercase italic text-black shadow-[5px_5px_0_0_rgba(0,0,0,1)] transition-all hover:translate-x-[3px] hover:translate-y-[3px] hover:bg-black hover:text-white hover:shadow-[2px_2px_0_0_rgba(0,0,0,1)]"
+                className={getSiteCtaClasses('archive', 'lg', 'group w-full sm:w-auto')}
               >
-                <Users className="h-5 w-5 transition-transform group-hover:-rotate-12" />
-                Esplora Community
+                <Archive className="h-5 w-5 transition-transform group-hover:-rotate-6" />
+                Archivio Digitale
               </motion.button>
-            </motion.div>
-
-            <motion.div variants={item} className="mb-8 flex w-full max-w-xs items-center">
-              {STEPS.map(({ Icon, label }, index) => (
-                <div key={label} className="flex flex-1 items-center">
-                  <div className="flex flex-1 flex-col items-center gap-1">
-                    <div className="flex h-9 w-9 items-center justify-center bg-black text-white">
-                      <Icon className="h-4 w-4" />
-                    </div>
-                    <span className="text-center text-[9px] font-mono font-bold uppercase leading-tight tracking-wide text-gray-500">{label}</span>
-                  </div>
-                  {index < STEPS.length - 1 && <div className="mb-4 h-px w-5 shrink-0 bg-black/40" />}
-                </div>
-              ))}
-            </motion.div>
-
-            <motion.div variants={item} ref={statsRef} className="flex items-center gap-5">
-              {STATS.map((stat, index) => (
-                <div key={stat.label} className="flex items-center gap-5">
-                  <StatItem {...stat} animate={statsInView} />
-                  {index < STATS.length - 1 && <div className="h-7 w-px bg-black/20" />}
-                </div>
-              ))}
             </motion.div>
           </motion.div>
 
@@ -169,12 +97,13 @@ export default function Hero({ onOpenCustomizer, onOpenCommunity }: HeroProps) {
               className="relative h-[320px] w-full cursor-grab active:cursor-grabbing sm:h-[420px] lg:h-[560px]"
             >
               <Product3DViewer
-                modelPath="/models/tshirt-ecommerce-ready.glb"
+                modelPath={TSHIRT_MODEL_PATH}
+                autoRotate={false}
               />
             </motion.div>
 
             <div className="pointer-events-none absolute bottom-3 left-1/2 flex -translate-x-1/2 items-center gap-1.5 text-black/35">
-              <span className="animate-bounce text-sm">•</span>
+              <span className="animate-bounce text-sm">.</span>
               <span className="font-mono text-[10px] font-semibold uppercase tracking-widest">Trascina per ruotare</span>
             </div>
           </motion.div>

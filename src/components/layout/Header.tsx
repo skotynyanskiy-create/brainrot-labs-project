@@ -1,8 +1,10 @@
-import { ShoppingCart, Menu, Zap, X, Wand2, Search, User, LogOut } from 'lucide-react';
+import { ShoppingCart, Menu, Zap, X, Wand2, Search, User, LogOut, LayoutGrid, Archive } from 'lucide-react';
+import { useRef, useState } from 'react';
+import { AnimatePresence, motion, useMotionValueEvent, useScroll } from 'motion/react';
+
 import { useCart } from '../../context/CartContext';
 import { useAuth } from '../../context/AuthContext';
-import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'motion/react';
-import { useRef, useState } from 'react';
+import { getSiteCtaClasses } from '../../styles/siteCta';
 import { playBlipSound } from '../../utils/sounds';
 
 interface HeaderProps {
@@ -14,43 +16,56 @@ interface HeaderProps {
   onOpenProfile?: () => void;
 }
 
-export default function Header({ onOpenCustomizer, onNavigateHome, searchQuery, setSearchQuery, onOpenCommunity, onOpenProfile }: HeaderProps) {
+const desktopActionButton = 'hidden md:inline-flex min-w-[13.5rem]';
+const mobileActionButton = 'shrink-0';
+const mobileSecondaryButton =
+  'shrink-0 inline-flex items-center justify-center gap-2 border-4 border-black bg-white px-4 py-2 font-display text-[0.95rem] font-black uppercase leading-[0.92] tracking-[-0.03em] shadow-[4px_4px_0_0_rgba(0,0,0,1)] transition-all hover:translate-x-1 hover:translate-y-1 hover:bg-black hover:text-white hover:shadow-none';
+const desktopAccountButton =
+  'hidden lg:inline-flex min-w-[13.5rem] items-center justify-center gap-2.5 border-4 border-black bg-black px-5 py-3 text-center font-display text-[0.95rem] font-black uppercase leading-[0.92] tracking-[-0.035em] text-white shadow-[6px_6px_0_0_rgba(0,0,0,1)] transition-all duration-200 hover:translate-x-1 hover:translate-y-1 hover:bg-white hover:text-black hover:shadow-none focus:outline-none focus-visible:ring-4 focus-visible:ring-black focus-visible:ring-offset-2';
+const mobileAccountButton =
+  'shrink-0 inline-flex items-center justify-center gap-2.5 border-4 border-black bg-black px-4 py-2.5 text-center font-display text-[0.9rem] font-black uppercase leading-[0.92] tracking-[-0.035em] text-white shadow-[4px_4px_0_0_rgba(0,0,0,1)] transition-all duration-200 hover:translate-x-1 hover:translate-y-1 hover:bg-white hover:text-black hover:shadow-none focus:outline-none focus-visible:ring-4 focus-visible:ring-black focus-visible:ring-offset-2';
+
+export default function Header({
+  onOpenCustomizer,
+  onNavigateHome,
+  searchQuery,
+  setSearchQuery,
+  onOpenCommunity,
+  onOpenProfile,
+}: HeaderProps) {
   const { items, setIsCartOpen } = useCart();
   const { user, logout } = useAuth();
   const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const mobileSearchRef = useRef<HTMLInputElement>(null);
   const [isHidden, setIsHidden] = useState(false);
+  const mobileSearchRef = useRef<HTMLInputElement>(null);
   const { scrollY } = useScroll();
 
-  useMotionValueEvent(scrollY, "change", (latest) => {
+  useMotionValueEvent(scrollY, 'change', (latest) => {
     const previous = scrollY.getPrevious() ?? 0;
-    if (latest > previous && latest > 150) {
+    if (latest > previous && latest > 180) {
       setIsHidden(true);
-    } else {
-      setIsHidden(false);
+      return;
     }
+    setIsHidden(false);
   });
 
-  const menuItems = [
-    { label: 'PRODOTTI', href: '#products' },
-    { label: 'PERCHÉ NOI', href: '#features' },
-    { label: 'FAQ', href: '#faq' },
-    { label: 'RECENSIONI', href: '#testimonials' },
-    { label: 'SPAM', href: '#newsletter' },
-  ];
-
-  const handleMenuToggle = (state: boolean) => {
+  const openMenu = () => {
     playBlipSound();
-    setIsMenuOpen(state);
+    setIsMenuOpen(true);
   };
 
-  const handleCartOpen = () => {
+  const closeMenu = () => {
+    playBlipSound();
+    setIsMenuOpen(false);
+  };
+
+  const openCart = () => {
     playBlipSound();
     setIsCartOpen(true);
   };
 
-  const handleSearchToggle = () => {
+  const focusSearch = () => {
     playBlipSound();
     mobileSearchRef.current?.focus();
     mobileSearchRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -58,215 +73,180 @@ export default function Header({ onOpenCustomizer, onNavigateHome, searchQuery, 
 
   return (
     <>
-      <motion.header 
-        variants={{ visible: { y: 0 }, hidden: { y: "-100%" } }}
-        animate={isHidden ? "hidden" : "visible"}
-        transition={{ duration: 0.3, ease: "easeInOut" }}
-        className="sticky top-0 z-40 border-b-8 border-black p-4 md:p-6 lg:p-8 flex justify-between items-center bg-white shadow-[0_12px_0_0_rgba(0,0,0,1)]"
+      <motion.header
+        variants={{ visible: { y: 0 }, hidden: { y: '-100%' } }}
+        animate={isHidden ? 'hidden' : 'visible'}
+        transition={{ duration: 0.28, ease: 'easeInOut' }}
+        className="sticky top-0 z-40 border-b-8 border-black bg-white"
       >
-        <button
-          type="button"
-          onClick={() => {
-            playBlipSound();
-            if (onNavigateHome) onNavigateHome();
-          }}
-          aria-label="Torna alla home di Brainrot Labs"
-          className="flex items-center gap-3 cursor-pointer group relative"
-        >
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 2.0, ease: "linear" }}
-            className="relative"
+        <div className="flex items-center justify-between gap-4 px-4 py-4 md:px-6">
+          <button
+            type="button"
+            onClick={() => {
+              playBlipSound();
+              onNavigateHome?.();
+            }}
+            aria-label="Torna alla home di Brainrot Labs"
+            className="group flex shrink-0 items-center gap-3 overflow-visible pr-1"
           >
-            <Zap className="w-8 h-8 md:w-10 md:h-10 text-black fill-black" />
-          </motion.div>
-          
-          <div className="flex flex-col items-start">
-            <motion.h1 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 2.0, ease: "linear" }}
-              className="text-3xl md:text-5xl font-black tracking-tighter flex leading-none text-black uppercase italic"
-            >
-              BRAINROT LABS
-            </motion.h1>
-          </div>
-        </button>
-
-        {/* Desktop Search */}
-        <div className="hidden xl:flex flex-1 max-w-lg mx-12">
-          <div className="relative w-full group">
-            <input
-              type="text"
-              placeholder="CERCA NEL CATALOGO..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery?.(e.target.value)}
-              aria-label="Cerca prodotti e design community"
-              className="w-full p-3 md:p-4 bg-white border-4 md:border-8 border-black font-mono text-base placeholder:text-black/40 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] md:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] group-hover:shadow-none group-hover:translate-x-1 group-hover:translate-y-1 focus:outline-none focus:ring-4 focus:ring-black focus:ring-offset-2 transition-all"
-            />
-            <div className="absolute right-6 top-1/2 -translate-y-1/2 flex items-center gap-3">
-              <span className="text-[10px] font-mono text-gray-400 hidden group-focus-within:inline animate-pulse">SEARCHING...</span>
-              <Search className="w-6 h-6 text-black" />
+            <div className="flex h-12 w-12 items-center justify-center border-4 border-black bg-yellow-400 shadow-[4px_4px_0_0_rgba(0,0,0,1)] transition-all group-hover:translate-x-1 group-hover:translate-y-1 group-hover:shadow-none">
+              <Zap className="h-6 w-6 fill-black text-black" />
             </div>
-          </div>
-        </div>
+            <h1 className="whitespace-nowrap pr-1 font-display text-[1.9rem] font-black uppercase leading-none tracking-[-0.045em] md:text-[2.85rem]">
+              Brainrot Labs
+            </h1>
+          </button>
 
-        <div className="flex gap-3 md:gap-6 items-center">
-          <motion.button 
-            whileHover={{ scale: 1.05, y: -2 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={handleSearchToggle}
-            aria-label="Apri ricerca"
-            className="xl:hidden p-2 md:p-3 border-4 border-black bg-white hover:bg-black hover:text-white transition-colors shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] focus:outline-none focus:ring-4 focus:ring-offset-2"
-          >
-            <Search className="w-5 h-5 md:w-6 md:h-6" />
-          </motion.button>
-          
-          {onOpenCommunity && (
-            <motion.button 
-              whileHover={{ scale: 1.05, y: -2 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => { playBlipSound(); onOpenCommunity(); }}
-              className="hidden md:flex items-center gap-2 px-4 md:px-6 py-2 md:py-3 border-4 border-black bg-cyan-400 text-black font-display uppercase text-sm md:text-lg italic hover:bg-black hover:text-cyan-400 transition-colors shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] md:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-1 hover:translate-y-1 focus:outline-none focus:ring-4 focus:ring-offset-2"
+          <div className="hidden xl:flex flex-1 max-w-xl px-8">
+            <label className="relative block w-full">
+              <span className="sr-only">Cerca catalogo e archivio digitale</span>
+              <input
+                type="search"
+                placeholder="CERCA PRODOTTI, CREATOR E DESIGN..."
+                value={searchQuery}
+                onChange={(event) => setSearchQuery?.(event.target.value)}
+                className="w-full border-4 border-black bg-[#f5f1e8] py-3 pl-4 pr-14 font-mono text-sm font-bold uppercase tracking-[0.08em] shadow-[6px_6px_0_0_rgba(0,0,0,1)] focus:outline-none focus:ring-4 focus:ring-offset-2"
+              />
+              <Search className="absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-black" />
+            </label>
+          </div>
+
+          <div className="flex items-center gap-2 md:gap-3">
+            <button
+              onClick={focusSearch}
+              aria-label="Apri ricerca"
+              className="xl:hidden border-4 border-black bg-white p-3 shadow-[4px_4px_0_0_rgba(0,0,0,1)] transition-all hover:translate-x-1 hover:translate-y-1 hover:bg-black hover:text-white hover:shadow-none"
             >
-              COMMUNITY
-            </motion.button>
-          )}
-          
-          {onOpenCustomizer && (
-            <motion.button 
-              whileHover={{ scale: 1.05, y: -2 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => { playBlipSound(); onOpenCustomizer(); }}
-              className="hidden md:flex items-center gap-2 px-4 md:px-6 py-2 md:py-3 border-4 border-black bg-pink-500 text-black font-display uppercase text-sm md:text-lg italic hover:bg-black hover:text-pink-500 transition-colors shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] md:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-1 hover:translate-y-1 focus:outline-none focus:ring-4 focus:ring-offset-2"
-            >
-              <Wand2 className="w-4 h-4 md:w-5 md:h-5" />
-              CREA
-            </motion.button>
-          )}
+              <Search className="h-5 w-5" />
+            </button>
 
-          <motion.button 
-            whileHover={{ scale: 1.05, y: -2 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => handleMenuToggle(true)} 
-            aria-label="Apri menu di navigazione"
-            className="p-2 md:p-3 border-4 border-black bg-white hover:bg-black hover:text-white transition-colors shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] focus:outline-none focus:ring-4 focus:ring-offset-2"
-          >
-            <Menu className="w-5 h-5 md:w-6 md:h-6" />
-          </motion.button>
-          
-          <div className="hidden lg:flex items-center gap-4">
-            {user ? (
-              <div className="flex gap-2">
-                {onOpenProfile && (
-                  <motion.button 
-                    whileHover={{ scale: 1.05, y: -2 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => { playBlipSound(); onOpenProfile(); }}
-                    aria-label="Apri profilo"
-                    className="flex items-center gap-2 p-2 md:p-3 border-4 border-black bg-white hover:bg-black hover:text-white transition-colors shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] focus:outline-none focus:ring-4 focus:ring-offset-2"
-                    title="Il Mio Profilo"
-                  >
-                    <User className="w-5 h-5 md:w-6 md:h-6" />
-                  </motion.button>
-                )}
-                <motion.button 
-                  whileHover={{ scale: 1.05, y: -2 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => { playBlipSound(); logout(); }}
-                  aria-label="Esci dall'account"
-                  className="flex items-center gap-2 p-2 md:p-3 border-4 border-black bg-red-500 hover:bg-black hover:text-red-500 transition-colors shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] focus:outline-none focus:ring-4 focus:ring-offset-2"
-                  title="Logout"
-                >
-                  <LogOut className="w-5 h-5 md:w-6 md:h-6" />
-                </motion.button>
-              </div>
-            ) : (
-              <motion.button 
-                whileHover={{ scale: 1.05, y: -2 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => { playBlipSound(); onOpenProfile?.(); }}
-                aria-label="Accedi all'account"
-                className="flex items-center gap-2 p-2 md:p-3 border-4 border-black bg-green-500 hover:bg-black hover:text-green-500 transition-colors shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] focus:outline-none focus:ring-4 focus:ring-offset-2"
-                title="Account"
-              >
-                <User className="w-5 h-5 md:w-6 md:h-6" />
-              </motion.button>
-            )}
-          </div>
-
-          <motion.button 
-            whileHover={{ scale: 1.05, y: -2 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={handleCartOpen}
-            aria-label="Apri carrello"
-            className="relative p-2 md:p-3 border-4 border-black bg-yellow-400 hover:bg-black hover:text-yellow-400 transition-colors shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] focus:outline-none focus:ring-4 focus:ring-offset-2"
-          >
-            <ShoppingCart className="w-5 h-5 md:w-6 md:h-6" />
-            {itemCount > 0 && (
-              <motion.span 
-                initial={{ scale: 0, rotate: -20 }} 
-                animate={{ scale: 1, rotate: 0 }}
-                className="absolute -top-2 -right-2 bg-red-600 text-white text-xs font-black px-2 py-0.5 border-2 border-black shadow-[2px_2px_0_0_rgba(0,0,0,1)] italic uppercase tracking-tighter"
-              >
-                {itemCount}
-              </motion.span>
-            )}
-          </motion.button>
-        </div>
-      </motion.header>
-
-      <motion.div 
-        variants={{ visible: { y: 0 }, hidden: { y: -200 } }}
-        animate={isHidden ? "hidden" : "visible"}
-        transition={{ duration: 0.3, ease: "easeInOut" }}
-        className="sticky top-[84px] z-30 border-b-4 border-black bg-yellow-400 px-4 py-3 shadow-[0_8px_0_0_rgba(0,0,0,1)] md:hidden"
-      >
-        <div className="mx-auto max-w-7xl space-y-3">
-          <label htmlFor="mobile-site-search" className="sr-only">
-            Cerca prodotti e design community
-          </label>
-          <div className="relative">
-            <input
-              id="mobile-site-search"
-              ref={mobileSearchRef}
-              type="search"
-              placeholder="CERCA PRODOTTI, MEME E DESIGN..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery?.(e.target.value)}
-              aria-label="Cerca prodotti e design community"
-              className="w-full border-4 border-black bg-white py-3 pl-4 pr-12 font-mono text-sm shadow-[6px_6px_0_0_rgba(0,0,0,1)] focus:outline-none focus:ring-4 focus:ring-offset-2"
-            />
-            <Search className="absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-black" />
-          </div>
-
-          <div className="flex gap-2 overflow-x-auto pb-1 md:hidden">
             {onOpenCommunity && (
               <button
-                onClick={() => { playBlipSound(); onOpenCommunity(); }}
-                aria-label="Apri la community"
-                className="shrink-0 border-4 border-black bg-cyan-400 px-4 py-2 font-black uppercase shadow-[4px_4px_0_0_rgba(0,0,0,1)]"
+                onClick={() => {
+                  playBlipSound();
+                  onOpenCommunity();
+                }}
+                className={getSiteCtaClasses('archive', 'md', desktopActionButton)}
               >
-                Community
+                <Archive className="h-4 w-4" />
+                Archivio Digitale
+              </button>
+            )}
+
+            {onOpenCustomizer && (
+              <button
+                onClick={() => {
+                  playBlipSound();
+                  onOpenCustomizer();
+                }}
+                className={getSiteCtaClasses('create', 'md', desktopActionButton)}
+              >
+                <Wand2 className="h-4 w-4" />
+                Crea il tuo design
+              </button>
+            )}
+
+            {onOpenProfile && (
+              <button
+                onClick={() => {
+                  playBlipSound();
+                  onOpenProfile();
+                }}
+                aria-label={user ? 'Apri account dashboard' : 'Apri login account'}
+                className={desktopAccountButton}
+              >
+                <User className="h-4 w-4" />
+                {user ? 'Account' : 'Accedi'}
+              </button>
+            )}
+
+            <button
+              onClick={openCart}
+              aria-label="Apri carrello"
+              className="relative border-4 border-black bg-yellow-400 p-3 shadow-[4px_4px_0_0_rgba(0,0,0,1)] transition-all hover:translate-x-1 hover:translate-y-1 hover:bg-black hover:text-yellow-400 hover:shadow-none"
+            >
+              <ShoppingCart className="h-5 w-5" />
+              {itemCount > 0 && (
+                <span className="absolute -right-2 -top-2 min-w-7 border-2 border-black bg-red-600 px-1.5 py-0.5 text-center font-mono text-[10px] font-black text-white">
+                  {itemCount}
+                </span>
+              )}
+            </button>
+
+            <button
+              onClick={openMenu}
+              aria-label="Apri menu"
+              className="border-4 border-black bg-white p-3 shadow-[4px_4px_0_0_rgba(0,0,0,1)] transition-all hover:translate-x-1 hover:translate-y-1 hover:bg-black hover:text-white hover:shadow-none"
+            >
+              <Menu className="h-5 w-5" />
+            </button>
+          </div>
+        </div>
+
+      </motion.header>
+
+      <motion.div
+        variants={{ visible: { y: 0 }, hidden: { y: -120 } }}
+        animate={isHidden ? 'hidden' : 'visible'}
+        transition={{ duration: 0.28, ease: 'easeInOut' }}
+        className="sticky top-[112px] z-30 border-b-4 border-black bg-[#f5f1e8] px-4 py-3 md:hidden"
+      >
+        <div className="space-y-3">
+          <label className="relative block">
+            <span className="sr-only">Cerca catalogo e archivio digitale</span>
+            <input
+              ref={mobileSearchRef}
+              type="search"
+              placeholder="CERCA PRODOTTI, CREATOR E DESIGN..."
+              value={searchQuery}
+              onChange={(event) => setSearchQuery?.(event.target.value)}
+              className="w-full border-4 border-black bg-white py-3 pl-4 pr-12 font-mono text-sm font-bold uppercase shadow-[4px_4px_0_0_rgba(0,0,0,1)] focus:outline-none focus:ring-4 focus:ring-offset-2"
+            />
+            <Search className="absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-black" />
+          </label>
+
+          <div className="flex gap-2 overflow-x-auto pb-1">
+            <button
+              onClick={() => {
+                playBlipSound();
+                onNavigateHome?.();
+              }}
+              className={mobileSecondaryButton}
+            >
+              <LayoutGrid className="h-4 w-4" />
+              Shop
+            </button>
+            {onOpenCommunity && (
+              <button
+                onClick={() => {
+                  playBlipSound();
+                  onOpenCommunity();
+                }}
+                className={getSiteCtaClasses('archive', 'sm', mobileActionButton)}
+              >
+                Archivio Digitale
               </button>
             )}
             {onOpenCustomizer && (
               <button
-                onClick={() => { playBlipSound(); onOpenCustomizer(); }}
-                aria-label="Apri il customizer"
-                className="shrink-0 border-4 border-black bg-pink-500 px-4 py-2 font-black uppercase text-black shadow-[4px_4px_0_0_rgba(0,0,0,1)]"
+                onClick={() => {
+                  playBlipSound();
+                  onOpenCustomizer();
+                }}
+                className={getSiteCtaClasses('create', 'sm', mobileActionButton)}
               >
-                Crea
+                Crea il tuo design
               </button>
             )}
             {onOpenProfile && (
               <button
-                onClick={() => { playBlipSound(); onOpenProfile(); }}
-                aria-label={user ? "Apri il profilo" : "Apri il login account"}
-                className="shrink-0 border-4 border-black bg-white px-4 py-2 font-black uppercase shadow-[4px_4px_0_0_rgba(0,0,0,1)]"
+                onClick={() => {
+                  playBlipSound();
+                  onOpenProfile();
+                }}
+                className={mobileAccountButton}
               >
-                {user ? 'Profilo' : 'Accedi'}
+                {user ? 'Account' : 'Accedi'}
               </button>
             )}
           </div>
@@ -275,68 +255,116 @@ export default function Header({ onOpenCustomizer, onNavigateHome, searchQuery, 
 
       <AnimatePresence>
         {isMenuOpen && (
-          <motion.div 
-            initial={{ opacity: 0 }} 
-            animate={{ opacity: 1 }} 
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-black/50"
-            onClick={() => setIsMenuOpen(false)}
+            className="fixed inset-0 z-50 bg-black/55"
+            onClick={closeMenu}
           >
-            <motion.div 
-              initial={{ y: '100%' }} 
-              animate={{ y: 0 }} 
+            <motion.div
+              initial={{ y: '100%' }}
+              animate={{ y: 0 }}
               exit={{ y: '100%' }}
-              transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              className="fixed bottom-0 left-0 right-0 bg-white border-t-4 border-black p-6"
-              onClick={(e) => e.stopPropagation()}
+              transition={{ type: 'spring', damping: 24, stiffness: 260 }}
+              className="fixed bottom-0 left-0 right-0 border-t-8 border-black bg-white p-6"
+              onClick={(event) => event.stopPropagation()}
             >
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-black uppercase">DOVE VUOI ANDARE?</h2>
-                <button onClick={() => setIsMenuOpen(false)} aria-label="Chiudi menu" className="p-2 border-2 border-black bg-yellow-400 hover:bg-black hover:text-white transition-colors">
-                  <X className="w-6 h-6" />
+              <div className="flex items-center justify-between gap-4">
+                <div>
+                  <p className="font-mono text-[10px] font-black uppercase tracking-[0.25em] text-gray-500">Navigation</p>
+                  <h2 className="text-3xl font-black uppercase tracking-[-0.06em]">Muoviti nel sistema</h2>
+                </div>
+                <button
+                  onClick={closeMenu}
+                  aria-label="Chiudi menu"
+                  className="border-4 border-black bg-white p-3 shadow-[4px_4px_0_0_rgba(0,0,0,1)] transition-all hover:translate-x-1 hover:translate-y-1 hover:bg-black hover:text-white hover:shadow-none"
+                >
+                  <X className="h-5 w-5" />
                 </button>
               </div>
-              
-              <nav className="grid grid-cols-1 gap-3">
+
+              <div className="mt-6 grid gap-3">
+                <button
+                  onClick={() => {
+                    closeMenu();
+                    onNavigateHome?.();
+                  }}
+                  className="flex items-center justify-between border-4 border-black bg-white px-5 py-4 text-left font-black uppercase shadow-[6px_6px_0_0_rgba(0,0,0,1)] transition-all hover:translate-x-1 hover:translate-y-1 hover:bg-black hover:text-white hover:shadow-none"
+                >
+                  <span>Shop</span>
+                  <LayoutGrid className="h-4 w-4" />
+                </button>
+
                 {onOpenCommunity && (
                   <button
-                    onClick={() => { setIsMenuOpen(false); onOpenCommunity(); }}
-                    className="flex items-center justify-center gap-3 text-lg font-black uppercase border-2 border-black bg-cyan-400 p-4 hover:bg-black hover:text-cyan-400 transition-all"
+                    onClick={() => {
+                      closeMenu();
+                      onOpenCommunity();
+                    }}
+                    className={getSiteCtaClasses('archive', 'md', 'w-full justify-between text-left')}
                   >
-                    COMMUNITY
+                    <span>Archivio Digitale</span>
+                    <Archive className="h-4 w-4" />
                   </button>
                 )}
+
                 {onOpenCustomizer && (
                   <button
-                    onClick={() => { setIsMenuOpen(false); onOpenCustomizer(); }}
-                    className="flex items-center justify-center gap-3 text-lg font-black uppercase border-2 border-black bg-pink-400 p-4 hover:bg-black hover:text-pink-400 transition-all"
+                    onClick={() => {
+                      closeMenu();
+                      onOpenCustomizer();
+                    }}
+                    className={getSiteCtaClasses('create', 'md', 'w-full justify-between text-left')}
                   >
-                    <Wand2 className="w-6 h-6" />
-                    CREA IL TUO DESIGN
+                    <span>Crea il tuo design</span>
+                    <Wand2 className="h-4 w-4" />
                   </button>
                 )}
-                {menuItems.map((item) => (
-                  <a
-                    key={item.href}
-                    href={item.href}
-                    onClick={(_e) => {
-                      setIsMenuOpen(false);
-                      if (onNavigateHome) {
-                        onNavigateHome();
-                        setTimeout(() => {
-                          const element = document.querySelector(item.href);
-                          if (element) {
-                            element.scrollIntoView({ behavior: 'smooth' });
-                          }
-                        }, 100);
-                      }
+
+                {onOpenProfile && (
+                  <button
+                    onClick={() => {
+                      closeMenu();
+                      onOpenProfile();
                     }}
-                    className="text-xl font-black uppercase border-2 border-black bg-white p-4 hover:bg-black hover:text-white transition-all text-center"
+                    className="flex items-center justify-between border-4 border-black bg-black px-5 py-4 text-left font-black uppercase text-white shadow-[6px_6px_0_0_rgba(0,0,0,1)] transition-all hover:translate-x-1 hover:translate-y-1 hover:shadow-none"
                   >
-                    {item.label}
-                  </a>
-                ))}
-              </nav>
+                    <span>{user ? 'Dashboard account' : 'Accedi / crea account'}</span>
+                    <User className="h-4 w-4" />
+                  </button>
+                )}
+
+                <button
+                  onClick={() => {
+                    closeMenu();
+                    setIsCartOpen(true);
+                  }}
+                  className="flex items-center justify-between border-4 border-black bg-yellow-400 px-5 py-4 text-left font-black uppercase shadow-[6px_6px_0_0_rgba(0,0,0,1)] transition-all hover:translate-x-1 hover:translate-y-1 hover:shadow-none"
+                >
+                  <span>Apri carrello</span>
+                  <span className="font-mono text-xs">{itemCount} articoli</span>
+                </button>
+              </div>
+
+              <div className="mt-6 border-4 border-black bg-[#f5f1e8] p-4">
+                <p className="font-mono text-[10px] font-black uppercase tracking-[0.2em] text-gray-500">Stato account</p>
+                <p className="mt-2 text-lg font-black uppercase">
+                  {user ? `Connesso come ${user.email ?? user.displayName ?? 'utente'}` : 'Nessun account attivo'}
+                </p>
+                {user && (
+                  <button
+                    onClick={async () => {
+                      closeMenu();
+                      await logout();
+                    }}
+                    className="mt-4 flex items-center gap-2 border-4 border-black bg-white px-4 py-3 font-black uppercase shadow-[4px_4px_0_0_rgba(0,0,0,1)] transition-all hover:translate-x-1 hover:translate-y-1 hover:bg-red-500 hover:text-white hover:shadow-none"
+                  >
+                    <LogOut className="h-4 w-4" />
+                    Logout
+                  </button>
+                )}
+              </div>
             </motion.div>
           </motion.div>
         )}

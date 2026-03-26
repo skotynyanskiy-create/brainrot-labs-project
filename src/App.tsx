@@ -72,6 +72,7 @@ function AppContent() {
   } = useUI();
 
   const [pendingMeme, setPendingMeme] = useState<{ url: string; name: string } | null>(null);
+  const [pendingBaseProductId, setPendingBaseProductId] = useState<string | null>(null);
 
   const handleNavigateHome = () => {
     setIsCustomizerOpen(false);
@@ -83,11 +84,29 @@ function AppContent() {
     setIsRoyaltyPolicyOpen(false);
     setSelectedProduct(null);
     setPendingMeme(null);
+    setPendingBaseProductId(null);
   };
 
   const handleStartWithMeme = (meme: MemeBase) => {
     playBlipSound();
     setPendingMeme({ url: meme.url, name: meme.name });
+    setPendingBaseProductId(null);
+    setIsCustomizerOpen(true);
+  };
+
+  const handleOpenCustomizerWithMeme = (meme: MemeBase) => {
+    playBlipSound();
+    setPendingMeme({ url: meme.url, name: meme.name });
+    setPendingBaseProductId(null);
+    setIsCommunityOpen(false);
+    setIsCustomizerOpen(true);
+  };
+
+  const handleOpenCustomizerWithProduct = (productId: string) => {
+    playBlipSound();
+    setPendingBaseProductId(productId);
+    setPendingMeme(null);
+    setIsCommunityOpen(false);
     setIsCustomizerOpen(true);
   };
 
@@ -200,8 +219,15 @@ function AppContent() {
           >
             <ErrorBoundary>
               <ProductCustomizer
-                onBack={() => { setIsCustomizerOpen(false); setPendingMeme(null); }}
+                onBack={() => { setIsCustomizerOpen(false); setPendingMeme(null); setPendingBaseProductId(null); }}
                 initialMeme={pendingMeme ?? undefined}
+                initialBaseProductId={pendingBaseProductId ?? undefined}
+                onPublished={() => {
+                  setIsCustomizerOpen(false);
+                  setPendingMeme(null);
+                  setPendingBaseProductId(null);
+                  setIsCommunityOpen(true);
+                }}
               />
             </ErrorBoundary>
           </motion.div>
@@ -218,6 +244,8 @@ function AppContent() {
                 onBack={() => setIsCommunityOpen(false)}
                 onSelectProduct={setSelectedProduct}
                 onOpenCustomizer={() => { setIsCommunityOpen(false); setIsCustomizerOpen(true); }}
+                onOpenCustomizerWithMeme={handleOpenCustomizerWithMeme}
+                onOpenCustomizerWithProduct={handleOpenCustomizerWithProduct}
               />
             </ErrorBoundary>
           </motion.div>
@@ -278,6 +306,8 @@ function AppContent() {
             onOpenTerms={() => { handleNavigateHome(); setIsTermsOpen(true); }}
             onOpenCreatorTerms={() => { handleNavigateHome(); setIsCreatorTermsOpen(true); }}
             onOpenRoyaltyPolicy={() => { handleNavigateHome(); setIsRoyaltyPolicyOpen(true); }}
+            onOpenCustomizer={() => { handleNavigateHome(); setIsCustomizerOpen(true); }}
+            onOpenCommunity={handleOpenCommunity}
           />
           <StickyCTA onOpenCustomizer={() => setIsCustomizerOpen(true)} />
         </motion.div>

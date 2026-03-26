@@ -1,0 +1,770 @@
+- generic [ref=e3]:
+  - generic "Notifiche e Slogan del Brand" [ref=e4]:
+    - generic [ref=e7]:
+      - generic [ref=e8]:
+        - text: IL TUO OUTFIT HA BISOGNO DI AIUTO 🚑
+        - generic [ref=e9]: ✦
+      - generic [ref=e10]:
+        - text: +1000 AURA POINTS ALL'ACQUISTO ✨
+        - generic [ref=e11]: ✦
+      - generic [ref=e12]:
+        - text: SPEDIZIONE GRATIS (FORSE) 📦
+        - generic [ref=e13]: ✦
+      - generic [ref=e14]:
+        - text: DROPPING HEAT OGNI VENERDÌ 🔥
+        - generic [ref=e15]: ✦
+      - generic [ref=e16]:
+        - text: LA TUA BANCA NON APPROVA 💳
+        - generic [ref=e17]: ✦
+      - generic [ref=e18]:
+        - text: VESTITI CHE FANNO PIANGERE I BOOMER 👴
+        - generic [ref=e19]: ✦
+      - generic [ref=e20]:
+        - text: DESIGN RUBATI A CASO 🥷
+        - generic [ref=e21]: ✦
+      - generic [ref=e22]:
+        - text: COMPRA ORA, PENTITI DOMANI 🛒
+        - generic [ref=e23]: ✦
+      - generic [ref=e24]:
+        - text: PROBABILMENTE ANDRÀ SOLD OUT SUBITO ⏳
+        - generic [ref=e25]: ✦
+      - generic [ref=e26]:
+        - text: NON FARLO VEDERE AI TUOI GENITORI 🫣
+        - generic [ref=e27]: ✦
+      - generic [ref=e28]:
+        - text: IL TUO CARRELLO TI STA GIUDICANDO 🤨
+        - generic [ref=e29]: ✦
+      - generic [ref=e30]:
+        - text: SEGUI L'HYPE, PERDI I SOLDI 💰
+        - generic [ref=e31]: ✦
+      - generic [ref=e32]:
+        - text: METTI NEL CARRELLO, NON FARE IL POVERO 💳
+        - generic [ref=e33]: ✦
+      - generic [ref=e34]:
+        - text: OTTIMO PER DELUDERE LA TUA FAMIGLIA 🏆
+        - generic [ref=e35]: ✦
+      - generic [ref=e36]:
+        - text: NESSUN SUPPORTO CLIENTI, ARRANGIATI 📞
+        - generic [ref=e37]: ✦
+      - generic [ref=e38]:
+        - text: LA SPEDIZIONE È LENTA, ABITUATICI 🐢
+        - generic [ref=e39]: ✦
+      - generic [ref=e40]:
+        - text: IL TUO OUTFIT HA BISOGNO DI AIUTO 🚑
+        - generic [ref=e41]: ✦
+      - generic [ref=e42]:
+        - text: +1000 AURA POINTS ALL'ACQUISTO ✨
+        - generic [ref=e43]: ✦
+      - generic [ref=e44]:
+        - text: SPEDIZIONE GRATIS (FORSE) 📦
+        - generic [ref=e45]: ✦
+      - generic [ref=e46]:
+        - text: DROPPING HEAT OGNI VENERDÌ 🔥
+        - generic [ref=e47]: ✦
+      - generic [ref=e48]:
+        - text: LA TUA BANCA NON APPROVA 💳
+        - generic [ref=e49]: ✦
+      - generic [ref=e50]:
+        - text: VESTITI CHE FANNO PIANGERE I BOOMER 👴
+        - generic [ref=e51]: ✦
+      - generic [ref=e52]:
+        - text: DESIGN RUBATI A CASO 🥷
+        - generic [ref=e53]: ✦
+      - generic [ref=e54]:
+        - text: COMPRA ORA, PENTITI DOMANI 🛒
+        - generic [ref=e55]: ✦
+      - generic [ref=e56]:
+        - text: PROBABILMENTE ANDRÀ SOLD OUT SUBITO ⏳
+        - generic [ref=e57]: ✦
+      - generic [ref=e58]:
+        - text: NON FARLO VEDERE AI TUOI GENITORI 🫣
+        - generic [ref=e59]: ✦
+      - generic [ref=e60]:
+        - text: IL TUO CARRELLO TI STA GIUDICANDO 🤨
+        - generic [ref=e61]: ✦
+      - generic [ref=e62]:
+        - text: SEGUI L'HYPE, PERDI I SOLDI 💰
+        - generic [ref=e63]: ✦
+      - generic [ref=e64]:
+        - text: METTI NEL CARRELLO, NON FARE IL POVERO 💳
+        - generic [ref=e65]: ✦
+      - generic [ref=e66]:
+        - text: OTTIMO PER DELUDERE LA TUA FAMIGLIA 🏆
+        - generic [ref=e67]: ✦
+      - generic [ref=e68]:
+        - text: NESSUN SUPPORTO CLIENTI, ARRANGIATI 📞
+        - generic [ref=e69]: ✦
+      - generic [ref=e70]:
+        - text: LA SPEDIZIONE È LENTA, ABITUATICI 🐢
+        - generic [ref=e71]: ✦
+      - generic [ref=e72]:
+        - text: IL TUO OUTFIT HA BISOGNO DI AIUTO 🚑
+        - generic [ref=e73]: ✦
+      - generic [ref=e74]:
+        - text: +1000 AURA POINTS ALL'ACQUISTO ✨
+        - generic [ref=e75]: ✦
+      - generic [ref=e76]:
+        - text: SPEDIZIONE GRATIS (FORSE) 📦
+        - generic [ref=e77]: ✦
+      - generic [ref=e78]:
+        - text: DROPPING HEAT OGNI VENERDÌ 🔥
+        - generic [ref=e79]: ✦
+      - generic [ref=e80]:
+        - text: LA TUA BANCA NON APPROVA 💳
+        - generic [ref=e81]: ✦
+      - generic [ref=e82]:
+        - text: VESTITI CHE FANNO PIANGERE I BOOMER 👴
+        - generic [ref=e83]: ✦
+      - generic [ref=e84]:
+        - text: DESIGN RUBATI A CASO 🥷
+        - generic [ref=e85]: ✦
+      - generic [ref=e86]:
+        - text: COMPRA ORA, PENTITI DOMANI 🛒
+        - generic [ref=e87]: ✦
+      - generic [ref=e88]:
+        - text: PROBABILMENTE ANDRÀ SOLD OUT SUBITO ⏳
+        - generic [ref=e89]: ✦
+      - generic [ref=e90]:
+        - text: NON FARLO VEDERE AI TUOI GENITORI 🫣
+        - generic [ref=e91]: ✦
+      - generic [ref=e92]:
+        - text: IL TUO CARRELLO TI STA GIUDICANDO 🤨
+        - generic [ref=e93]: ✦
+      - generic [ref=e94]:
+        - text: SEGUI L'HYPE, PERDI I SOLDI 💰
+        - generic [ref=e95]: ✦
+      - generic [ref=e96]:
+        - text: METTI NEL CARRELLO, NON FARE IL POVERO 💳
+        - generic [ref=e97]: ✦
+      - generic [ref=e98]:
+        - text: OTTIMO PER DELUDERE LA TUA FAMIGLIA 🏆
+        - generic [ref=e99]: ✦
+      - generic [ref=e100]:
+        - text: NESSUN SUPPORTO CLIENTI, ARRANGIATI 📞
+        - generic [ref=e101]: ✦
+      - generic [ref=e102]:
+        - text: LA SPEDIZIONE È LENTA, ABITUATICI 🐢
+        - generic [ref=e103]: ✦
+    - generic [ref=e106]:
+      - generic [ref=e107]:
+        - generic [ref=e108]: ✦
+        - text: LIVELLO DI RIZZ INACCETTABILE 📈
+      - generic [ref=e109]:
+        - generic [ref=e110]: ✦
+        - text: 100% REAL NO CAP 🧢
+      - generic [ref=e111]:
+        - generic [ref=e112]: ✦
+        - text: MEWING DAL 2004 🗿
+      - generic [ref=e113]:
+        - generic [ref=e114]: ✦
+        - text: NON SEI PRONTO PER QUESTO DRIP 💧
+      - generic [ref=e115]:
+        - generic [ref=e116]: ✦
+        - text: HAUTE COUTURE PER DISADATTATI 👽
+      - generic [ref=e117]:
+        - generic [ref=e118]: ✦
+        - text: QUESTA È LETTERALMENTE ARTE 🖼️
+      - generic [ref=e119]:
+        - generic [ref=e120]: ✦
+        - text: TROPPO COSTOSO PER TE 💸
+      - generic [ref=e121]:
+        - generic [ref=e122]: ✦
+        - text: NON CHIEDERE PERCHÉ 🤫
+      - generic [ref=e123]:
+        - generic [ref=e124]: ✦
+        - text: SKIBIDI TOILET APPROVED 🚽
+      - generic [ref=e125]:
+        - generic [ref=e126]: ✦
+        - text: TOCCARE L'ERBA È SOPRAVVALUTATO 🌿
+      - generic [ref=e127]:
+        - generic [ref=e128]: ✦
+        - text: SIAMO TUTTI NPC IN REALTÀ 🤖
+      - generic [ref=e129]:
+        - generic [ref=e130]: ✦
+        - text: ONLY W, MAI L 👑
+      - generic [ref=e131]:
+        - generic [ref=e132]: ✦
+        - text: IL TUO FIT È UN CRIMINE DI GUERRA 🚨
+      - generic [ref=e133]:
+        - generic [ref=e134]: ✦
+        - text: IL BRO CUCINA MA NESSUNO HA FAME 🍳
+      - generic [ref=e135]:
+        - generic [ref=e136]: ✦
+        - text: BASEATO E ROSSOPILOLATO 💊
+      - generic [ref=e137]:
+        - generic [ref=e138]: ✦
+        - text: HO CREATO QUESTO BRAND SU DISCORD 🎧
+      - generic [ref=e139]:
+        - generic [ref=e140]: ✦
+        - text: LIVELLO DI RIZZ INACCETTABILE 📈
+      - generic [ref=e141]:
+        - generic [ref=e142]: ✦
+        - text: 100% REAL NO CAP 🧢
+      - generic [ref=e143]:
+        - generic [ref=e144]: ✦
+        - text: MEWING DAL 2004 🗿
+      - generic [ref=e145]:
+        - generic [ref=e146]: ✦
+        - text: NON SEI PRONTO PER QUESTO DRIP 💧
+      - generic [ref=e147]:
+        - generic [ref=e148]: ✦
+        - text: HAUTE COUTURE PER DISADATTATI 👽
+      - generic [ref=e149]:
+        - generic [ref=e150]: ✦
+        - text: QUESTA È LETTERALMENTE ARTE 🖼️
+      - generic [ref=e151]:
+        - generic [ref=e152]: ✦
+        - text: TROPPO COSTOSO PER TE 💸
+      - generic [ref=e153]:
+        - generic [ref=e154]: ✦
+        - text: NON CHIEDERE PERCHÉ 🤫
+      - generic [ref=e155]:
+        - generic [ref=e156]: ✦
+        - text: SKIBIDI TOILET APPROVED 🚽
+      - generic [ref=e157]:
+        - generic [ref=e158]: ✦
+        - text: TOCCARE L'ERBA È SOPRAVVALUTATO 🌿
+      - generic [ref=e159]:
+        - generic [ref=e160]: ✦
+        - text: SIAMO TUTTI NPC IN REALTÀ 🤖
+      - generic [ref=e161]:
+        - generic [ref=e162]: ✦
+        - text: ONLY W, MAI L 👑
+      - generic [ref=e163]:
+        - generic [ref=e164]: ✦
+        - text: IL TUO FIT È UN CRIMINE DI GUERRA 🚨
+      - generic [ref=e165]:
+        - generic [ref=e166]: ✦
+        - text: IL BRO CUCINA MA NESSUNO HA FAME 🍳
+      - generic [ref=e167]:
+        - generic [ref=e168]: ✦
+        - text: BASEATO E ROSSOPILOLATO 💊
+      - generic [ref=e169]:
+        - generic [ref=e170]: ✦
+        - text: HO CREATO QUESTO BRAND SU DISCORD 🎧
+      - generic [ref=e171]:
+        - generic [ref=e172]: ✦
+        - text: LIVELLO DI RIZZ INACCETTABILE 📈
+      - generic [ref=e173]:
+        - generic [ref=e174]: ✦
+        - text: 100% REAL NO CAP 🧢
+      - generic [ref=e175]:
+        - generic [ref=e176]: ✦
+        - text: MEWING DAL 2004 🗿
+      - generic [ref=e177]:
+        - generic [ref=e178]: ✦
+        - text: NON SEI PRONTO PER QUESTO DRIP 💧
+      - generic [ref=e179]:
+        - generic [ref=e180]: ✦
+        - text: HAUTE COUTURE PER DISADATTATI 👽
+      - generic [ref=e181]:
+        - generic [ref=e182]: ✦
+        - text: QUESTA È LETTERALMENTE ARTE 🖼️
+      - generic [ref=e183]:
+        - generic [ref=e184]: ✦
+        - text: TROPPO COSTOSO PER TE 💸
+      - generic [ref=e185]:
+        - generic [ref=e186]: ✦
+        - text: NON CHIEDERE PERCHÉ 🤫
+      - generic [ref=e187]:
+        - generic [ref=e188]: ✦
+        - text: SKIBIDI TOILET APPROVED 🚽
+      - generic [ref=e189]:
+        - generic [ref=e190]: ✦
+        - text: TOCCARE L'ERBA È SOPRAVVALUTATO 🌿
+      - generic [ref=e191]:
+        - generic [ref=e192]: ✦
+        - text: SIAMO TUTTI NPC IN REALTÀ 🤖
+      - generic [ref=e193]:
+        - generic [ref=e194]: ✦
+        - text: ONLY W, MAI L 👑
+      - generic [ref=e195]:
+        - generic [ref=e196]: ✦
+        - text: IL TUO FIT È UN CRIMINE DI GUERRA 🚨
+      - generic [ref=e197]:
+        - generic [ref=e198]: ✦
+        - text: IL BRO CUCINA MA NESSUNO HA FAME 🍳
+      - generic [ref=e199]:
+        - generic [ref=e200]: ✦
+        - text: BASEATO E ROSSOPILOLATO 💊
+      - generic [ref=e201]:
+        - generic [ref=e202]: ✦
+        - text: HO CREATO QUESTO BRAND SU DISCORD 🎧
+  - banner [ref=e203]:
+    - generic [ref=e204]:
+      - button "Torna alla home di Brainrot Labs" [ref=e205]:
+        - img [ref=e207]
+        - generic [ref=e209]:
+          - paragraph [ref=e210]: Brainrot Labs
+          - heading "Shop + Community" [level=1] [ref=e211]
+      - generic [ref=e213]:
+        - generic [ref=e214]: Cerca catalogo e community
+        - searchbox "Cerca catalogo e community" [ref=e215]
+        - img [ref=e216]
+      - generic [ref=e219]:
+        - button "Community" [ref=e220]:
+          - img [ref=e221]
+          - text: Community
+        - button "Crea" [ref=e226]:
+          - img [ref=e227]
+          - text: Crea
+        - button "Apri login account" [ref=e230]:
+          - img [ref=e231]
+          - text: Accedi
+        - button "Apri carrello" [ref=e234]:
+          - img [ref=e235]
+        - button "Apri menu" [ref=e239]:
+          - img [ref=e240]
+    - generic [ref=e241]: Catalogo curato, design salvati prima del checkout, ordini e tracking nel tuo account.
+  - generic [ref=e242]:
+    - generic [ref=e245]:
+      - generic [ref=e246]:
+        - heading "IL TUO OUTFIT E UN MEME" [level=1] [ref=e247]:
+          - text: IL TUO OUTFIT
+          - generic [ref=e248]: E UN MEME
+        - paragraph [ref=e249]: Crea un design con AI o basi curate, controllalo in anteprima 3D e trasformalo in un prodotto fisico pronto per il checkout o per la community.
+        - generic [ref=e250]:
+          - button "Apri Customizer" [ref=e251]:
+            - img [ref=e252]
+            - text: Apri Customizer
+          - button "Esplora Community" [ref=e255]:
+            - img [ref=e256]
+            - text: Esplora Community
+        - generic [ref=e261]:
+          - generic [ref=e263]:
+            - img [ref=e265]
+            - generic [ref=e268]: Genera AI
+          - generic [ref=e271]:
+            - img [ref=e273]
+            - generic [ref=e275]: Personalizza
+          - generic [ref=e278]:
+            - img [ref=e280]
+            - generic [ref=e283]: Ordina
+        - generic [ref=e284]:
+          - generic [ref=e286]:
+            - generic [ref=e287]: "-"
+            - generic [ref=e288]: prodotti base
+          - generic [ref=e291]:
+            - generic [ref=e292]: "-"
+            - generic [ref=e293]: basi curate
+          - generic [ref=e296]:
+            - generic [ref=e297]: "-"
+            - generic [ref=e298]: royalty creator
+      - generic [ref=e299]:
+        - generic:
+          - generic: •
+          - generic: Trascina per ruotare
+    - generic [ref=e309]:
+      - generic [ref=e311]:
+        - generic [ref=e312]: MAIN QUEST
+        - heading "COME FUNZIONA" [level=2] [ref=e313]:
+          - text: COME
+          - generic [ref=e314]: FUNZIONA
+      - generic [ref=e315]:
+        - generic [ref=e317]:
+          - img [ref=e319]
+          - generic [ref=e322]:
+            - generic [ref=e323]:
+              - generic [ref=e324]: "01"
+              - generic [ref=e325]: TUTORIAL STAGE
+            - heading "Scegli il supporto" [level=3] [ref=e326]
+            - paragraph [ref=e327]: Parti da uno dei prodotti base disponibili nel customizer e definisci subito formato, colore e destinazione del design.
+          - img [ref=e329]
+        - generic [ref=e331]:
+          - img [ref=e333]
+          - generic [ref=e336]:
+            - generic [ref=e337]:
+              - generic [ref=e338]: "02"
+              - generic [ref=e339]: AI POWERED
+            - heading "Costruisci il design" [level=3] [ref=e340]
+            - paragraph [ref=e341]: Usa una base meme, genera una variante con AI oppure combina testo, sticker e upload manuali nello stesso editor.
+          - img [ref=e343]
+        - generic [ref=e345]:
+          - img [ref=e347]
+          - generic [ref=e350]:
+            - generic [ref=e351]:
+              - generic [ref=e352]: "03"
+              - generic [ref=e353]: REALITY CHECK
+            - heading "Controlla la preview" [level=3] [ref=e354]
+            - paragraph [ref=e355]: Verifica la resa in 2D e 3D prima di acquistare, cosi il contenuto che vedi resta coerente con il prodotto finale.
+          - img [ref=e357]
+        - generic [ref=e359]:
+          - img [ref=e361]
+          - generic [ref=e363]:
+            - generic [ref=e364]:
+              - generic [ref=e365]: "04"
+              - generic [ref=e366]: PRINT ON DEMAND
+            - heading "Acquista il prodotto" [level=3] [ref=e367]
+            - paragraph [ref=e368]: Conferma taglia, colore e quantità. Il prodotto entra nel flusso di stampa on-demand e parte con tracking dedicato.
+          - img [ref=e370]
+        - generic [ref=e372]:
+          - generic [ref=e373]:
+            - img [ref=e374]
+            - generic [ref=e377]: ★
+          - generic [ref=e378]:
+            - generic [ref=e379]:
+              - generic [ref=e380]: "05"
+              - generic [ref=e381]: 6.9% ROYALTY
+            - heading "Pubblica e monetizza" [level=3] [ref=e382]
+            - paragraph [ref=e383]: Se rendi pubblico il design, può entrare nella community e generare il 6.9% di royalty su ogni vendita successiva.
+      - generic [ref=e384]:
+        - generic [ref=e385]:
+          - generic [ref=e386]:
+            - img [ref=e387]
+            - generic [ref=e390]: CREATOR ECONOMY
+          - heading "Ogni vendita del tuo design = 6.9% nelle tue tasche" [level=3] [ref=e391]:
+            - text: Ogni vendita del tuo design
+            - generic [ref=e392]: = 6.9% nelle tue tasche
+          - paragraph [ref=e393]: Pubblica un design solo quando è davvero pronto. Se altri utenti lo acquistano dalla community, il sistema registra automaticamente le tue royalty.
+        - button "APRI IL CUSTOMIZER" [ref=e394]:
+          - img [ref=e395]
+          - text: APRI IL CUSTOMIZER
+    - generic [ref=e398]:
+      - generic:
+        - generic: MEME MEME MEME
+      - generic [ref=e399]:
+        - generic [ref=e400]:
+          - generic [ref=e401]: BASI PIU USATE
+          - button "CREA LIBERO" [ref=e402]:
+            - img [ref=e403]
+            - text: CREA LIBERO
+        - generic [ref=e406]:
+          - generic [ref=e407]:
+            - generic [ref=e408]:
+              - img "Drake Approve" [ref=e409]
+              - generic [ref=e410]: USATO 847x
+              - generic [ref=e411]: reaction
+              - generic [ref=e413]:
+                - img [ref=e414]
+                - text: USA QUESTA BASE
+            - generic [ref=e417]:
+              - heading "Drake Approve" [level=4] [ref=e418]
+              - paragraph [ref=e419]: approvazione · scelta
+          - generic [ref=e420]:
+            - generic [ref=e421]:
+              - img "Ragazzo Distratto" [ref=e422]
+              - generic [ref=e423]: USATO 634x
+              - generic [ref=e424]: reaction
+              - generic [ref=e426]:
+                - img [ref=e427]
+                - text: USA QUESTA BASE
+            - generic [ref=e430]:
+              - heading "Ragazzo Distratto" [level=4] [ref=e431]
+              - paragraph [ref=e432]: tradimento · distrazione
+          - generic [ref=e433]:
+            - generic [ref=e434]:
+              - img "Cervello in Espansione" [ref=e435]
+              - generic [ref=e436]: USATO 521x
+              - generic [ref=e437]: format
+              - generic [ref=e439]:
+                - img [ref=e440]
+                - text: USA QUESTA BASE
+            - generic [ref=e443]:
+              - heading "Cervello in Espansione" [level=4] [ref=e444]
+              - paragraph [ref=e445]: intelligenza · livelli
+          - generic [ref=e446]:
+            - generic [ref=e447]:
+              - img "This Is Fine" [ref=e448]
+              - generic [ref=e449]: USATO 489x
+              - generic [ref=e450]: reaction
+              - generic [ref=e452]:
+                - img [ref=e453]
+                - text: USA QUESTA BASE
+            - generic [ref=e456]:
+              - heading "This Is Fine" [level=4] [ref=e457]
+              - paragraph [ref=e458]: caos · ignorare
+    - generic [ref=e461]:
+      - generic [ref=e462]:
+        - generic [ref=e463]: LA LORE DEL BRAND
+        - heading "PERCHÉ NON SKIPPARCI?" [level=2] [ref=e464]:
+          - text: PERCHÉ
+          - generic [ref=e465]: NON SKIPPARCI?
+        - paragraph [ref=e466]: "\"Prendiamo meme, copy e visual di internet e li trasformiamo in un catalogo coerente, con editor AI, preview credibili e community monetizzabile.\""
+      - generic [ref=e467]:
+        - generic [ref=e468]:
+          - generic [ref=e469]: "1"
+          - generic [ref=e470]:
+            - img [ref=e472]
+            - heading "Basi Curate" [level=3] [ref=e479]
+            - paragraph [ref=e480]: "Le immagini di partenza non sono riempitivi casuali: ogni base viene scelta per funzionare davvero su prodotto, card e sezione."
+          - img [ref=e482]
+        - generic [ref=e484]:
+          - generic [ref=e485]: "2"
+          - generic [ref=e486]:
+            - img [ref=e488]
+            - heading "Workflow Coerente" [level=3] [ref=e491]
+            - paragraph [ref=e492]: "Customizer, schede prodotto e community raccontano lo stesso processo: scegli, costruisci, controlli la preview, acquisti o pubblichi."
+          - img [ref=e494]
+        - generic [ref=e496]:
+          - generic [ref=e497]: "3"
+          - generic [ref=e498]:
+            - img [ref=e500]
+            - heading "Preview Reale" [level=3] [ref=e505]
+            - paragraph [ref=e506]: L'anteprima 3D e i visual di dettaglio servono a confermare la resa finale, non a coprire buchi di contenuto.
+          - img [ref=e508]
+        - generic [ref=e510]:
+          - generic [ref=e511]: "4"
+          - generic [ref=e512]:
+            - img [ref=e514]
+            - heading "Produzione On Demand" [level=3] [ref=e517]
+            - paragraph [ref=e518]: Ogni prodotto nasce dal design scelto o creato nel laboratorio e passa poi nel flusso di acquisto senza cambiare logica o tono.
+          - img [ref=e520]
+        - generic [ref=e522]:
+          - generic [ref=e523]: "5"
+          - generic [ref=e524]:
+            - img [ref=e526]
+            - heading "Community Credibile" [level=3] [ref=e528]
+            - paragraph [ref=e529]: I design community usano seed, copy e metriche costruite per categoria, evitando l'effetto demo improvvisata o gallery piena di placeholder.
+          - img [ref=e531]
+        - generic [ref=e533]:
+          - generic [ref=e534]: "6"
+          - generic [ref=e535]:
+            - img [ref=e537]
+            - heading "Royalty Chiare" [level=3] [ref=e539]
+            - paragraph [ref=e540]: "Se pubblichi un design in community, la promessa resta semplice e leggibile: 6.9% di royalty automatiche su ogni vendita."
+          - img [ref=e542]
+      - button "Inizia a creare il tuo design →" [ref=e545]
+    - generic [ref=e548]:
+      - generic [ref=e549]:
+        - generic [ref=e550]: Cosa Dicono Di Noi
+        - heading "FEEDBACK VERIFICATI" [level=2] [ref=e551]:
+          - text: FEEDBACK
+          - generic [ref=e552]: VERIFICATI
+      - generic [ref=e553]:
+        - article [ref=e554]:
+          - generic "5 stelle su 5" [ref=e555]:
+            - img [ref=e556]
+            - img [ref=e558]
+            - img [ref=e560]
+            - img [ref=e562]
+            - img [ref=e564]
+          - paragraph [ref=e566]: "\"Ho usato una base già curata, ho sistemato il copy nel customizer e il risultato finale è rimasto coerente dalla preview al prodotto consegnato.\""
+          - generic [ref=e567]:
+            - img "Avatar di Marco R." [ref=e568]
+            - generic [ref=e569]:
+              - generic [ref=e570]: Marco R.
+              - text: Creator early adopter
+        - article [ref=e571]:
+          - generic "5 stelle su 5" [ref=e572]:
+            - img [ref=e573]
+            - img [ref=e575]
+            - img [ref=e577]
+            - img [ref=e579]
+            - img [ref=e581]
+          - paragraph [ref=e583]: "\"La parte migliore è che il sito non usa immagini riempitive: quello che scegli in editor è quello che percepisci anche nella scheda prodotto.\""
+          - generic [ref=e584]:
+            - img "Avatar di Giulia P., Milano" [ref=e585]
+            - generic [ref=e586]:
+              - generic [ref=e587]: Giulia P., Milano
+              - text: Cliente repeat
+        - article [ref=e588]:
+          - generic "5 stelle su 5" [ref=e589]:
+            - img [ref=e590]
+            - img [ref=e592]
+            - img [ref=e594]
+            - img [ref=e596]
+            - img [ref=e598]
+          - paragraph [ref=e600]: "\"Per la community il salto di qualità si vede: seed credibili, visual pertinenti e promessa royalty finalmente spiegata in modo semplice.\""
+          - generic [ref=e601]:
+            - img "Avatar di Luca F., Torino" [ref=e602]
+            - generic [ref=e603]:
+              - generic [ref=e604]: Luca F., Torino
+              - text: Creator community
+      - generic [ref=e605]:
+        - generic [ref=e606]:
+          - img [ref=e608]
+          - generic [ref=e610]: "0"
+          - paragraph [ref=e611]: Prodotti Base nel Customizer
+        - generic [ref=e612]:
+          - img [ref=e614]
+          - generic [ref=e616]: "0"
+          - paragraph [ref=e617]: Basi Curate da Cui Partire
+        - generic [ref=e618]:
+          - img [ref=e620]
+          - generic [ref=e623]: 0,0%
+          - paragraph [ref=e624]: Royalty Creator per Vendita
+      - button "Unisciti alla community →" [ref=e626]
+    - generic [ref=e630]:
+      - heading "Domande Esistenziali" [level=2] [ref=e631]:
+        - text: Domande
+        - generic [ref=e633]: Esistenziali
+      - generic [ref=e634]:
+        - button "Come scelgo il prodotto giusto? +" [ref=e636]:
+          - generic [ref=e637]: Come scelgo il prodotto giusto?
+          - generic [ref=e638]: +
+        - button "Posso partire da una base meme invece che da zero? +" [ref=e640]:
+          - generic [ref=e641]: Posso partire da una base meme invece che da zero?
+          - generic [ref=e642]: +
+        - button "Il customizer usa davvero l'AI? +" [ref=e644]:
+          - generic [ref=e645]: Il customizer usa davvero l'AI?
+          - generic [ref=e646]: +
+        - button "Come funziona la preview 3D? +" [ref=e648]:
+          - generic [ref=e649]: Come funziona la preview 3D?
+          - generic [ref=e650]: +
+        - button "Posso pubblicare il mio design nella community? +" [ref=e652]:
+          - generic [ref=e653]: Posso pubblicare il mio design nella community?
+          - generic [ref=e654]: +
+        - button "Come funzionano le royalty? +" [ref=e656]:
+          - generic [ref=e657]: Come funzionano le royalty?
+          - generic [ref=e658]: +
+        - button "Se il prodotto arriva con un difetto? +" [ref=e660]:
+          - generic [ref=e661]: Se il prodotto arriva con un difetto?
+          - generic [ref=e662]: +
+    - generic [ref=e665]:
+      - generic [ref=e666]:
+        - img [ref=e668]
+        - heading "Speedrun Spedizioni" [level=3] [ref=e673]
+        - paragraph [ref=e674]: 3-5 giorni lavorativi IRL
+        - paragraph [ref=e675]: "Spediamo con tracking e aggiornamenti chiari durante produzione e consegna. La logica del sito resta allineata: prima confermi il design, poi parte il flusso operativo."
+        - paragraph [ref=e676]: "* I tempi indicati sono stime operative e possono variare in base a produzione, destinazione e disponibilita del corriere."
+      - generic [ref=e677]:
+        - img [ref=e679]
+        - heading "Rage Quit (Resi)" [level=3] [ref=e682]
+        - paragraph [ref=e683]: 14 giorni per ripensarci
+        - paragraph [ref=e684]: Se il prodotto arriva con difetti o problemi di stampa, puoi avviare la procedura di assistenza e reso seguendo i termini indicati nel sito.
+        - paragraph [ref=e685]: "* Per i prodotti personalizzati valgono le limitazioni previste dalla normativa applicabile, salvo difetti di produzione o non conformita."
+      - generic [ref=e686]:
+        - img [ref=e688]
+        - heading "No Doxxing (Privacy)" [level=3] [ref=e691]
+        - paragraph [ref=e692]: Dati al sicuro dagli NPC
+        - paragraph [ref=e693]: I dati vengono usati per account, ordini, logistica e funzioni essenziali del servizio. Il tono del brand puo essere ironico, ma il trattamento resta serio e circoscritto.
+        - paragraph [ref=e694]: "* I dettagli completi sul trattamento dei dati sono disponibili nella Privacy Policy e seguono il quadro GDPR applicabile."
+    - generic [ref=e696]:
+      - generic:
+        - generic: NEWSLETTER NEWSLETTER
+      - generic [ref=e697]:
+        - generic [ref=e698]: AGGIORNAMENTI DAL LAB
+        - heading "VUOI ALTRI MEME?" [level=2] [ref=e699]:
+          - text: VUOI ALTRI
+          - generic [ref=e700]: MEME?
+        - paragraph [ref=e701]: "\"Iscriviti per ricevere nuovi drop, basi curate, aggiornamenti sul customizer e novità dalla community creator.\""
+        - generic [ref=e702]:
+          - generic: 🤑
+          - textbox "Il tuo indirizzo email" [ref=e703]
+          - button "ISCRIVITI" [ref=e704]:
+            - text: ISCRIVITI
+            - img [ref=e705]
+        - paragraph [ref=e708]: "* Useremo la tua email solo per comunicazioni coerenti con il laboratorio e le sue novità."
+    - contentinfo [ref=e709]:
+      - generic "Disclaimer e Slogan" [ref=e710]:
+        - generic [ref=e712]:
+          - generic [ref=e713]:
+            - generic [ref=e714]: "!"
+            - generic [ref=e715]: IL TUO FEED E DIVENTATO UN WORKFLOW DI PRODOTTO
+          - generic [ref=e716]:
+            - generic [ref=e717]: "!"
+            - generic [ref=e718]: BASI CURATE, NON IMMAGINI RANDOM
+          - generic [ref=e719]:
+            - generic [ref=e720]: "!"
+            - generic [ref=e721]: CUSTOMIZER, PREVIEW E COMMUNITY PARLANO LA STESSA LINGUA
+          - generic [ref=e722]:
+            - generic [ref=e723]: "!"
+            - generic [ref=e724]: ROYALTY DEL 6.9% SUI DESIGN PUBBLICATI
+          - generic [ref=e725]:
+            - generic [ref=e726]: "!"
+            - generic [ref=e727]: OGNI DROP DEVE AVERE SENSO SU SEZIONE E SUPPORTO
+          - generic [ref=e728]:
+            - generic [ref=e729]: "!"
+            - generic [ref=e730]: DAL MEME AL MERCH SENZA PASSAGGI FUORI CONTESTO
+          - generic [ref=e731]:
+            - generic [ref=e732]: "!"
+            - generic [ref=e733]: LE SCHEDE PRODOTTO NON VIVONO DI PLACEHOLDER
+          - generic [ref=e734]:
+            - generic [ref=e735]: "!"
+            - generic [ref=e736]: QUI IL BRAINROT HA UNA LOGICA OPERATIVA
+          - generic [ref=e737]:
+            - generic [ref=e738]: "!"
+            - generic [ref=e739]: IL TUO FEED E DIVENTATO UN WORKFLOW DI PRODOTTO
+          - generic [ref=e740]:
+            - generic [ref=e741]: "!"
+            - generic [ref=e742]: BASI CURATE, NON IMMAGINI RANDOM
+          - generic [ref=e743]:
+            - generic [ref=e744]: "!"
+            - generic [ref=e745]: CUSTOMIZER, PREVIEW E COMMUNITY PARLANO LA STESSA LINGUA
+          - generic [ref=e746]:
+            - generic [ref=e747]: "!"
+            - generic [ref=e748]: ROYALTY DEL 6.9% SUI DESIGN PUBBLICATI
+          - generic [ref=e749]:
+            - generic [ref=e750]: "!"
+            - generic [ref=e751]: OGNI DROP DEVE AVERE SENSO SU SEZIONE E SUPPORTO
+          - generic [ref=e752]:
+            - generic [ref=e753]: "!"
+            - generic [ref=e754]: DAL MEME AL MERCH SENZA PASSAGGI FUORI CONTESTO
+          - generic [ref=e755]:
+            - generic [ref=e756]: "!"
+            - generic [ref=e757]: LE SCHEDE PRODOTTO NON VIVONO DI PLACEHOLDER
+          - generic [ref=e758]:
+            - generic [ref=e759]: "!"
+            - generic [ref=e760]: QUI IL BRAINROT HA UNA LOGICA OPERATIVA
+          - generic [ref=e761]:
+            - generic [ref=e762]: "!"
+            - generic [ref=e763]: IL TUO FEED E DIVENTATO UN WORKFLOW DI PRODOTTO
+          - generic [ref=e764]:
+            - generic [ref=e765]: "!"
+            - generic [ref=e766]: BASI CURATE, NON IMMAGINI RANDOM
+          - generic [ref=e767]:
+            - generic [ref=e768]: "!"
+            - generic [ref=e769]: CUSTOMIZER, PREVIEW E COMMUNITY PARLANO LA STESSA LINGUA
+          - generic [ref=e770]:
+            - generic [ref=e771]: "!"
+            - generic [ref=e772]: ROYALTY DEL 6.9% SUI DESIGN PUBBLICATI
+          - generic [ref=e773]:
+            - generic [ref=e774]: "!"
+            - generic [ref=e775]: OGNI DROP DEVE AVERE SENSO SU SEZIONE E SUPPORTO
+          - generic [ref=e776]:
+            - generic [ref=e777]: "!"
+            - generic [ref=e778]: DAL MEME AL MERCH SENZA PASSAGGI FUORI CONTESTO
+          - generic [ref=e779]:
+            - generic [ref=e780]: "!"
+            - generic [ref=e781]: LE SCHEDE PRODOTTO NON VIVONO DI PLACEHOLDER
+          - generic [ref=e782]:
+            - generic [ref=e783]: "!"
+            - generic [ref=e784]: QUI IL BRAINROT HA UNA LOGICA OPERATIVA
+      - generic [ref=e785]:
+        - generic [ref=e786]:
+          - generic [ref=e787]:
+            - heading "Brainrot Labs" [level=2] [ref=e789]:
+              - text: Brainrot
+              - generic [ref=e791]: Labs
+            - paragraph [ref=e792]: "\"Trasformiamo meme, visual e idee della community in prodotti coerenti, con un workflow chiaro dal customizer alla pubblicazione.\""
+          - generic [ref=e793]:
+            - paragraph [ref=e794]: © 2026 Brainrot Labs.
+            - paragraph [ref=e795]: Design system brutalist, catalogo curato, creator economy al 6.9%.
+        - generic [ref=e796]:
+          - heading "Documenti Chiave" [level=3] [ref=e797]
+          - list [ref=e798]:
+            - listitem [ref=e799]:
+              - link "-> FAQ" [ref=e800]:
+                - /url: "#faq"
+            - listitem [ref=e801]:
+              - link "-> Spedizioni" [ref=e802]:
+                - /url: "#shipping"
+            - listitem [ref=e803]:
+              - link "-> Resi" [ref=e804]:
+                - /url: "#returns"
+            - listitem [ref=e805]:
+              - button "-> Privacy Policy" [ref=e806]
+            - listitem [ref=e807]:
+              - button "-> Termini di Servizio" [ref=e808]
+            - listitem [ref=e809]:
+              - button "-> Creator Terms" [ref=e810]
+            - listitem [ref=e811]:
+              - button "-> Royalty Policy" [ref=e812]
+        - generic [ref=e813]:
+          - heading "Sorveglianza Digitale" [level=3] [ref=e814]
+          - generic [ref=e815]:
+            - link "Visita il nostro profilo Instagram" [ref=e816]:
+              - /url: https://instagram.com/brainrotlabs
+              - generic [ref=e817]: Instagram
+              - img [ref=e818]
+            - link "Visita il nostro profilo TikTok" [ref=e822]:
+              - /url: https://tiktok.com/@brainrotlabs
+              - generic [ref=e823]: TikTok
+              - img [ref=e824]
+            - link "Visita il nostro profilo X (Twitter)" [ref=e826]:
+              - /url: https://x.com/brainrotlabs
+              - generic [ref=e827]: X / Twitter
+              - img [ref=e828]
+      - generic [ref=e830]: Costruito per far combaciare contenuto, sezione, preview e community.
+  - button "Toggle Soundboard" [ref=e832]:
+    - img [ref=e833]

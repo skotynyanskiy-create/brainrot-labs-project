@@ -1,5 +1,6 @@
 import { motion, AnimatePresence } from 'motion/react';
 import { useState, useEffect } from 'react';
+import { getSiteCtaClasses } from '../../styles/siteCta';
 import { playBlipSound } from '../../utils/sounds';
 
 interface StickyCTAProps {
@@ -31,7 +32,7 @@ export default function StickyCTA({ onOpenCustomizer }: StickyCTAProps) {
             whileHover={{ scale: 1.1, rotate: -2 }}
             whileTap={{ scale: 0.9 }}
             onClick={() => { playBlipSound(); onOpenCustomizer(); }}
-            className="bg-pink-500 text-white font-black uppercase text-xl px-8 py-4 border-4 border-black shadow-[8px_8px_0_0_rgba(0,0,0,1)]"
+            className={getSiteCtaClasses('create', 'lg')}
           >
             Crea il tuo design
           </motion.button>

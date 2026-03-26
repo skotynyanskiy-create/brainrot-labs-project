@@ -1,0 +1,61 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "communityDesigns",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "baseProductId", "order": "ASCENDING" },
+        { "fieldPath": "likes", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "communityDesigns",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "baseProductId", "order": "ASCENDING" },
+        { "fieldPath": "createdAt", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "communityDesigns",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "baseProductId", "order": "ASCENDING" },
+        { "fieldPath": "totalSales", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "communityDesigns",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "memeBaseId", "order": "ASCENDING" },
+        { "fieldPath": "likes", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "communityDesigns",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "memeBaseId", "order": "ASCENDING" },
+        { "fieldPath": "createdAt", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "communityDesigns",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "memeBaseId", "order": "ASCENDING" },
+        { "fieldPath": "totalSales", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "communityDesigns",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "isPublished", "order": "ASCENDING" },
+        { "fieldPath": "createdAt", "order": "DESCENDING" }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}

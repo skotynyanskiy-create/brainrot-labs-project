@@ -42,11 +42,15 @@ export const BASE_PRODUCTS: BaseProduct[] = [
   // ── Bella+Canvas 3001 Unisex T-Shirt (Printful Product 71) ─────────────────
   {
     id: 'base-tshirt',
+    slug: 'tshirt',
     name: 'T-Shirt Bella+Canvas 3001',
     price: 28.00,
     // Neutral flat-lay product photo (stable CDN, no auth required)
     image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=800&q=80&fm=webp',
     category: 'wearable',
+    rendererType: 'tshirt',
+    modelPath: '/models/tshirt-brainrot.glb',
+    selectionMode: 'size-color',
     sizes: ['S', 'M', 'L', 'XL', '2XL'],
     colors: [
       { name: 'White',            hex: '#FFFFFF' },
@@ -58,6 +62,7 @@ export const BASE_PRODUCTS: BaseProduct[] = [
     // Front print area (chest): ~28% top, 25% left, 50% wide, 52% tall (on 800px image)
     overlay: { top: '28%', left: '25%', width: '50%', height: '52%', mixBlendMode: 'multiply' },
     printfulProductId: 71,
+    printTemplateKey: 'bella-canvas-3001-front',
     printfulPlacement: 'front',
     printfulVariants: [
       // White
@@ -96,10 +101,14 @@ export const BASE_PRODUCTS: BaseProduct[] = [
   // ── iPhone 15 Pro Snap Case (Printful Product 571) ──────────────────────────
   {
     id: 'base-phonecase',
-    name: 'iPhone 15 Pro Case',
+    slug: 'iphone-case',
+    name: 'iPhone Snap Case',
     price: 19.00,
     image: 'https://images.unsplash.com/photo-1601593346740-925612772716?auto=format&fit=crop&w=800&q=80&fm=webp',
     category: 'useless',
+    rendererType: 'phone-case',
+    modelPath: '/models/iphone-17.stl',
+    selectionMode: 'phone-model-finish',
     sizes: ['15 Pro', '15 Pro Max'],
     colors: [
       { name: 'Glossy', hex: '#F5F5F5' },
@@ -109,6 +118,7 @@ export const BASE_PRODUCTS: BaseProduct[] = [
     // Use 'normal' blend mode (design IS the product, not overlaid on color)
     overlay: { top: '5%', left: '5%', width: '90%', height: '90%' },
     printfulProductId: 571,
+    printTemplateKey: 'iphone-snap-case-back',
     printfulPlacement: 'default',
     printfulVariants: [
       { id: 11534, size: '15 Pro',     colorName: 'Glossy', colorHex: '#F5F5F5' },
@@ -116,6 +126,28 @@ export const BASE_PRODUCTS: BaseProduct[] = [
       { id: 11536, size: '15 Pro Max', colorName: 'Glossy', colorHex: '#F5F5F5' },
       { id: 11537, size: '15 Pro Max', colorName: 'Matte',  colorHex: '#E0E0E0' },
     ],
+  },
+  {
+    id: 'base-poster',
+    slug: 'poster',
+    name: 'Poster Premium',
+    price: 24.00,
+    image: 'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&w=800&q=80&fm=webp',
+    category: 'decor',
+    rendererType: 'poster',
+    selectionMode: 'poster-size',
+    variantOptions: [
+      { label: '30x40 cm', value: '30x40' },
+      { label: '50x70 cm', value: '50x70' },
+      { label: '70x100 cm', value: '70x100' },
+    ],
+    sizes: ['30x40', '50x70', '70x100'],
+    colors: [{ name: 'Natural White', hex: '#F8F6F0' }],
+    overlay: { top: '8%', left: '8%', width: '84%', height: '84%' },
+    printfulProductId: 0,
+    printTemplateKey: 'poster-paper-front',
+    printfulPlacement: 'front',
+    printfulVariants: [],
   },
 ];
 
@@ -235,14 +267,14 @@ export const PRODUCTS: Product[] = [
 // Curati dall'admin. Sostituire url e usageCount con i dati reali.
 // ─────────────────────────────────────────────────────────────────────────────
 export const MEME_BASES: MemeBase[] = [
-  { id: 'drake',            name: 'Drake Approve',          url: 'https://i.imgflip.com/30b1gx.jpg',  category: 'reaction', usageCount: 847, tags: ['approvazione', 'scelta'] },
-  { id: 'distracted-bf',    name: 'Ragazzo Distratto',      url: 'https://i.imgflip.com/1ur9b0.jpg',  category: 'reaction', usageCount: 634, tags: ['tradimento', 'distrazione'] },
-  { id: 'brain-size',       name: 'Cervello in Espansione', url: 'https://i.imgflip.com/1jwhww.jpg',  category: 'format',   usageCount: 521, tags: ['intelligenza', 'livelli'] },
-  { id: 'this-is-fine',     name: 'This Is Fine',           url: 'https://i.imgflip.com/wxica.jpg',   category: 'reaction', usageCount: 489, tags: ['caos', 'ignorare'] },
-  { id: 'roll-safe',        name: 'Roll Safe',              url: 'https://i.imgflip.com/1h7in3.jpg',  category: 'reaction', usageCount: 412, tags: ['logica', 'furbo'] },
-  { id: 'surprised-pikachu',name: 'Pikachu Sorpreso',       url: 'https://i.imgflip.com/2kbn1e.jpg',  category: 'reaction', usageCount: 398, tags: ['sorpresa', 'shocked'] },
-  { id: 'doge',             name: 'Doge',                   url: 'https://i.imgflip.com/4t0m5.jpg',   category: 'dank',     usageCount: 376, tags: ['wow', 'doge'] },
-  { id: 'two-buttons',      name: 'Due Pulsanti',           url: 'https://i.imgflip.com/1g8my4.jpg',  category: 'format',   usageCount: 301, tags: ['dilemma', 'scelta'] },
+  { id: 'drake',             name: 'Drake Approve',          url: 'https://i.imgflip.com/30b1gx.jpg',  category: 'reaction', usageCount: 847, tags: ['approvazione', 'scelta'],         trendScore: 92 },
+  { id: 'distracted-bf',     name: 'Ragazzo Distratto',      url: 'https://i.imgflip.com/1ur9b0.jpg',  category: 'reaction', usageCount: 634, tags: ['tradimento', 'distrazione'],      trendScore: 78 },
+  { id: 'brain-size',        name: 'Cervello in Espansione', url: 'https://i.imgflip.com/1jwhww.jpg',  category: 'format',   usageCount: 521, tags: ['intelligenza', 'livelli'],        trendScore: 71 },
+  { id: 'this-is-fine',      name: 'This Is Fine',           url: 'https://i.imgflip.com/wxica.jpg',   category: 'reaction', usageCount: 489, tags: ['caos', 'ignorare'],               trendScore: 68 },
+  { id: 'roll-safe',         name: 'Roll Safe',              url: 'https://i.imgflip.com/1h7in3.jpg',  category: 'reaction', usageCount: 412, tags: ['logica', 'furbo'],                trendScore: 61 },
+  { id: 'surprised-pikachu', name: 'Pikachu Sorpreso',       url: 'https://i.imgflip.com/2kbn1e.jpg',  category: 'reaction', usageCount: 398, tags: ['sorpresa', 'shocked'],            trendScore: 58 },
+  { id: 'doge',              name: 'Doge',                   url: 'https://i.imgflip.com/4t0m5.jpg',   category: 'dank',     usageCount: 376, tags: ['wow', 'doge'],                    trendScore: 54 },
+  { id: 'two-buttons',       name: 'Due Pulsanti',           url: 'https://i.imgflip.com/1g8my4.jpg',  category: 'format',   usageCount: 301, tags: ['dilemma', 'scelta'],              trendScore: 47 },
 ];
 
 export const COMMUNITY_SEED_DESIGNS = [
@@ -259,6 +291,15 @@ export const COMMUNITY_SEED_DESIGNS = [
     isPublished: true,
     productType: 'wearable' as const,
     tags: ['reaction', 'choice', 'streetwear'],
+    baseProductId: 'base-tshirt',
+    baseProductName: 'T-Shirt Bella+Canvas 3001',
+    baseProductPrice: 28.00,
+    memeBaseId: 'drake',
+    memeBaseName: 'Drake Approve',
+    memeBaseCategory: 'reaction' as const,
+    layerCount: 3,
+    hasCustomText: true,
+    hasAILayer: false,
   },
   {
     id: 'fallback-2',
@@ -273,6 +314,15 @@ export const COMMUNITY_SEED_DESIGNS = [
     isPublished: true,
     productType: 'decor' as const,
     tags: ['office', 'dry-humor', 'reaction'],
+    baseProductId: 'base-tshirt',
+    baseProductName: 'T-Shirt Bella+Canvas 3001',
+    baseProductPrice: 28.00,
+    memeBaseId: 'roll-safe',
+    memeBaseName: 'Roll Safe',
+    memeBaseCategory: 'reaction' as const,
+    layerCount: 2,
+    hasCustomText: true,
+    hasAILayer: false,
   },
   {
     id: 'fallback-3',
@@ -287,6 +337,15 @@ export const COMMUNITY_SEED_DESIGNS = [
     isPublished: true,
     productType: 'decor' as const,
     tags: ['cat', 'chaos', 'poster'],
+    baseProductId: 'base-tshirt',
+    baseProductName: 'T-Shirt Bella+Canvas 3001',
+    baseProductPrice: 28.00,
+    memeBaseId: null,
+    memeBaseName: null,
+    memeBaseCategory: null,
+    layerCount: 2,
+    hasCustomText: false,
+    hasAILayer: false,
   },
   {
     id: 'fallback-4',
@@ -301,6 +360,15 @@ export const COMMUNITY_SEED_DESIGNS = [
     isPublished: true,
     productType: 'wearable' as const,
     tags: ['comparison', 'doge', 'gaming'],
+    baseProductId: 'base-tshirt',
+    baseProductName: 'T-Shirt Bella+Canvas 3001',
+    baseProductPrice: 28.00,
+    memeBaseId: 'doge',
+    memeBaseName: 'Doge',
+    memeBaseCategory: 'dank' as const,
+    layerCount: 4,
+    hasCustomText: true,
+    hasAILayer: false,
   },
   {
     id: 'fallback-5',
@@ -315,6 +383,15 @@ export const COMMUNITY_SEED_DESIGNS = [
     isPublished: true,
     productType: 'decor' as const,
     tags: ['harold', 'office', 'deadpan'],
+    baseProductId: 'base-phonecase',
+    baseProductName: 'iPhone 15 Pro Case',
+    baseProductPrice: 19.00,
+    memeBaseId: null,
+    memeBaseName: null,
+    memeBaseCategory: null,
+    layerCount: 1,
+    hasCustomText: false,
+    hasAILayer: false,
   },
   {
     id: 'fallback-6',
@@ -329,5 +406,14 @@ export const COMMUNITY_SEED_DESIGNS = [
     isPublished: true,
     productType: 'wearable' as const,
     tags: ['chaos', 'tee', 'reaction'],
+    baseProductId: 'base-tshirt',
+    baseProductName: 'T-Shirt Bella+Canvas 3001',
+    baseProductPrice: 28.00,
+    memeBaseId: 'this-is-fine',
+    memeBaseName: 'This Is Fine',
+    memeBaseCategory: 'reaction' as const,
+    layerCount: 3,
+    hasCustomText: true,
+    hasAILayer: false,
   },
 ] as const;

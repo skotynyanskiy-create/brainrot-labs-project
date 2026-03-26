@@ -1,0 +1,409 @@
+- generic [ref=e3]:
+  - generic "Notifiche e Slogan del Brand" [ref=e4]:
+    - generic [ref=e7]:
+      - generic [ref=e8]:
+        - text: IL TUO OUTFIT HA BISOGNO DI AIUTO 🚑
+        - generic [ref=e9]: ✦
+      - generic [ref=e10]:
+        - text: +1000 AURA POINTS ALL'ACQUISTO ✨
+        - generic [ref=e11]: ✦
+      - generic [ref=e12]:
+        - text: SPEDIZIONE GRATIS (FORSE) 📦
+        - generic [ref=e13]: ✦
+      - generic [ref=e14]:
+        - text: DROPPING HEAT OGNI VENERDÌ 🔥
+        - generic [ref=e15]: ✦
+      - generic [ref=e16]:
+        - text: LA TUA BANCA NON APPROVA 💳
+        - generic [ref=e17]: ✦
+      - generic [ref=e18]:
+        - text: VESTITI CHE FANNO PIANGERE I BOOMER 👴
+        - generic [ref=e19]: ✦
+      - generic [ref=e20]:
+        - text: DESIGN RUBATI A CASO 🥷
+        - generic [ref=e21]: ✦
+      - generic [ref=e22]:
+        - text: COMPRA ORA, PENTITI DOMANI 🛒
+        - generic [ref=e23]: ✦
+      - generic [ref=e24]:
+        - text: PROBABILMENTE ANDRÀ SOLD OUT SUBITO ⏳
+        - generic [ref=e25]: ✦
+      - generic [ref=e26]:
+        - text: NON FARLO VEDERE AI TUOI GENITORI 🫣
+        - generic [ref=e27]: ✦
+      - generic [ref=e28]:
+        - text: IL TUO CARRELLO TI STA GIUDICANDO 🤨
+        - generic [ref=e29]: ✦
+      - generic [ref=e30]:
+        - text: SEGUI L'HYPE, PERDI I SOLDI 💰
+        - generic [ref=e31]: ✦
+      - generic [ref=e32]:
+        - text: METTI NEL CARRELLO, NON FARE IL POVERO 💳
+        - generic [ref=e33]: ✦
+      - generic [ref=e34]:
+        - text: OTTIMO PER DELUDERE LA TUA FAMIGLIA 🏆
+        - generic [ref=e35]: ✦
+      - generic [ref=e36]:
+        - text: NESSUN SUPPORTO CLIENTI, ARRANGIATI 📞
+        - generic [ref=e37]: ✦
+      - generic [ref=e38]:
+        - text: LA SPEDIZIONE È LENTA, ABITUATICI 🐢
+        - generic [ref=e39]: ✦
+      - generic [ref=e40]:
+        - text: IL TUO OUTFIT HA BISOGNO DI AIUTO 🚑
+        - generic [ref=e41]: ✦
+      - generic [ref=e42]:
+        - text: +1000 AURA POINTS ALL'ACQUISTO ✨
+        - generic [ref=e43]: ✦
+      - generic [ref=e44]:
+        - text: SPEDIZIONE GRATIS (FORSE) 📦
+        - generic [ref=e45]: ✦
+      - generic [ref=e46]:
+        - text: DROPPING HEAT OGNI VENERDÌ 🔥
+        - generic [ref=e47]: ✦
+      - generic [ref=e48]:
+        - text: LA TUA BANCA NON APPROVA 💳
+        - generic [ref=e49]: ✦
+      - generic [ref=e50]:
+        - text: VESTITI CHE FANNO PIANGERE I BOOMER 👴
+        - generic [ref=e51]: ✦
+      - generic [ref=e52]:
+        - text: DESIGN RUBATI A CASO 🥷
+        - generic [ref=e53]: ✦
+      - generic [ref=e54]:
+        - text: COMPRA ORA, PENTITI DOMANI 🛒
+        - generic [ref=e55]: ✦
+      - generic [ref=e56]:
+        - text: PROBABILMENTE ANDRÀ SOLD OUT SUBITO ⏳
+        - generic [ref=e57]: ✦
+      - generic [ref=e58]:
+        - text: NON FARLO VEDERE AI TUOI GENITORI 🫣
+        - generic [ref=e59]: ✦
+      - generic [ref=e60]:
+        - text: IL TUO CARRELLO TI STA GIUDICANDO 🤨
+        - generic [ref=e61]: ✦
+      - generic [ref=e62]:
+        - text: SEGUI L'HYPE, PERDI I SOLDI 💰
+        - generic [ref=e63]: ✦
+      - generic [ref=e64]:
+        - text: METTI NEL CARRELLO, NON FARE IL POVERO 💳
+        - generic [ref=e65]: ✦
+      - generic [ref=e66]:
+        - text: OTTIMO PER DELUDERE LA TUA FAMIGLIA 🏆
+        - generic [ref=e67]: ✦
+      - generic [ref=e68]:
+        - text: NESSUN SUPPORTO CLIENTI, ARRANGIATI 📞
+        - generic [ref=e69]: ✦
+      - generic [ref=e70]:
+        - text: LA SPEDIZIONE È LENTA, ABITUATICI 🐢
+        - generic [ref=e71]: ✦
+      - generic [ref=e72]:
+        - text: IL TUO OUTFIT HA BISOGNO DI AIUTO 🚑
+        - generic [ref=e73]: ✦
+      - generic [ref=e74]:
+        - text: +1000 AURA POINTS ALL'ACQUISTO ✨
+        - generic [ref=e75]: ✦
+      - generic [ref=e76]:
+        - text: SPEDIZIONE GRATIS (FORSE) 📦
+        - generic [ref=e77]: ✦
+      - generic [ref=e78]:
+        - text: DROPPING HEAT OGNI VENERDÌ 🔥
+        - generic [ref=e79]: ✦
+      - generic [ref=e80]:
+        - text: LA TUA BANCA NON APPROVA 💳
+        - generic [ref=e81]: ✦
+      - generic [ref=e82]:
+        - text: VESTITI CHE FANNO PIANGERE I BOOMER 👴
+        - generic [ref=e83]: ✦
+      - generic [ref=e84]:
+        - text: DESIGN RUBATI A CASO 🥷
+        - generic [ref=e85]: ✦
+      - generic [ref=e86]:
+        - text: COMPRA ORA, PENTITI DOMANI 🛒
+        - generic [ref=e87]: ✦
+      - generic [ref=e88]:
+        - text: PROBABILMENTE ANDRÀ SOLD OUT SUBITO ⏳
+        - generic [ref=e89]: ✦
+      - generic [ref=e90]:
+        - text: NON FARLO VEDERE AI TUOI GENITORI 🫣
+        - generic [ref=e91]: ✦
+      - generic [ref=e92]:
+        - text: IL TUO CARRELLO TI STA GIUDICANDO 🤨
+        - generic [ref=e93]: ✦
+      - generic [ref=e94]:
+        - text: SEGUI L'HYPE, PERDI I SOLDI 💰
+        - generic [ref=e95]: ✦
+      - generic [ref=e96]:
+        - text: METTI NEL CARRELLO, NON FARE IL POVERO 💳
+        - generic [ref=e97]: ✦
+      - generic [ref=e98]:
+        - text: OTTIMO PER DELUDERE LA TUA FAMIGLIA 🏆
+        - generic [ref=e99]: ✦
+      - generic [ref=e100]:
+        - text: NESSUN SUPPORTO CLIENTI, ARRANGIATI 📞
+        - generic [ref=e101]: ✦
+      - generic [ref=e102]:
+        - text: LA SPEDIZIONE È LENTA, ABITUATICI 🐢
+        - generic [ref=e103]: ✦
+    - generic [ref=e106]:
+      - generic [ref=e107]:
+        - generic [ref=e108]: ✦
+        - text: LIVELLO DI RIZZ INACCETTABILE 📈
+      - generic [ref=e109]:
+        - generic [ref=e110]: ✦
+        - text: 100% REAL NO CAP 🧢
+      - generic [ref=e111]:
+        - generic [ref=e112]: ✦
+        - text: MEWING DAL 2004 🗿
+      - generic [ref=e113]:
+        - generic [ref=e114]: ✦
+        - text: NON SEI PRONTO PER QUESTO DRIP 💧
+      - generic [ref=e115]:
+        - generic [ref=e116]: ✦
+        - text: HAUTE COUTURE PER DISADATTATI 👽
+      - generic [ref=e117]:
+        - generic [ref=e118]: ✦
+        - text: QUESTA È LETTERALMENTE ARTE 🖼️
+      - generic [ref=e119]:
+        - generic [ref=e120]: ✦
+        - text: TROPPO COSTOSO PER TE 💸
+      - generic [ref=e121]:
+        - generic [ref=e122]: ✦
+        - text: NON CHIEDERE PERCHÉ 🤫
+      - generic [ref=e123]:
+        - generic [ref=e124]: ✦
+        - text: SKIBIDI TOILET APPROVED 🚽
+      - generic [ref=e125]:
+        - generic [ref=e126]: ✦
+        - text: TOCCARE L'ERBA È SOPRAVVALUTATO 🌿
+      - generic [ref=e127]:
+        - generic [ref=e128]: ✦
+        - text: SIAMO TUTTI NPC IN REALTÀ 🤖
+      - generic [ref=e129]:
+        - generic [ref=e130]: ✦
+        - text: ONLY W, MAI L 👑
+      - generic [ref=e131]:
+        - generic [ref=e132]: ✦
+        - text: IL TUO FIT È UN CRIMINE DI GUERRA 🚨
+      - generic [ref=e133]:
+        - generic [ref=e134]: ✦
+        - text: IL BRO CUCINA MA NESSUNO HA FAME 🍳
+      - generic [ref=e135]:
+        - generic [ref=e136]: ✦
+        - text: BASEATO E ROSSOPILOLATO 💊
+      - generic [ref=e137]:
+        - generic [ref=e138]: ✦
+        - text: HO CREATO QUESTO BRAND SU DISCORD 🎧
+      - generic [ref=e139]:
+        - generic [ref=e140]: ✦
+        - text: LIVELLO DI RIZZ INACCETTABILE 📈
+      - generic [ref=e141]:
+        - generic [ref=e142]: ✦
+        - text: 100% REAL NO CAP 🧢
+      - generic [ref=e143]:
+        - generic [ref=e144]: ✦
+        - text: MEWING DAL 2004 🗿
+      - generic [ref=e145]:
+        - generic [ref=e146]: ✦
+        - text: NON SEI PRONTO PER QUESTO DRIP 💧
+      - generic [ref=e147]:
+        - generic [ref=e148]: ✦
+        - text: HAUTE COUTURE PER DISADATTATI 👽
+      - generic [ref=e149]:
+        - generic [ref=e150]: ✦
+        - text: QUESTA È LETTERALMENTE ARTE 🖼️
+      - generic [ref=e151]:
+        - generic [ref=e152]: ✦
+        - text: TROPPO COSTOSO PER TE 💸
+      - generic [ref=e153]:
+        - generic [ref=e154]: ✦
+        - text: NON CHIEDERE PERCHÉ 🤫
+      - generic [ref=e155]:
+        - generic [ref=e156]: ✦
+        - text: SKIBIDI TOILET APPROVED 🚽
+      - generic [ref=e157]:
+        - generic [ref=e158]: ✦
+        - text: TOCCARE L'ERBA È SOPRAVVALUTATO 🌿
+      - generic [ref=e159]:
+        - generic [ref=e160]: ✦
+        - text: SIAMO TUTTI NPC IN REALTÀ 🤖
+      - generic [ref=e161]:
+        - generic [ref=e162]: ✦
+        - text: ONLY W, MAI L 👑
+      - generic [ref=e163]:
+        - generic [ref=e164]: ✦
+        - text: IL TUO FIT È UN CRIMINE DI GUERRA 🚨
+      - generic [ref=e165]:
+        - generic [ref=e166]: ✦
+        - text: IL BRO CUCINA MA NESSUNO HA FAME 🍳
+      - generic [ref=e167]:
+        - generic [ref=e168]: ✦
+        - text: BASEATO E ROSSOPILOLATO 💊
+      - generic [ref=e169]:
+        - generic [ref=e170]: ✦
+        - text: HO CREATO QUESTO BRAND SU DISCORD 🎧
+      - generic [ref=e171]:
+        - generic [ref=e172]: ✦
+        - text: LIVELLO DI RIZZ INACCETTABILE 📈
+      - generic [ref=e173]:
+        - generic [ref=e174]: ✦
+        - text: 100% REAL NO CAP 🧢
+      - generic [ref=e175]:
+        - generic [ref=e176]: ✦
+        - text: MEWING DAL 2004 🗿
+      - generic [ref=e177]:
+        - generic [ref=e178]: ✦
+        - text: NON SEI PRONTO PER QUESTO DRIP 💧
+      - generic [ref=e179]:
+        - generic [ref=e180]: ✦
+        - text: HAUTE COUTURE PER DISADATTATI 👽
+      - generic [ref=e181]:
+        - generic [ref=e182]: ✦
+        - text: QUESTA È LETTERALMENTE ARTE 🖼️
+      - generic [ref=e183]:
+        - generic [ref=e184]: ✦
+        - text: TROPPO COSTOSO PER TE 💸
+      - generic [ref=e185]:
+        - generic [ref=e186]: ✦
+        - text: NON CHIEDERE PERCHÉ 🤫
+      - generic [ref=e187]:
+        - generic [ref=e188]: ✦
+        - text: SKIBIDI TOILET APPROVED 🚽
+      - generic [ref=e189]:
+        - generic [ref=e190]: ✦
+        - text: TOCCARE L'ERBA È SOPRAVVALUTATO 🌿
+      - generic [ref=e191]:
+        - generic [ref=e192]: ✦
+        - text: SIAMO TUTTI NPC IN REALTÀ 🤖
+      - generic [ref=e193]:
+        - generic [ref=e194]: ✦
+        - text: ONLY W, MAI L 👑
+      - generic [ref=e195]:
+        - generic [ref=e196]: ✦
+        - text: IL TUO FIT È UN CRIMINE DI GUERRA 🚨
+      - generic [ref=e197]:
+        - generic [ref=e198]: ✦
+        - text: IL BRO CUCINA MA NESSUNO HA FAME 🍳
+      - generic [ref=e199]:
+        - generic [ref=e200]: ✦
+        - text: BASEATO E ROSSOPILOLATO 💊
+      - generic [ref=e201]:
+        - generic [ref=e202]: ✦
+        - text: HO CREATO QUESTO BRAND SU DISCORD 🎧
+  - banner [ref=e203]:
+    - generic [ref=e204]:
+      - button "Torna alla home di Brainrot Labs" [ref=e205]:
+        - img [ref=e207]
+        - generic [ref=e209]:
+          - paragraph [ref=e210]: Brainrot Labs
+          - heading "Shop + Community" [level=1] [ref=e211]
+      - generic [ref=e213]:
+        - generic [ref=e214]: Cerca catalogo e community
+        - searchbox "Cerca catalogo e community" [ref=e215]
+        - img [ref=e216]
+      - generic [ref=e219]:
+        - button "Community" [ref=e220]:
+          - img [ref=e221]
+          - text: Community
+        - button "Crea" [ref=e226]:
+          - img [ref=e227]
+          - text: Crea
+        - button "Apri account dashboard" [ref=e1308]:
+          - img [ref=e231]
+          - text: Account
+        - button "Apri carrello" [ref=e234]:
+          - img [ref=e235]
+        - button "Apri menu" [ref=e239]:
+          - img [ref=e240]
+    - generic [ref=e241]: Catalogo curato, design salvati prima del checkout, ordini e tracking nel tuo account.
+  - generic [ref=e1309]:
+    - generic [ref=e1311]:
+      - generic [ref=e1312]:
+        - button "Esci" [ref=e1313]:
+          - img [ref=e1314]
+          - text: Esci
+        - generic [ref=e1316]:
+          - heading "Account Dashboard" [level=1] [ref=e1317]
+          - paragraph [ref=e1318]: creazioni, ordini, royalty e impostazioni essenziali
+      - button "Logout" [ref=e1319]:
+        - img [ref=e1320]
+        - text: Logout
+    - generic [ref=e1323]:
+      - complementary [ref=e1324]:
+        - generic [ref=e1325]:
+          - generic [ref=e1326]:
+            - paragraph [ref=e1327]: Creator profile
+            - heading "@demo_creator" [level=2] [ref=e1328]
+            - paragraph [ref=e1329]: Demo Creator
+            - paragraph [ref=e1330]: Meme designer indipendente con setup payout pronto per il go-live.
+            - generic [ref=e1331]:
+              - generic [ref=e1332]: Milano, Italia
+              - generic [ref=e1333]: "@demo_creator"
+              - generic [ref=e1334]: "Payout: Verifica in corso"
+          - generic [ref=e1335]:
+            - generic [ref=e1336]:
+              - generic [ref=e1337]: Profilo
+              - strong [ref=e1338]: 83%
+            - generic [ref=e1339]:
+              - generic [ref=e1340]: Disponibile
+              - strong [ref=e1341]: EUR 18.40
+            - generic [ref=e1342]:
+              - generic [ref=e1343]: In attesa
+              - strong [ref=e1344]: EUR 8.00
+          - generic [ref=e1345]:
+            - button "Overview" [ref=e1346]:
+              - img [ref=e1347]
+              - text: Overview
+            - button "Design" [ref=e1357]:
+              - img [ref=e1358]
+              - text: Design
+            - button "Ordini" [ref=e1362]:
+              - img [ref=e1363]
+              - text: Ordini
+            - button "Impostazioni" [ref=e1367]:
+              - img [ref=e1368]
+              - text: Impostazioni
+      - main [ref=e1371]:
+        - generic [ref=e1372]:
+          - heading "Overview" [level=2] [ref=e1373]
+          - generic [ref=e1374]:
+            - generic [ref=e1375]:
+              - img [ref=e1376]
+              - generic [ref=e1380]: "1"
+              - paragraph [ref=e1381]: Design pubblicati
+            - generic [ref=e1382]:
+              - img [ref=e1383]
+              - generic [ref=e1387]: "1"
+              - paragraph [ref=e1388]: Ordini registrati
+            - generic [ref=e1389]:
+              - img [ref=e1390]
+              - generic [ref=e1392]: EUR 18.40
+              - paragraph [ref=e1393]: Royalty disponibili
+            - generic [ref=e1394]:
+              - img [ref=e1395]
+              - generic [ref=e1400]: "0"
+              - paragraph [ref=e1401]: Ordini spediti
+          - generic [ref=e1402]:
+            - generic [ref=e1403]:
+              - heading "Stato profilo" [level=3] [ref=e1404]
+              - generic [ref=e1406]:
+                - generic [ref=e1407]: Completamento profilo
+                - strong [ref=e1408]: 83%
+              - generic [ref=e1411]:
+                - generic [ref=e1412]: Aggiungi un indirizzo di spedizione valido.
+                - generic [ref=e1413]: Il collegamento Stripe finale richiede onboarding o verifica.
+            - generic [ref=e1414]:
+              - heading "Ordini recenti" [level=3] [ref=e1415]
+              - generic [ref=e1417]:
+                - generic [ref=e1418]:
+                  - generic [ref=e1419]:
+                    - paragraph [ref=e1420]: PF-DEMO-001
+                    - paragraph [ref=e1421]: In produzione
+                  - paragraph [ref=e1422]: EUR 42.90
+                - paragraph [ref=e1423]: Standard
+  - generic [ref=e1424]:
+    - generic [ref=e1425]: Accesso demo locale attivato.
+    - button [ref=e1426]:
+      - img [ref=e1427]
+  - button "Toggle Soundboard" [ref=e832]:
+    - img [ref=e833]

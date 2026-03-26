@@ -2,6 +2,7 @@ import { motion } from 'motion/react';
 import { Heart, MessageCircle, Share2 } from 'lucide-react';
 import { useMemo } from 'react';
 import { useProduct } from '../../context/ProductContext';
+import { getSiteCtaClasses } from '../../styles/siteCta';
 import { playBlipSound } from '../../utils/sounds';
 
 interface CombinedCommunityProps {
@@ -44,18 +45,18 @@ export default function CombinedCommunity({ onOpenCustomizer, onOpenCommunity }:
               whileTap={{ scale: 0.95 }}
               onClick={() => { playBlipSound(); onOpenCustomizer?.(); }}
               aria-label="Apri il customizer per pubblicare un design"
-              className="bg-white text-black px-12 py-6 border-4 border-white font-black uppercase text-2xl shadow-[12px_12px_0_0_rgba(255,255,255,0.2)] hover:shadow-none hover:translate-x-[12px] hover:translate-y-[12px] transition-all"
+              className={getSiteCtaClasses('create', 'lg', 'border-white shadow-[12px_12px_0_0_rgba(255,255,255,0.2)]')}
             >
-              Esponi la tua Opera
+              Crea il tuo design
             </motion.button>
             {onOpenCommunity && (
               <motion.button 
                 whileHover={{ scale: 1.05, rotate: -2 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => { playBlipSound(); onOpenCommunity(); }}
-                className="bg-cyan-500 text-black px-12 py-6 border-4 border-cyan-500 font-black uppercase text-2xl shadow-[12px_12px_0_0_rgba(6,182,212,0.2)] hover:shadow-none hover:translate-x-[12px] hover:translate-y-[12px] transition-all"
+                className={getSiteCtaClasses('archive', 'lg', 'border-white shadow-[12px_12px_0_0_rgba(6,182,212,0.2)]')}
               >
-                Esplora la Galleria
+                Archivio Digitale
               </motion.button>
             )}
           </div>

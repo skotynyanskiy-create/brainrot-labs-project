@@ -1,56 +1,6 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    
-    // ===============================================================
-    // Assumed Data Model
-    // ===============================================================
-    //
-    // Collection: users
-    // Document ID: {userId}
-    // Fields:
-    //   - uid: string (required) - Firebase Auth UID
-    //   - email: string (required) - User email
-    //   - displayName: string (optional) - User name
-    //   - photoURL: string (optional) - Profile pic
-    //   - role: string (required) - 'admin' or 'client'
-    //
-    // Collection: products
-    // Document ID: {productId}
-    // Fields:
-    //   - name: string (required)
-    //   - price: number (required)
-    //   - image: string (required)
-    //   - category: string (required)
-    //   - rarity: string (optional)
-    //   - color: string (optional)
-    //   - memeDescription: string (optional)
-    //
-    // Collection: orders
-    // Document ID: {orderId}
-    // Fields:
-    //   - userId: string (required)
-    //   - items: list (required)
-    //   - total: number (required)
-    //   - status: string (required) - 'pending', 'paid', 'shipped', 'cancelled'
-    //   - createdAt: timestamp (required)
-    //
-    // Collection: communityDesigns
-    // Document ID: {designId}
-    // Fields:
-    //   - authorId: string (required) - UID of the author
-    //   - authorName: string (required) - Name of the author
-    //   - image: string (required) - URL to the design image
-    //   - memeDescription: string (required) - Description of the design
-    //   - createdAt: timestamp (required) - Timestamp of creation
-    //   - likes: number (optional) - Number of likes
-    //
-    // ===============================================================
-
-    // ===============================================================
-    // Helper Functions
-    // ===============================================================
-    
     function isAuthenticated() {
       return request.auth != null;
     }
@@ -59,172 +9,93 @@ service cloud.firestore {
       return isAuthenticated() && request.auth.uid == userId;
     }
 
-    function isAuthor(authorId) {
-      return isAuthenticated() && request.auth.uid == authorId;
-    }
-
     function isAdmin() {
-      return isAuthenticated() &&
-        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
-        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+      return isAuthenticated()
+        && exists(/databases/$(database)/documents/users/$(request.auth.uid))
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
     }
 
-    function uidUnchanged() {
-      return !('uid' in request.resource.data) || request.resource.data.uid == resource.data.uid;
+    function userRoleIsValid() {
+      return request.resource.data.role in ['admin', 'client', 'creator'];
     }
 
-    function isValidUser(data) {
-      return data.keys().hasAll(['uid', 'email', 'role']) &&
-             data.uid is string && data.uid.size() > 0 && data.uid.size() < 128 &&
-             data.email is string && data.email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$") &&
-             data.role in ['admin', 'client', 'creator'] &&
-             (!('displayName' in data) || (data.displayName is string && data.displayName.size() < 100)) &&
-             (!('photoURL' in data) || (data.photoURL is string && data.photoURL.size() < 2048)) &&
-             (!('username' in data) || (data.username is string && data.username.size() < 50)) &&
-             (!('creatorTagline' in data) || (data.creatorTagline is string && data.creatorTagline.size() < 140)) &&
-             (!('bio' in data) || (data.bio is string && data.bio.size() < 500)) &&
-             (!('location' in data) || (data.location is string && data.location.size() < 120)) &&
-             (!('portfolioUrl' in data) || (data.portfolioUrl is string && data.portfolioUrl.size() < 2048)) &&
-             (!('socialHandle' in data) || (data.socialHandle is string && data.socialHandle.size() < 80)) &&
-             (!('creatorCategory' in data) || (data.creatorCategory is string && data.creatorCategory.size() < 80)) &&
-             (!('legalName' in data) || (data.legalName is string && data.legalName.size() < 140)) &&
-             (!('payoutEmail' in data) || (data.payoutEmail is string && data.payoutEmail.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"))) &&
-             (!('phone' in data) || (data.phone is string && data.phone.size() < 30)) &&
-             (!('newsletterOptIn' in data) || (data.newsletterOptIn is bool)) &&
-             (!('authProvider' in data) || data.authProvider in ['google', 'password']) &&
-             (!('createdAt' in data) || data.createdAt is string) &&
-             (!('payoutSetup' in data) || (
-               data.payoutSetup is map &&
-               (!('provider' in data.payoutSetup) || data.payoutSetup.provider in ['none', 'stripe_connect', 'paypal', 'bank_transfer']) &&
-               (!('status' in data.payoutSetup) || data.payoutSetup.status in ['not_configured', 'pending_setup', 'pending_verification', 'active', 'restricted']) &&
-               (!('accountId' in data.payoutSetup) || (data.payoutSetup.accountId is string && data.payoutSetup.accountId.size() < 160)) &&
-               (!('accountLabel' in data.payoutSetup) || (data.payoutSetup.accountLabel is string && data.payoutSetup.accountLabel.size() < 160)) &&
-               (!('payoutCurrency' in data.payoutSetup) || (data.payoutSetup.payoutCurrency is string && data.payoutSetup.payoutCurrency.size() < 8)) &&
-               (!('minimumPayoutAmount' in data.payoutSetup) || (data.payoutSetup.minimumPayoutAmount is number && data.payoutSetup.minimumPayoutAmount >= 0)) &&
-               (!('connectedAt' in data.payoutSetup) || data.payoutSetup.connectedAt is string) &&
-               (!('onboardingReady' in data.payoutSetup) || data.payoutSetup.onboardingReady is bool)
-             )) &&
-             (!('taxProfile' in data) || (
-               data.taxProfile is map &&
-               (!('legalName' in data.taxProfile) || (data.taxProfile.legalName is string && data.taxProfile.legalName.size() < 140)) &&
-               (!('businessType' in data.taxProfile) || data.taxProfile.businessType in ['individual', 'business']) &&
-               (!('taxCountry' in data.taxProfile) || (data.taxProfile.taxCountry is string && data.taxProfile.taxCountry.size() < 100)) &&
-               (!('taxId' in data.taxProfile) || (data.taxProfile.taxId is string && data.taxProfile.taxId.size() < 80)) &&
-               (!('vatId' in data.taxProfile) || (data.taxProfile.vatId is string && data.taxProfile.vatId.size() < 80))
-             )) &&
-             (!('royaltyWallet' in data) || (
-               data.royaltyWallet is map &&
-               (!('available' in data.royaltyWallet) || (data.royaltyWallet.available is number && data.royaltyWallet.available >= 0)) &&
-               (!('pending' in data.royaltyWallet) || (data.royaltyWallet.pending is number && data.royaltyWallet.pending >= 0)) &&
-               (!('paidTotal' in data.royaltyWallet) || (data.royaltyWallet.paidTotal is number && data.royaltyWallet.paidTotal >= 0)) &&
-               (!('nextPayoutEstimate' in data.royaltyWallet) || data.royaltyWallet.nextPayoutEstimate is string) &&
-               (!('lastPayoutAt' in data.royaltyWallet) || data.royaltyWallet.lastPayoutAt is string)
-             )) &&
-             (!('legalAcceptances' in data) || (
-               data.legalAcceptances is map &&
-               (!('creatorTerms' in data.legalAcceptances) || (
-                 data.legalAcceptances.creatorTerms is map &&
-                 (!('accepted' in data.legalAcceptances.creatorTerms) || data.legalAcceptances.creatorTerms.accepted is bool) &&
-                 (!('version' in data.legalAcceptances.creatorTerms) || (data.legalAcceptances.creatorTerms.version is string && data.legalAcceptances.creatorTerms.version.size() < 40)) &&
-                 (!('acceptedAt' in data.legalAcceptances.creatorTerms) || data.legalAcceptances.creatorTerms.acceptedAt is string)
-               )) &&
-               (!('royaltyPolicy' in data.legalAcceptances) || (
-                 data.legalAcceptances.royaltyPolicy is map &&
-                 (!('accepted' in data.legalAcceptances.royaltyPolicy) || data.legalAcceptances.royaltyPolicy.accepted is bool) &&
-                 (!('version' in data.legalAcceptances.royaltyPolicy) || (data.legalAcceptances.royaltyPolicy.version is string && data.legalAcceptances.royaltyPolicy.version.size() < 40)) &&
-                 (!('acceptedAt' in data.legalAcceptances.royaltyPolicy) || data.legalAcceptances.royaltyPolicy.acceptedAt is string)
-               ))
-             )) &&
-             (!('shippingAddress' in data) || (
-               data.shippingAddress is map &&
-               (!('fullName' in data.shippingAddress) || (data.shippingAddress.fullName is string && data.shippingAddress.fullName.size() < 120)) &&
-               (!('address1' in data.shippingAddress) || (data.shippingAddress.address1 is string && data.shippingAddress.address1.size() < 200)) &&
-               (!('city' in data.shippingAddress) || (data.shippingAddress.city is string && data.shippingAddress.city.size() < 100)) &&
-               (!('province' in data.shippingAddress) || (data.shippingAddress.province is string && data.shippingAddress.province.size() < 20)) &&
-               (!('zip' in data.shippingAddress) || (data.shippingAddress.zip is string && data.shippingAddress.zip.size() < 20)) &&
-               (!('country' in data.shippingAddress) || (data.shippingAddress.country is string && data.shippingAddress.country.size() < 80)) &&
-               (!('phone' in data.shippingAddress) || (data.shippingAddress.phone is string && data.shippingAddress.phone.size() < 30))
-             ));
+    function profileCoreIsValid() {
+      return request.resource.data.uid == request.auth.uid
+        && request.resource.data.email is string
+        && request.resource.data.email.size() > 3
+        && userRoleIsValid();
     }
 
-    function isValidProduct(data) {
-      return data.keys().hasAll(['name', 'price', 'image', 'category']) &&
-             data.name is string && data.name.size() > 0 && data.name.size() < 100 &&
-             data.price is number && data.price >= 0 &&
-             data.image is string && data.image.size() > 0 && data.image.size() < 2048 &&
-             data.category is string && data.category.size() < 50 &&
-             (!('memeDescription' in data) || (data.memeDescription is string && data.memeDescription.size() < 500)) &&
-             (!('rarity' in data) || (data.rarity is string && data.rarity.size() < 50)) &&
-             (!('color' in data) || (data.color is string && data.color.size() < 50)) &&
-             (!('sizes' in data) || (data.sizes is list)) &&
-             (!('colors' in data) || (data.colors is list));
+    function immutableUserCore() {
+      return request.resource.data.uid == resource.data.uid
+        && request.resource.data.email == resource.data.email
+        && request.resource.data.role == resource.data.role;
     }
 
-    function isValidOrder(data) {
-      return data.keys().hasAll(['userId', 'items', 'total', 'status', 'createdAt']) &&
-             data.userId == request.auth.uid &&
-             data.items is list && data.items.size() > 0 && data.items.size() < 100 &&
-             data.total is number && data.total >= 0 &&
-             data.status in ['pending', 'paid', 'shipped', 'cancelled'] &&
-             data.createdAt is timestamp;
+    function isSingleLikeMutation() {
+      return isAuthenticated()
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['likes'])
+        && request.resource.data.likes is number
+        && resource.data.likes is number
+        && request.resource.data.likes >= 0
+        && (
+          request.resource.data.likes == resource.data.likes + 1
+          || request.resource.data.likes == resource.data.likes - 1
+        );
     }
-
-    function isValidCommunityDesign(data) {
-      return data.keys().hasAll(['authorId', 'authorName', 'image', 'memeDescription', 'createdAt']) &&
-             (data.authorId == request.auth.uid || isAdmin()) &&
-             data.authorName is string && data.authorName.size() > 0 && data.authorName.size() < 100 &&
-             data.image is string && data.image.size() > 0 && data.image.size() < 2048 &&
-             data.memeDescription is string && data.memeDescription.size() > 0 && data.memeDescription.size() < 1000 &&
-             (
-               data.createdAt is timestamp ||
-               (resource != null && resource.data.createdAt is string && data.createdAt == resource.data.createdAt)
-             ) &&
-             (!('likes' in data) || (data.likes is number && data.likes >= 0));
-    }
-
-    // ===============================================================
-    // Rules
-    // ===============================================================
 
     match /users/{userId} {
       allow read: if isOwner(userId) || isAdmin();
-      allow create: if isAuthenticated() && isOwner(userId) && isValidUser(request.resource.data) && 
-                      (request.resource.data.role in ['client', 'creator'] || isAdmin());
-      allow update: if isAuthenticated() && isOwner(userId) && isValidUser(request.resource.data) && uidUnchanged() &&
-                      (request.resource.data.role == resource.data.role || request.resource.data.role == 'creator' || isAdmin());
+      allow create: if isOwner(userId) && profileCoreIsValid() && request.resource.data.role in ['client', 'creator'];
+      allow update: if isOwner(userId) && immutableUserCore();
+      allow delete: if false;
     }
 
     match /products/{productId} {
       allow read: if true;
-      allow create: if isAdmin() && isValidProduct(request.resource.data);
-      allow update, delete: if isAdmin();
+      allow write: if isAdmin();
     }
 
-    match /orders/{orderId} {
-      allow read: if isAuthenticated() && (resource.data.userId == request.auth.uid || isAdmin());
-      allow create: if isAuthenticated() && isValidOrder(request.resource.data);
-      allow update: if isAdmin() && isValidOrder(request.resource.data) && request.resource.data.userId == resource.data.userId && request.resource.data.createdAt == resource.data.createdAt; 
-      allow delete: if isAdmin();
+    match /catalogVariants/{variantId} {
+      allow read: if true;
+      allow write: if false;
     }
 
     match /communityDesigns/{designId} {
       allow read: if true;
-      allow create: if isAuthenticated() && isValidCommunityDesign(request.resource.data);
-      allow update: if isAuthenticated() && (isAuthor(resource.data.authorId) || isAdmin()) && isValidCommunityDesign(request.resource.data) && request.resource.data.authorId == resource.data.authorId;
-      allow delete: if isAuthenticated() && (isAuthor(resource.data.authorId) || isAdmin());
+      allow update: if isSingleLikeMutation() || isAdmin();
+      allow create, delete: if false;
     }
 
-    // Newsletter subscribers — write-only (append), no read access for clients
+    match /designs/{designId} {
+      allow read: if isAuthenticated() && (resource.data.ownerId == request.auth.uid || isAdmin());
+      allow write: if false;
+    }
+
+    match /orders/{orderId} {
+      allow read: if isAuthenticated() && (resource.data.userId == request.auth.uid || isAdmin());
+      allow write: if false;
+    }
+
+    match /shippingQuotes/{quoteId} {
+      allow read: if isAuthenticated() && (resource.data.userId == request.auth.uid || isAdmin());
+      allow write: if false;
+    }
+
+    match /royaltyLedger/{ledgerId} {
+      allow read: if isAuthenticated() && (resource.data.creatorId == request.auth.uid || isAdmin());
+      allow write: if false;
+    }
+
     match /subscribers/{docId} {
-      allow create: if request.resource.data.keys().hasAll(['email', 'subscribedAt']) &&
-                       request.resource.data.email is string &&
-                       request.resource.data.email.matches("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$") &&
-                       request.resource.data.subscribedAt is string;
+      allow create: if request.resource.data.keys().hasAll(['email', 'subscribedAt'])
+        && request.resource.data.email is string
+        && request.resource.data.email.matches("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$")
+        && request.resource.data.subscribedAt is string;
       allow read, update, delete: if isAdmin();
     }
 
-    // Rate limit counters — managed exclusively by Cloud Functions (Admin SDK)
-    match /_rateLimits/{doc} {
+    match /_rateLimits/{docId} {
       allow read, write: if false;
     }
   }

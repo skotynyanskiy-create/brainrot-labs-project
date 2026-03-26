@@ -1,12 +1,11 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import type { BaseProduct, Meme, Product, LayerData as Layer, CustomTemplate } from '../../types';
+import type { BaseProduct, Meme, LayerData as Layer, CustomTemplate } from '../../types';
 import { BASE_PRODUCTS, CREATOR_ROYALTY_RATE, STORAGE_KEYS, MEME_BASES } from '../../constants';
-import { db, collection, addDoc, serverTimestamp, storage } from '../../firebase';
-import { ref, uploadString, getDownloadURL } from 'firebase/storage';
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import { useCart } from '../../context/CartContext';
 import { useToast } from '../../context/ToastContext';
 import { useAuth } from '../../context/AuthContext';
+import { useUI } from '../../context/UIContext';
 import {
   ArrowLeft, ArrowRight, Plus, Search, Loader2, Type, Save,
   Trash2, Upload, Download, Layers, Image as ImageIcon, X,
@@ -21,16 +20,21 @@ import { toPng } from 'html-to-image';
 import { cn } from '../../utils/cn';
 import { logger } from '../../utils/logger';
 import Product3DPreview from './Product3DPreview';
-import BrainrotMeter from './BrainrotMeter';
 import type {
   GenerateImageRequest, GenerateImageResponse,
   SuggestCaptionRequest, SuggestCaptionResponse, VoicePreset,
 } from '../../services/aiTypes';
+import { publishCommunityDesign, saveDesignDraft } from '../../services/commerce/client';
+import { buildCartItemId, getCatalogVariantsForBaseProduct, resolveCatalogVariantBySelection } from '../../services/commerce/helpers';
 
 // ─── Props ────────────────────────────────────────────────────────────────────
 interface ProductCustomizerProps {
   onBack: () => void;
   initialMeme?: { url: string; name: string };
+  /** Se passato, seleziona il prodotto base e salta direttamente allo step 2 */
+  initialBaseProductId?: string;
+  /** Chiamato dopo una pubblicazione riuscita — usato per redirect alla community */
+  onPublished?: () => void;
 }
 
 // ─── Voice presets ────────────────────────────────────────────────────────────
@@ -77,17 +81,22 @@ const STICKERS = [
   { name: 'Deal With It',url: 'https://i.imgur.com/r6Sj9m1.png' },
 ];
 
+const LOCAL_DRAFTS_STORAGE_KEY = 'brainrot_local_design_drafts';
+
 // ─── Component ───────────────────────────────────────────────────────────────
-const ProductCustomizer: React.FC<ProductCustomizerProps> = ({ onBack, initialMeme }) => {
+const ProductCustomizer: React.FC<ProductCustomizerProps> = ({ onBack, initialMeme, initialBaseProductId, onPublished }) => {
   const { addToCart } = useCart();
   const { addToast } = useToast();
-  const { user } = useAuth();
+  const { user, isDemoUser } = useAuth();
+  const { setIsProfileOpen, setIsCustomizerOpen } = useUI();
 
   // ── Step state ──────────────────────────────────────────────────────────────
-  const [currentStep, setCurrentStep] = useState<Step>(1);
+  const [currentStep, setCurrentStep] = useState<Step>(initialBaseProductId ? 2 : 1);
 
   // ── Product state ───────────────────────────────────────────────────────────
-  const [selectedBase, setSelectedBase] = useState<BaseProduct>(BASE_PRODUCTS[0]);
+  const [selectedBase, setSelectedBase] = useState<BaseProduct>(
+    () => BASE_PRODUCTS.find((p) => p.id === initialBaseProductId) ?? BASE_PRODUCTS[0]
+  );
   const [selectedSize,  setSelectedSize]  = useState<string>(BASE_PRODUCTS[0].sizes?.[0] ?? 'M');
   const [selectedColor, setSelectedColor] = useState<string>(BASE_PRODUCTS[0].colors?.[0]?.name ?? 'White');
   const [quantity, setQuantity] = useState(1);
@@ -113,7 +122,6 @@ const ProductCustomizer: React.FC<ProductCustomizerProps> = ({ onBack, initialMe
   const [designTextureUrl, setDesignTextureUrl]   = useState<string | null>(null);
   const [isTextureUpdating,setIsTextureUpdating]  = useState(false);
   const [isExporting,      setIsExporting]        = useState(false);
-  const [isBrainrotMode,   setIsBrainrotMode]     = useState(false);
   const [show2DCanvas,     setShow2DCanvas]       = useState(false); // step 2 toggle
 
   // ── Templates ───────────────────────────────────────────────────────────────
@@ -162,6 +170,14 @@ const ProductCustomizer: React.FC<ProductCustomizerProps> = ({ onBack, initialMe
       .finally(() => setMemesLoading(false));
   }, []);
 
+  useEffect(() => {
+    if (currentStep === 2) {
+      setShow2DCanvas(true);
+      return;
+    }
+    setShow2DCanvas(false);
+  }, [currentStep]);
+
   // ── Texture auto-update ───────────────────────────────────────────────────
   useEffect(() => {
     const timer = setTimeout(async () => {
@@ -178,20 +194,22 @@ const ProductCustomizer: React.FC<ProductCustomizerProps> = ({ onBack, initialMe
   const activeLayer = layers.find(l => l.id === activeLayerId);
 
   const selectedColorHex = selectedBase.colors?.find(c => c.name === selectedColor)?.hex ?? '#ffffff';
+  const catalogVariants = getCatalogVariantsForBaseProduct(selectedBase.id);
 
   /** Available sizes for the currently-selected color */
-  const availableSizes = selectedBase.printfulVariants
-    .filter(v => v.colorName === selectedColor)
-    .map(v => v.size);
+  const availableSizes = selectedBase.id === 'base-tshirt'
+    ? catalogVariants
+        .filter(v => v.colorName === selectedColor)
+        .map(v => v.size)
+        .filter((value): value is string => Boolean(value))
+    : selectedBase.id === 'base-phonecase'
+      ? catalogVariants
+          .map(v => v.phoneModel)
+          .filter((value): value is string => Boolean(value))
+      : selectedBase.sizes ?? selectedBase.variantOptions?.map((option) => option.value) ?? [];
 
   const canGoToStep2 = selectedBase !== null && selectedSize !== '' && selectedColor !== '';
   const canGoToStep3 = layers.length > 0;
-
-  const brainrotLevel = Math.min(100, Math.round(
-    (layers.length * 12) +
-    (isBrainrotMode ? 30 : 0) +
-    layers.reduce((sum, l) => sum + Math.abs(l.rotate ?? 0) / 36, 0)
-  ));
 
   const goToStep = (step: Step) => {
     if (step === 2 && !canGoToStep2) {
@@ -212,17 +230,24 @@ const ProductCustomizer: React.FC<ProductCustomizerProps> = ({ onBack, initialMe
     setSelectedBase(base);
     const firstColor = base.colors?.[0]?.name ?? 'White';
     setSelectedColor(firstColor);
-    const firstVariant = base.printfulVariants.find(v => v.colorName === firstColor);
-    setSelectedSize(firstVariant?.size ?? base.sizes?.[0] ?? 'M');
+    const firstVariant = resolveCatalogVariantBySelection(base.id, base.sizes?.[0], firstColor);
+    setSelectedSize(
+      firstVariant?.size
+      ?? firstVariant?.phoneModel
+      ?? firstVariant?.posterSize
+      ?? base.sizes?.[0]
+      ?? base.variantOptions?.[0]?.value
+      ?? 'M'
+    );
   };
 
   const handleColorChange = (colorName: string) => {
     playBlipSound();
     setSelectedColor(colorName);
-    const variantsForColor = selectedBase.printfulVariants.filter(v => v.colorName === colorName);
-    const stillValid = variantsForColor.some(v => v.size === selectedSize);
+    const variantsForColor = getCatalogVariantsForBaseProduct(selectedBase.id).filter(v => v.colorName === colorName);
+    const stillValid = variantsForColor.some(v => v.size === selectedSize || v.phoneModel === selectedSize);
     if (!stillValid && variantsForColor.length > 0) {
-      setSelectedSize(variantsForColor[0].size);
+      setSelectedSize(variantsForColor[0].size ?? variantsForColor[0].phoneModel ?? selectedSize);
     }
   };
 
@@ -409,24 +434,104 @@ const ProductCustomizer: React.FC<ProductCustomizerProps> = ({ onBack, initialMe
     localStorage.setItem(STORAGE_KEYS.TEMPLATES, JSON.stringify(updated));
   };
 
+  const requireAuthenticatedDraftFlow = () => {
+    if (user) return true;
+
+    addToast('Accedi prima di salvare il design o aggiungerlo al carrello.', 'warning');
+    setIsCustomizerOpen(false);
+    setIsProfileOpen(true);
+    return false;
+  };
+
+  const createLocalDraftFallback = (texture: string) => {
+    const localDesignId = `local-dev-${Date.now()}`;
+    const localDraft = {
+      id: localDesignId,
+      baseProductId: selectedBase.id,
+      selectionKey: `${selectedBase.id}:${selectedSize}:${selectedColor}`,
+      previewUrl: texture,
+      layerConfig: layers,
+      createdAt: new Date().toISOString(),
+    };
+
+    if (typeof window !== 'undefined') {
+      try {
+        const existing = window.localStorage.getItem(LOCAL_DRAFTS_STORAGE_KEY);
+        const parsed = existing ? JSON.parse(existing) as unknown[] : [];
+        const next = Array.isArray(parsed) ? [localDraft, ...parsed].slice(0, 24) : [localDraft];
+        window.localStorage.setItem(LOCAL_DRAFTS_STORAGE_KEY, JSON.stringify(next));
+      } catch (error) {
+        logger.warn('Local draft fallback storage failed', error);
+      }
+    }
+
+    addToast('Bozza salvata in locale. Per checkout reale servono Functions attive.', 'warning');
+    return {
+      designId: localDesignId,
+      previewUrl: texture,
+    };
+  };
+
   // ─── Add to cart ──────────────────────────────────────────────────────────
-  const uploadDesignAsset = async (): Promise<string | null> => {
+  const persistDesignDraft = async () => {
+    if (!requireAuthenticatedDraftFlow()) {
+      return null;
+    }
+
     const texture = await captureDesignTexture();
     if (!texture) {
       addToast('Errore nella cattura del design. Riprova.', 'error');
       return null;
     }
 
-    let finalUrl = texture;
-    try {
-      const storageRef = ref(storage, `designs/${Date.now()}.png`);
-      await uploadString(storageRef, texture, 'data_url');
-      finalUrl = await getDownloadURL(storageRef);
-    } catch (error) {
-      logger.error('Storage upload failed, using data URL fallback', error);
+    const detectedMemeBase = detectMemeBaseFromLayers(layers);
+    if (isDemoUser) {
+      return createLocalDraftFallback(texture);
     }
 
-    return finalUrl;
+    try {
+      const response = await saveDesignDraft({
+        baseProductId: selectedBase.id,
+        sourceType: 'customizer',
+        selectionKey: `${selectedBase.id}:${selectedSize}:${selectedColor}`,
+        layerConfig: layers,
+        previewDataUrl: texture,
+        printPlacements: [
+          {
+            placement: selectedBase.printfulPlacement,
+            technique: selectedBase.id === 'base-tshirt' ? 'dtg' : selectedBase.id === 'base-phonecase' ? 'uv' : 'print',
+            imageDataUrl: texture,
+          },
+        ],
+        metadata: {
+          memeDescription: aiPrompt.trim() || `Design ${selectedBase.name}`,
+          memeBaseId: detectedMemeBase?.id ?? null,
+          memeBaseName: detectedMemeBase?.name ?? null,
+          memeBaseCategory: detectedMemeBase?.category ?? null,
+          tags: detectedMemeBase?.tags ?? [],
+          hasCustomText: layers.some((layer) => layer.type === 'text'),
+          hasAILayer: false,
+          layerCount: layers.length,
+        },
+      });
+
+      return {
+        designId: response.designId,
+        previewUrl: response.previewUrl,
+      };
+    } catch (error) {
+      logger.error('persistDesignDraft error', error);
+      if (import.meta.env.DEV || isDemoUser) {
+        return createLocalDraftFallback(texture);
+      }
+      throw error;
+    }
+  };
+
+  const detectMemeBaseFromLayers = (currentLayers: Layer[]) => {
+    const memeLayer = currentLayers.find((l) => l.type === 'meme');
+    if (!memeLayer) return null;
+    return MEME_BASES.find((mb) => mb.url === memeLayer.content) ?? null;
   };
 
   const handlePublishToCommunity = async () => {
@@ -434,31 +539,28 @@ const ProductCustomizer: React.FC<ProductCustomizerProps> = ({ onBack, initialMe
       addToast('Aggiungi almeno un elemento al design.');
       return;
     }
-    if (!user) {
-      addToast('Devi essere loggato per pubblicare!', 'warning');
+    if (!requireAuthenticatedDraftFlow()) {
       return;
     }
 
     playBlipSound();
     setIsPublishing(true);
     try {
-      const finalUrl = await uploadDesignAsset();
-      if (!finalUrl) return;
+      const persisted = await persistDesignDraft();
+      if (!persisted) return;
 
-      await addDoc(collection(db, 'communityDesigns'), {
-        authorId: user.uid,
-        authorName: user.displayName || 'Anonimo',
-        image: finalUrl,
+      if (persisted.designId.startsWith('local-dev-')) {
+        addToast('Pubblicazione community disponibile quando le Functions sono attive.', 'warning');
+        return;
+      }
+
+      await publishCommunityDesign({
+        designId: persisted.designId,
         memeDescription: aiPrompt.trim() || `Design ${selectedBase.name}`,
-        createdAt: serverTimestamp(),
-        likes: 0,
-        totalSales: 0,
-        totalEarnings: 0,
-        royaltyRate: CREATOR_ROYALTY_RATE,
-        isPublished: true,
-        productType: selectedBase.category,
       });
-      addToast('Design pubblicato nella community!');
+
+      addToast('Design pubblicato! Ora visibile nella community.');
+      onPublished?.();
     } catch (error) {
       logger.error('handlePublishToCommunity error', error);
       addToast('Errore durante la pubblicazione.', 'error');
@@ -472,35 +574,42 @@ const ProductCustomizer: React.FC<ProductCustomizerProps> = ({ onBack, initialMe
     playCoinSound();
     setIsExporting(true);
     try {
-      const finalUrl = await uploadDesignAsset();
-      if (!finalUrl) return;
+      const persisted = await persistDesignDraft();
+      if (!persisted) return;
 
-      const containerWidth  = containerRef.current?.offsetWidth  || 500;
-      const containerHeight = containerRef.current?.offsetHeight || 500;
-
-      const customProduct: Product = {
-        id:              `custom-${selectedBase.id}-${Date.now()}`,
-        name:            `${selectedBase.name} — Custom`,
-        price:           selectedBase.price,
-        image:           selectedBase.image,
-        category:        selectedBase.category,
+      const catalogVariant = resolveCatalogVariantBySelection(selectedBase.id, selectedSize, selectedColor);
+      if (!catalogVariant) {
+        addToast('Variante non disponibile per il checkout.', 'error');
+        return;
+      }
+      const productId = `${selectedBase.id}:${catalogVariant.id}`;
+      addToCart({
+        cartItemId: buildCartItemId({
+          sourceType: 'customizer',
+          productId,
+          designId: persisted.designId,
+          catalogVariantRef: catalogVariant.id,
+        }),
+        sourceType: 'customizer',
+        productId,
+        baseProductId: selectedBase.id,
+        designId: persisted.designId,
+        catalogVariantRef: catalogVariant.id,
+        quantity,
+        price: catalogVariant.price,
+        name: `${selectedBase.name} - Custom`,
+        image: persisted.previewUrl,
+        category: selectedBase.category,
         memeDescription: aiPrompt || 'Creato da te, genio incompreso.',
-        rarity:          'Legendary',
-        color:           'bg-green-400',
-        sizes:           selectedBase.sizes,
-        colors:          selectedBase.colors,
-        customData: {
-          baseImage:         selectedBase.image,
-          layers,
-          overlay:           selectedBase.overlay,
-          containerSize:     { width: containerWidth, height: containerHeight },
-          designTextureUrl:  finalUrl ?? undefined,
-        },
-      };
-
-      addToCart(customProduct, quantity, selectedSize, selectedColor);
+        color: 'bg-green-400',
+        selectedSize,
+        selectedColor,
+      });
       addToast('Capolavoro aggiunto al carrello!');
       onBack();
+      /*
+        name:            `${selectedBase.name} — Custom`,
+      */
     } catch (error) {
       logger.error('handleAddToCart error', error);
       addToast("Errore durante l'aggiunta al carrello.");
@@ -522,7 +631,6 @@ const ProductCustomizer: React.FC<ProductCustomizerProps> = ({ onBack, initialMe
       exit={{ opacity: 0 }}
       className="min-h-screen bg-[#f0f0f0] flex flex-col font-sans"
     >
-      <BrainrotMeter level={brainrotLevel} />
       {/* ── HEADER ─────────────────────────────────────────────────────────── */}
       <header className="bg-white border-b-4 border-black sticky top-0 z-50 flex items-center justify-between px-4 py-3 gap-4">
         {/* Left: back + branding */}
@@ -573,15 +681,18 @@ const ProductCustomizer: React.FC<ProductCustomizerProps> = ({ onBack, initialMe
 
         {/* Right: actions */}
         <div className="flex items-center gap-2">
-          <button
-            onClick={() => { setIsBrainrotMode(b => !b); playBlipSound(); }}
-            className={cn(
-              'hidden sm:block px-3 py-2 border-4 border-black font-black uppercase text-xs transition-all',
-              isBrainrotMode ? 'bg-red-500 text-white animate-pulse' : 'bg-white'
-            )}
-          >
-            Y2K {isBrainrotMode ? 'ON' : 'OFF'}
-          </button>
+          {currentStep === 2 && (
+            <button
+              onClick={() => { setShow2DCanvas(s => !s); playBlipSound(); }}
+              className={cn(
+                'hidden md:flex items-center gap-2 px-3 py-2 border-4 border-black font-black uppercase text-xs shadow-[3px_3px_0_0_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-0.5 hover:translate-y-0.5 transition-all',
+                show2DCanvas ? 'bg-yellow-400 text-black' : 'bg-white text-black'
+              )}
+            >
+              <Palette className="w-4 h-4" />
+              {show2DCanvas ? 'Vista 3D' : 'Posiziona in 2D'}
+            </button>
+          )}
           <button
             onClick={handleSaveTemplate}
             className="hidden md:flex items-center gap-2 px-3 py-2 border-4 border-black bg-cyan-400 font-black uppercase text-xs shadow-[3px_3px_0_0_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-0.5 hover:translate-y-0.5 transition-all"
@@ -643,8 +754,13 @@ const ProductCustomizer: React.FC<ProductCustomizerProps> = ({ onBack, initialMe
                             : 'bg-white shadow-[6px_6px_0_0_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-0.5 hover:translate-y-0.5'
                         )}
                       >
-                        <div className="aspect-square w-full border-4 border-black overflow-hidden bg-gray-100">
-                          <img src={base.image} alt={base.name} className="w-full h-full object-cover" />
+                        <div className="aspect-square w-full border-4 border-black overflow-hidden">
+                          <Product3DPreview
+                            baseProductId={base.id}
+                            designTextureUrl={null}
+                            baseColor={selectedBase.id === base.id ? (selectedColor || '#ffffff') : '#ffffff'}
+                            autoRotate={true}
+                          />
                         </div>
                         <span className="font-black uppercase text-xs leading-tight text-center">{base.name}</span>
                         <span className="font-mono text-xs text-gray-500">€{base.price.toFixed(2)}</span>
@@ -1074,8 +1190,13 @@ const ProductCustomizer: React.FC<ProductCustomizerProps> = ({ onBack, initialMe
                   <div className="border-4 border-black p-4 bg-gray-50 space-y-3">
                     <h3 className="font-black uppercase text-sm border-b-2 border-black pb-2">Riepilogo Ordine</h3>
                     <div className="flex items-center gap-3">
-                      <div className="w-16 h-16 border-4 border-black overflow-hidden bg-gray-100 shrink-0">
-                        <img src={selectedBase.image} alt={selectedBase.name} className="w-full h-full object-cover" />
+                      <div className="w-16 h-16 border-4 border-black overflow-hidden shrink-0">
+                        <Product3DPreview
+                          baseProductId={selectedBase.id}
+                          designTextureUrl={null}
+                          baseColor={selectedColor || '#ffffff'}
+                          autoRotate={true}
+                        />
                       </div>
                       <div className="flex-1">
                         <p className="font-black uppercase text-sm">{selectedBase.name}</p>
@@ -1193,24 +1314,6 @@ const ProductCustomizer: React.FC<ProductCustomizerProps> = ({ onBack, initialMe
         {/* ── RIGHT PANEL: Preview ──────────────────────────────────────────── */}
         <div className="hidden md:flex flex-col flex-grow bg-[#1a1a1a] relative overflow-hidden">
 
-          {/* Toggle 2D/3D (only in step 2) */}
-          {currentStep === 2 && (
-            <div className="absolute top-4 right-4 z-20 flex gap-2">
-              <button
-                onClick={() => { setShow2DCanvas(s => !s); playBlipSound(); }}
-                className={cn(
-                  'flex items-center gap-2 px-4 py-2 border-4 border-white font-black uppercase text-xs transition-all',
-                  show2DCanvas
-                    ? 'bg-yellow-400 text-black border-yellow-400 shadow-none'
-                    : 'bg-white/10 text-white shadow-[4px_4px_0_0_rgba(255,255,255,0.2)] hover:bg-white/20'
-                )}
-              >
-                <Palette className="w-4 h-4" />
-                {show2DCanvas ? 'Vista 3D' : 'Modifica 2D'}
-              </button>
-            </div>
-          )}
-
           {/* Status bar */}
           <div className="absolute top-4 left-4 z-20 flex items-center gap-2 bg-black/70 backdrop-blur border border-white/20 px-3 py-1.5">
             <div className={cn('w-2 h-2 rounded-full', isTextureUpdating ? 'bg-yellow-400 animate-spin' : 'bg-green-500')} />
@@ -1235,23 +1338,24 @@ const ProductCustomizer: React.FC<ProductCustomizerProps> = ({ onBack, initialMe
                   style={{ width: '100%', maxWidth: 500, aspectRatio: '1' }}
                 >
                   <div ref={canvasRef} className="absolute inset-0">
-                    <img
-                      src={selectedBase.image}
-                      alt={selectedBase.name}
-                      className="w-full h-full object-cover pointer-events-none"
-                      style={{ filter: selectedColorHex !== '#FFFFFF' ? `hue-rotate(0deg)` : 'none' }}
+                    {/* Sfondo colore prodotto — nessuna foto 2D */}
+                    <div
+                      className="absolute inset-0 pointer-events-none"
+                      style={{ background: selectedColorHex ?? '#ffffff' }}
                     />
 
-                    {/* Overlay print area */}
+                    {/* Area di stampa evidenziata */}
                     <div
-                      className="absolute pointer-events-none border-2 border-dashed border-white/30"
+                      className="absolute pointer-events-none border-2 border-dashed border-black/20 bg-black/5"
                       style={{
                         top:    selectedBase.overlay.top,
                         left:   selectedBase.overlay.left,
                         width:  selectedBase.overlay.width,
                         height: selectedBase.overlay.height,
                       }}
-                    />
+                    >
+                      <span className="absolute -top-5 left-0 font-mono text-[9px] font-black uppercase tracking-widest text-black/40">Area stampa</span>
+                    </div>
 
                     {/* Editable layers */}
                     <div
@@ -1342,10 +1446,10 @@ const ProductCustomizer: React.FC<ProductCustomizerProps> = ({ onBack, initialMe
                 className="w-full h-full"
               >
                 <Product3DPreview
-                  baseProductId={selectedBase.id as 'base-tshirt' | 'base-phonecase'}
+                  baseProductId={selectedBase.id}
                   designTextureUrl={designTextureUrl}
                   baseColor={selectedColorHex}
-                  lightingMode={isBrainrotMode ? 'y2k' : 'neutral'}
+                  lightingMode="neutral"
                   autoRotate={currentStep === 3}
                 />
               </motion.div>
@@ -1360,7 +1464,7 @@ const ProductCustomizer: React.FC<ProductCustomizerProps> = ({ onBack, initialMe
             </div>
             {currentStep === 2 && !show2DCanvas && layers.length > 0 && (
               <div className="bg-yellow-400 text-black border-2 border-black px-3 py-1 font-black uppercase text-xs">
-                Clicca "Modifica 2D" per editare
+                Torna alla vista 2D per regolare posizione e scala
               </div>
             )}
           </div>

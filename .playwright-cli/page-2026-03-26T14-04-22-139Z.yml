@@ -1,0 +1,581 @@
+- generic [ref=e3]:
+  - generic "Notifiche e Slogan del Brand" [ref=e4]:
+    - generic [ref=e7]:
+      - generic [ref=e8]:
+        - text: IL TUO OUTFIT HA BISOGNO DI AIUTO 🚑
+        - generic [ref=e9]: ✦
+      - generic [ref=e10]:
+        - text: +1000 AURA POINTS ALL'ACQUISTO ✨
+        - generic [ref=e11]: ✦
+      - generic [ref=e12]:
+        - text: SPEDIZIONE GRATIS (FORSE) 📦
+        - generic [ref=e13]: ✦
+      - generic [ref=e14]:
+        - text: DROPPING HEAT OGNI VENERDÌ 🔥
+        - generic [ref=e15]: ✦
+      - generic [ref=e16]:
+        - text: LA TUA BANCA NON APPROVA 💳
+        - generic [ref=e17]: ✦
+      - generic [ref=e18]:
+        - text: VESTITI CHE FANNO PIANGERE I BOOMER 👴
+        - generic [ref=e19]: ✦
+      - generic [ref=e20]:
+        - text: DESIGN RUBATI A CASO 🥷
+        - generic [ref=e21]: ✦
+      - generic [ref=e22]:
+        - text: COMPRA ORA, PENTITI DOMANI 🛒
+        - generic [ref=e23]: ✦
+      - generic [ref=e24]:
+        - text: PROBABILMENTE ANDRÀ SOLD OUT SUBITO ⏳
+        - generic [ref=e25]: ✦
+      - generic [ref=e26]:
+        - text: NON FARLO VEDERE AI TUOI GENITORI 🫣
+        - generic [ref=e27]: ✦
+      - generic [ref=e28]:
+        - text: IL TUO CARRELLO TI STA GIUDICANDO 🤨
+        - generic [ref=e29]: ✦
+      - generic [ref=e30]:
+        - text: SEGUI L'HYPE, PERDI I SOLDI 💰
+        - generic [ref=e31]: ✦
+      - generic [ref=e32]:
+        - text: METTI NEL CARRELLO, NON FARE IL POVERO 💳
+        - generic [ref=e33]: ✦
+      - generic [ref=e34]:
+        - text: OTTIMO PER DELUDERE LA TUA FAMIGLIA 🏆
+        - generic [ref=e35]: ✦
+      - generic [ref=e36]:
+        - text: NESSUN SUPPORTO CLIENTI, ARRANGIATI 📞
+        - generic [ref=e37]: ✦
+      - generic [ref=e38]:
+        - text: LA SPEDIZIONE È LENTA, ABITUATICI 🐢
+        - generic [ref=e39]: ✦
+      - generic [ref=e40]:
+        - text: IL TUO OUTFIT HA BISOGNO DI AIUTO 🚑
+        - generic [ref=e41]: ✦
+      - generic [ref=e42]:
+        - text: +1000 AURA POINTS ALL'ACQUISTO ✨
+        - generic [ref=e43]: ✦
+      - generic [ref=e44]:
+        - text: SPEDIZIONE GRATIS (FORSE) 📦
+        - generic [ref=e45]: ✦
+      - generic [ref=e46]:
+        - text: DROPPING HEAT OGNI VENERDÌ 🔥
+        - generic [ref=e47]: ✦
+      - generic [ref=e48]:
+        - text: LA TUA BANCA NON APPROVA 💳
+        - generic [ref=e49]: ✦
+      - generic [ref=e50]:
+        - text: VESTITI CHE FANNO PIANGERE I BOOMER 👴
+        - generic [ref=e51]: ✦
+      - generic [ref=e52]:
+        - text: DESIGN RUBATI A CASO 🥷
+        - generic [ref=e53]: ✦
+      - generic [ref=e54]:
+        - text: COMPRA ORA, PENTITI DOMANI 🛒
+        - generic [ref=e55]: ✦
+      - generic [ref=e56]:
+        - text: PROBABILMENTE ANDRÀ SOLD OUT SUBITO ⏳
+        - generic [ref=e57]: ✦
+      - generic [ref=e58]:
+        - text: NON FARLO VEDERE AI TUOI GENITORI 🫣
+        - generic [ref=e59]: ✦
+      - generic [ref=e60]:
+        - text: IL TUO CARRELLO TI STA GIUDICANDO 🤨
+        - generic [ref=e61]: ✦
+      - generic [ref=e62]:
+        - text: SEGUI L'HYPE, PERDI I SOLDI 💰
+        - generic [ref=e63]: ✦
+      - generic [ref=e64]:
+        - text: METTI NEL CARRELLO, NON FARE IL POVERO 💳
+        - generic [ref=e65]: ✦
+      - generic [ref=e66]:
+        - text: OTTIMO PER DELUDERE LA TUA FAMIGLIA 🏆
+        - generic [ref=e67]: ✦
+      - generic [ref=e68]:
+        - text: NESSUN SUPPORTO CLIENTI, ARRANGIATI 📞
+        - generic [ref=e69]: ✦
+      - generic [ref=e70]:
+        - text: LA SPEDIZIONE È LENTA, ABITUATICI 🐢
+        - generic [ref=e71]: ✦
+      - generic [ref=e72]:
+        - text: IL TUO OUTFIT HA BISOGNO DI AIUTO 🚑
+        - generic [ref=e73]: ✦
+      - generic [ref=e74]:
+        - text: +1000 AURA POINTS ALL'ACQUISTO ✨
+        - generic [ref=e75]: ✦
+      - generic [ref=e76]:
+        - text: SPEDIZIONE GRATIS (FORSE) 📦
+        - generic [ref=e77]: ✦
+      - generic [ref=e78]:
+        - text: DROPPING HEAT OGNI VENERDÌ 🔥
+        - generic [ref=e79]: ✦
+      - generic [ref=e80]:
+        - text: LA TUA BANCA NON APPROVA 💳
+        - generic [ref=e81]: ✦
+      - generic [ref=e82]:
+        - text: VESTITI CHE FANNO PIANGERE I BOOMER 👴
+        - generic [ref=e83]: ✦
+      - generic [ref=e84]:
+        - text: DESIGN RUBATI A CASO 🥷
+        - generic [ref=e85]: ✦
+      - generic [ref=e86]:
+        - text: COMPRA ORA, PENTITI DOMANI 🛒
+        - generic [ref=e87]: ✦
+      - generic [ref=e88]:
+        - text: PROBABILMENTE ANDRÀ SOLD OUT SUBITO ⏳
+        - generic [ref=e89]: ✦
+      - generic [ref=e90]:
+        - text: NON FARLO VEDERE AI TUOI GENITORI 🫣
+        - generic [ref=e91]: ✦
+      - generic [ref=e92]:
+        - text: IL TUO CARRELLO TI STA GIUDICANDO 🤨
+        - generic [ref=e93]: ✦
+      - generic [ref=e94]:
+        - text: SEGUI L'HYPE, PERDI I SOLDI 💰
+        - generic [ref=e95]: ✦
+      - generic [ref=e96]:
+        - text: METTI NEL CARRELLO, NON FARE IL POVERO 💳
+        - generic [ref=e97]: ✦
+      - generic [ref=e98]:
+        - text: OTTIMO PER DELUDERE LA TUA FAMIGLIA 🏆
+        - generic [ref=e99]: ✦
+      - generic [ref=e100]:
+        - text: NESSUN SUPPORTO CLIENTI, ARRANGIATI 📞
+        - generic [ref=e101]: ✦
+      - generic [ref=e102]:
+        - text: LA SPEDIZIONE È LENTA, ABITUATICI 🐢
+        - generic [ref=e103]: ✦
+    - generic [ref=e106]:
+      - generic [ref=e107]:
+        - generic [ref=e108]: ✦
+        - text: LIVELLO DI RIZZ INACCETTABILE 📈
+      - generic [ref=e109]:
+        - generic [ref=e110]: ✦
+        - text: 100% REAL NO CAP 🧢
+      - generic [ref=e111]:
+        - generic [ref=e112]: ✦
+        - text: MEWING DAL 2004 🗿
+      - generic [ref=e113]:
+        - generic [ref=e114]: ✦
+        - text: NON SEI PRONTO PER QUESTO DRIP 💧
+      - generic [ref=e115]:
+        - generic [ref=e116]: ✦
+        - text: HAUTE COUTURE PER DISADATTATI 👽
+      - generic [ref=e117]:
+        - generic [ref=e118]: ✦
+        - text: QUESTA È LETTERALMENTE ARTE 🖼️
+      - generic [ref=e119]:
+        - generic [ref=e120]: ✦
+        - text: TROPPO COSTOSO PER TE 💸
+      - generic [ref=e121]:
+        - generic [ref=e122]: ✦
+        - text: NON CHIEDERE PERCHÉ 🤫
+      - generic [ref=e123]:
+        - generic [ref=e124]: ✦
+        - text: SKIBIDI TOILET APPROVED 🚽
+      - generic [ref=e125]:
+        - generic [ref=e126]: ✦
+        - text: TOCCARE L'ERBA È SOPRAVVALUTATO 🌿
+      - generic [ref=e127]:
+        - generic [ref=e128]: ✦
+        - text: SIAMO TUTTI NPC IN REALTÀ 🤖
+      - generic [ref=e129]:
+        - generic [ref=e130]: ✦
+        - text: ONLY W, MAI L 👑
+      - generic [ref=e131]:
+        - generic [ref=e132]: ✦
+        - text: IL TUO FIT È UN CRIMINE DI GUERRA 🚨
+      - generic [ref=e133]:
+        - generic [ref=e134]: ✦
+        - text: IL BRO CUCINA MA NESSUNO HA FAME 🍳
+      - generic [ref=e135]:
+        - generic [ref=e136]: ✦
+        - text: BASEATO E ROSSOPILOLATO 💊
+      - generic [ref=e137]:
+        - generic [ref=e138]: ✦
+        - text: HO CREATO QUESTO BRAND SU DISCORD 🎧
+      - generic [ref=e139]:
+        - generic [ref=e140]: ✦
+        - text: LIVELLO DI RIZZ INACCETTABILE 📈
+      - generic [ref=e141]:
+        - generic [ref=e142]: ✦
+        - text: 100% REAL NO CAP 🧢
+      - generic [ref=e143]:
+        - generic [ref=e144]: ✦
+        - text: MEWING DAL 2004 🗿
+      - generic [ref=e145]:
+        - generic [ref=e146]: ✦
+        - text: NON SEI PRONTO PER QUESTO DRIP 💧
+      - generic [ref=e147]:
+        - generic [ref=e148]: ✦
+        - text: HAUTE COUTURE PER DISADATTATI 👽
+      - generic [ref=e149]:
+        - generic [ref=e150]: ✦
+        - text: QUESTA È LETTERALMENTE ARTE 🖼️
+      - generic [ref=e151]:
+        - generic [ref=e152]: ✦
+        - text: TROPPO COSTOSO PER TE 💸
+      - generic [ref=e153]:
+        - generic [ref=e154]: ✦
+        - text: NON CHIEDERE PERCHÉ 🤫
+      - generic [ref=e155]:
+        - generic [ref=e156]: ✦
+        - text: SKIBIDI TOILET APPROVED 🚽
+      - generic [ref=e157]:
+        - generic [ref=e158]: ✦
+        - text: TOCCARE L'ERBA È SOPRAVVALUTATO 🌿
+      - generic [ref=e159]:
+        - generic [ref=e160]: ✦
+        - text: SIAMO TUTTI NPC IN REALTÀ 🤖
+      - generic [ref=e161]:
+        - generic [ref=e162]: ✦
+        - text: ONLY W, MAI L 👑
+      - generic [ref=e163]:
+        - generic [ref=e164]: ✦
+        - text: IL TUO FIT È UN CRIMINE DI GUERRA 🚨
+      - generic [ref=e165]:
+        - generic [ref=e166]: ✦
+        - text: IL BRO CUCINA MA NESSUNO HA FAME 🍳
+      - generic [ref=e167]:
+        - generic [ref=e168]: ✦
+        - text: BASEATO E ROSSOPILOLATO 💊
+      - generic [ref=e169]:
+        - generic [ref=e170]: ✦
+        - text: HO CREATO QUESTO BRAND SU DISCORD 🎧
+      - generic [ref=e171]:
+        - generic [ref=e172]: ✦
+        - text: LIVELLO DI RIZZ INACCETTABILE 📈
+      - generic [ref=e173]:
+        - generic [ref=e174]: ✦
+        - text: 100% REAL NO CAP 🧢
+      - generic [ref=e175]:
+        - generic [ref=e176]: ✦
+        - text: MEWING DAL 2004 🗿
+      - generic [ref=e177]:
+        - generic [ref=e178]: ✦
+        - text: NON SEI PRONTO PER QUESTO DRIP 💧
+      - generic [ref=e179]:
+        - generic [ref=e180]: ✦
+        - text: HAUTE COUTURE PER DISADATTATI 👽
+      - generic [ref=e181]:
+        - generic [ref=e182]: ✦
+        - text: QUESTA È LETTERALMENTE ARTE 🖼️
+      - generic [ref=e183]:
+        - generic [ref=e184]: ✦
+        - text: TROPPO COSTOSO PER TE 💸
+      - generic [ref=e185]:
+        - generic [ref=e186]: ✦
+        - text: NON CHIEDERE PERCHÉ 🤫
+      - generic [ref=e187]:
+        - generic [ref=e188]: ✦
+        - text: SKIBIDI TOILET APPROVED 🚽
+      - generic [ref=e189]:
+        - generic [ref=e190]: ✦
+        - text: TOCCARE L'ERBA È SOPRAVVALUTATO 🌿
+      - generic [ref=e191]:
+        - generic [ref=e192]: ✦
+        - text: SIAMO TUTTI NPC IN REALTÀ 🤖
+      - generic [ref=e193]:
+        - generic [ref=e194]: ✦
+        - text: ONLY W, MAI L 👑
+      - generic [ref=e195]:
+        - generic [ref=e196]: ✦
+        - text: IL TUO FIT È UN CRIMINE DI GUERRA 🚨
+      - generic [ref=e197]:
+        - generic [ref=e198]: ✦
+        - text: IL BRO CUCINA MA NESSUNO HA FAME 🍳
+      - generic [ref=e199]:
+        - generic [ref=e200]: ✦
+        - text: BASEATO E ROSSOPILOLATO 💊
+      - generic [ref=e201]:
+        - generic [ref=e202]: ✦
+        - text: HO CREATO QUESTO BRAND SU DISCORD 🎧
+  - banner [ref=e203]:
+    - generic [ref=e204]:
+      - button "Torna alla home di Brainrot Labs" [ref=e205]:
+        - img [ref=e207]
+        - generic [ref=e209]:
+          - paragraph [ref=e210]: Brainrot Labs
+          - heading "Shop + Community" [level=1] [ref=e211]
+      - generic [ref=e213]:
+        - generic [ref=e214]: Cerca catalogo e community
+        - searchbox "Cerca catalogo e community" [ref=e215]
+        - img [ref=e216]
+      - generic [ref=e219]:
+        - button "Community" [ref=e220]:
+          - img [ref=e221]
+          - text: Community
+        - button "Crea" [ref=e226]:
+          - img [ref=e227]
+          - text: Crea
+        - button "Apri account dashboard" [ref=e899]:
+          - img [ref=e231]
+          - text: Account
+        - button "Apri carrello" [ref=e234]:
+          - img [ref=e235]
+        - button "Apri menu" [ref=e239]:
+          - img [ref=e240]
+    - generic [ref=e241]: Catalogo curato, design salvati prima del checkout, ordini e tracking nel tuo account.
+  - generic [ref=e1611]:
+    - generic:
+      - generic: "Brainrot Level: 12%"
+    - banner [ref=e1612]:
+      - generic [ref=e1613]:
+        - button "ESCI" [ref=e1614]:
+          - img [ref=e1615]
+          - generic [ref=e1617]: ESCI
+        - generic [ref=e1618]:
+          - paragraph [ref=e1619]: BRAINROT STUDIO
+          - paragraph [ref=e1620]: T-Shirt Bella+Canvas 3001
+      - generic [ref=e1621]:
+        - button "Prodotto" [ref=e1712]:
+          - img [ref=e1713]
+          - generic [ref=e1624]: Prodotto
+        - button "2 Design" [ref=e1626]:
+          - generic [ref=e1627]: "2"
+          - generic [ref=e1628]: Design
+        - button "3 Conferma" [ref=e1630]:
+          - generic [ref=e1631]: "3"
+          - generic [ref=e1632]: Conferma
+      - generic [ref=e1633]:
+        - button "Y2K OFF" [ref=e1634]
+        - button "SALVA" [ref=e1635]:
+          - img [ref=e1636]
+          - text: SALVA
+        - button "ESPORTA" [ref=e1640]:
+          - img [ref=e1641]
+          - text: ESPORTA
+    - generic [ref=e1644]:
+      - generic [ref=e1645]:
+        - generic [ref=e1646]:
+          - paragraph [ref=e1647]: Step 2 / 3
+          - heading "Aggiungi il design" [level=2] [ref=e1716]
+        - generic [ref=e1649]:
+          - generic [ref=e1717]:
+            - button "Meme" [ref=e1718]:
+              - img [ref=e1719]
+              - text: Meme
+            - button "AI" [ref=e1723]:
+              - img [ref=e1724]
+              - text: AI
+            - button "Stickers" [ref=e1732]:
+              - img [ref=e1733]
+              - text: Stickers
+            - button "Upload" [ref=e1736]:
+              - img [ref=e1737]
+              - text: Upload
+          - button "+ Aggiungi Testo" [ref=e1740]:
+            - img [ref=e1741]
+            - text: + Aggiungi Testo
+          - generic [ref=e1743]:
+            - generic [ref=e1744]:
+              - paragraph [ref=e1745]:
+                - text: 🔥 BASI TRENDING
+                - generic [ref=e1746]: clicca per aggiungere
+              - generic [ref=e1747]:
+                - button "Drake Approve Drake Approve" [active] [ref=e1748]:
+                  - img "Drake Approve" [ref=e1749]
+                  - generic [ref=e1751]: Drake Approve
+                - button "Ragazzo Distratto Ragazzo Distratto" [ref=e1752]:
+                  - img "Ragazzo Distratto" [ref=e1753]
+                  - generic [ref=e1755]: Ragazzo Distratto
+                - button "Cervello in Espansione Cervello in Espansione" [ref=e1756]:
+                  - img "Cervello in Espansione" [ref=e1757]
+                  - generic [ref=e1759]: Cervello in Espansione
+                - button "This Is Fine This Is Fine" [ref=e1760]:
+                  - img "This Is Fine" [ref=e1761]
+                  - generic [ref=e1763]: This Is Fine
+                - button "Roll Safe Roll Safe" [ref=e1764]:
+                  - img "Roll Safe" [ref=e1765]
+                  - generic [ref=e1767]: Roll Safe
+                - button "Pikachu Sorpreso Pikachu Sorpreso" [ref=e1768]:
+                  - img "Pikachu Sorpreso" [ref=e1769]
+                  - generic [ref=e1771]: Pikachu Sorpreso
+                - button "Doge Doge" [ref=e1772]:
+                  - img "Doge" [ref=e1773]
+                  - generic [ref=e1775]: Doge
+                - button "Due Pulsanti Due Pulsanti" [ref=e1776]:
+                  - img "Due Pulsanti" [ref=e1777]
+                  - generic [ref=e1779]: Due Pulsanti
+            - paragraph [ref=e1781]: LIBRERIA IMGFLIP
+            - generic [ref=e1782]:
+              - img [ref=e1783]
+              - textbox "Cerca meme..." [ref=e1786]
+            - generic [ref=e1787]:
+              - button "Drake Hotline Bling" [ref=e1788]:
+                - img "Drake Hotline Bling" [ref=e1789]
+              - button "Two Buttons" [ref=e1790]:
+                - img "Two Buttons" [ref=e1791]
+              - button "Distracted Boyfriend" [ref=e1792]:
+                - img "Distracted Boyfriend" [ref=e1793]
+              - button "UNO Draw 25 Cards" [ref=e1794]:
+                - img "UNO Draw 25 Cards" [ref=e1795]
+              - button "Bernie I Am Once Again Asking For Your Support" [ref=e1796]:
+                - img "Bernie I Am Once Again Asking For Your Support" [ref=e1797]
+              - button "Left Exit 12 Off Ramp" [ref=e1798]:
+                - img "Left Exit 12 Off Ramp" [ref=e1799]
+              - button "Anakin Padme 4 Panel" [ref=e1800]:
+                - img "Anakin Padme 4 Panel" [ref=e1801]
+              - button "Always Has Been" [ref=e1802]:
+                - img "Always Has Been" [ref=e1803]
+              - button "patrick to do list actually blank" [ref=e1804]:
+                - img "patrick to do list actually blank" [ref=e1805]
+              - button "This Is Fine" [ref=e1806]:
+                - img "This Is Fine" [ref=e1807]
+              - button "Running Away Balloon" [ref=e1808]:
+                - img "Running Away Balloon" [ref=e1809]
+              - button "Epic Handshake" [ref=e1810]:
+                - img "Epic Handshake" [ref=e1811]
+              - button "Gru's Plan" [ref=e1812]:
+                - img "Gru's Plan" [ref=e1813]
+              - button "Sad Pablo Escobar" [ref=e1814]:
+                - img "Sad Pablo Escobar" [ref=e1815]
+              - button "Disaster Girl" [ref=e1816]:
+                - img "Disaster Girl" [ref=e1817]
+              - button "Mocking Spongebob" [ref=e1818]:
+                - img "Mocking Spongebob" [ref=e1819]
+              - button "Y'all Got Any More Of That" [ref=e1820]:
+                - img "Y'all Got Any More Of That" [ref=e1821]
+              - button "Waiting Skeleton" [ref=e1822]:
+                - img "Waiting Skeleton" [ref=e1823]
+              - button "X, X Everywhere" [ref=e1824]:
+                - img "X, X Everywhere" [ref=e1825]
+              - button "Ancient Aliens" [ref=e1826]:
+                - img "Ancient Aliens" [ref=e1827]
+              - button "Change My Mind" [ref=e1828]:
+                - img "Change My Mind" [ref=e1829]
+              - button "Batman Slapping Robin" [ref=e1830]:
+                - img "Batman Slapping Robin" [ref=e1831]
+              - button "Trade Offer" [ref=e1832]:
+                - img "Trade Offer" [ref=e1833]
+              - button "Woman Yelling At Cat" [ref=e1834]:
+                - img "Woman Yelling At Cat" [ref=e1835]
+              - button "Clown Applying Makeup" [ref=e1836]:
+                - img "Clown Applying Makeup" [ref=e1837]
+              - button "Buff Doge vs. Cheems" [ref=e1838]:
+                - img "Buff Doge vs. Cheems" [ref=e1839]
+              - button "Expanding Brain" [ref=e1840]:
+                - img "Expanding Brain" [ref=e1841]
+              - button "Tuxedo Winnie The Pooh" [ref=e1842]:
+                - img "Tuxedo Winnie The Pooh" [ref=e1843]
+              - button "Blank Nut Button" [ref=e1844]:
+                - img "Blank Nut Button" [ref=e1845]
+              - button "One Does Not Simply" [ref=e1846]:
+                - img "One Does Not Simply" [ref=e1847]
+              - button "Marked Safe From" [ref=e1848]:
+                - img "Marked Safe From" [ref=e1849]
+              - button "Bike Fall" [ref=e1850]:
+                - img "Bike Fall" [ref=e1851]
+              - button "Is This A Pigeon" [ref=e1852]:
+                - img "Is This A Pigeon" [ref=e1853]
+              - button "Mother Ignoring Kid Drowning In A Pool" [ref=e1854]:
+                - img "Mother Ignoring Kid Drowning In A Pool" [ref=e1855]
+              - button "0 days without (Lenny, Simpsons)" [ref=e1856]:
+                - img "0 days without (Lenny, Simpsons)" [ref=e1857]
+              - button "Bernie Sanders Once Again Asking" [ref=e1858]:
+                - img "Bernie Sanders Once Again Asking" [ref=e1859]
+              - button "Absolute Cinema" [ref=e1860]:
+                - img "Absolute Cinema" [ref=e1861]
+              - button "They're The Same Picture" [ref=e1862]:
+                - img "They're The Same Picture" [ref=e1863]
+              - button "I Bet He's Thinking About Other Women" [ref=e1864]:
+                - img "I Bet He's Thinking About Other Women" [ref=e1865]
+              - button "Evil Kermit" [ref=e1866]:
+                - img "Evil Kermit" [ref=e1867]
+              - button "Success Kid" [ref=e1868]:
+                - img "Success Kid" [ref=e1869]
+              - button "You Guys are Getting Paid" [ref=e1870]:
+                - img "You Guys are Getting Paid" [ref=e1871]
+              - button "Oprah You Get A" [ref=e1872]:
+                - img "Oprah You Get A" [ref=e1873]
+              - button "Monkey Puppet" [ref=e1874]:
+                - img "Monkey Puppet" [ref=e1875]
+              - button "Megamind peeking" [ref=e1876]:
+                - img "Megamind peeking" [ref=e1877]
+              - button "This Is Where I'd Put My Trophy If I Had One" [ref=e1878]:
+                - img "This Is Where I'd Put My Trophy If I Had One" [ref=e1879]
+              - button "spiderman pointing at spiderman" [ref=e1880]:
+                - img "spiderman pointing at spiderman" [ref=e1881]
+              - button "Squidward window" [ref=e1882]:
+                - img "Squidward window" [ref=e1883]
+              - button "Oh No Black Cat" [ref=e1884]:
+                - img "Oh No Black Cat" [ref=e1885]
+              - button "Hide the Pain Harold" [ref=e1886]:
+                - img "Hide the Pain Harold" [ref=e1887]
+              - button "Pawn Stars Best I Can Do" [ref=e1888]:
+                - img "Pawn Stars Best I Can Do" [ref=e1889]
+              - button "Boardroom Meeting Suggestion" [ref=e1890]:
+                - img "Boardroom Meeting Suggestion" [ref=e1891]
+              - button "Laughing Leo" [ref=e1892]:
+                - img "Laughing Leo" [ref=e1893]
+              - button "Bell Curve" [ref=e1894]:
+                - img "Bell Curve" [ref=e1895]
+              - button "Soldier protecting sleeping child" [ref=e1896]:
+                - img "Soldier protecting sleeping child" [ref=e1897]
+              - button "Panik Kalm Panik" [ref=e1898]:
+                - img "Panik Kalm Panik" [ref=e1899]
+              - button "Roll Safe Think About It" [ref=e1900]:
+                - img "Roll Safe Think About It" [ref=e1901]
+              - button "Futurama Fry" [ref=e1902]:
+                - img "Futurama Fry" [ref=e1903]
+              - button "They don't know" [ref=e1904]:
+                - img "They don't know" [ref=e1905]
+              - button "Flex Tape" [ref=e1906]:
+                - img "Flex Tape" [ref=e1907]
+          - generic [ref=e1917]:
+            - generic [ref=e1918]:
+              - paragraph [ref=e1919]:
+                - img [ref=e1920]
+                - text: Livelli (1)
+              - button "Svuota" [ref=e1924]
+            - generic [ref=e1926]:
+              - generic [ref=e1928]: Immagine 1
+              - generic [ref=e1929]:
+                - button [ref=e1930]:
+                  - img [ref=e1931]
+                - button [ref=e1933]:
+                  - img [ref=e1934]
+                - button [ref=e1936]:
+                  - img [ref=e1937]
+          - generic [ref=e1940]:
+            - generic [ref=e1941]:
+              - paragraph [ref=e1942]: Proprietà livello
+              - generic [ref=e1943]:
+                - button [ref=e1944]:
+                  - img [ref=e1945]
+                - button [ref=e1948]:
+                  - img [ref=e1949]
+                - button [ref=e1952]:
+                  - img [ref=e1953]
+                - button [ref=e1956]:
+                  - img [ref=e1957]
+                - button [ref=e1960]:
+                  - img [ref=e1961]
+            - generic [ref=e1964]:
+              - generic [ref=e1965]: Opacità
+              - slider [ref=e1966]: "1"
+            - generic [ref=e1967]:
+              - generic [ref=e1968]: Rotazione
+              - slider [ref=e1969]: "0"
+        - generic [ref=e1695]:
+          - button "INDIETRO" [ref=e1908]:
+            - img [ref=e1697]
+            - text: INDIETRO
+          - generic [ref=e1699]: 2 / 3
+          - button "AVANTI" [ref=e1700]:
+            - text: AVANTI
+            - img [ref=e1701]
+      - generic [ref=e1703]:
+        - button "Modifica 2D" [ref=e1910]:
+          - img [ref=e1911]
+          - text: Modifica 2D
+        - generic [ref=e1706]: 1 livello
+        - generic [ref=e1708]:
+          - generic: Trascina per ruotare
+        - generic:
+          - generic:
+            - paragraph: Step 2
+            - paragraph: Aggiungi il design
+          - generic: Clicca "Modifica 2D" per editare
+  - button "Toggle Soundboard" [ref=e832]:
+    - img [ref=e833]

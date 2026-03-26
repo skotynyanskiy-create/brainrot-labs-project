@@ -1,64 +1,7 @@
-import { motion, useInView } from 'motion/react';
-import { Star, MessageSquare, ShieldCheck } from 'lucide-react';
-import { useEffect, useRef, useState, type ComponentType } from 'react';
-import { CREATOR_ROYALTY_RATE } from '../../constants';
+import { motion } from 'motion/react';
+import { Star } from 'lucide-react';
+import { getSiteCtaClasses } from '../../styles/siteCta';
 import { playBlipSound } from '../../utils/sounds';
-
-interface CounterProps {
-  target: number;
-  label: string;
-  icon: ComponentType<{ className?: string }>;
-  suffix?: string;
-}
-
-const AnimatedCounter = ({ target, label, icon: Icon, suffix = '' }: CounterProps) => {
-  const [count, setCount] = useState(0);
-  const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true });
-  const hasDecimals = target % 1 !== 0;
-
-  useEffect(() => {
-    if (!inView) return;
-
-    const duration = 2;
-    const increment = target / (duration * 60);
-    let current = 0;
-
-    const timer = setInterval(() => {
-      current += increment;
-      if (current >= target) {
-        setCount(target);
-        clearInterval(timer);
-      } else {
-        setCount(hasDecimals ? Number(current.toFixed(1)) : Math.floor(current));
-      }
-    }, 1000 / 60);
-
-    return () => clearInterval(timer);
-  }, [hasDecimals, inView, target]);
-
-  const formattedCount = hasDecimals
-    ? count.toLocaleString('it-IT', { minimumFractionDigits: 1, maximumFractionDigits: 1 })
-    : count.toLocaleString('it-IT');
-
-  return (
-    <div ref={ref} className="flex flex-col items-center gap-4">
-      <motion.div
-        animate={{ scale: inView ? 1 : 0.8, rotate: inView ? 5 : 0 }}
-        className="bg-black text-white p-4 md:p-6 border-4 border-black shadow-[4px_4px_0_0_rgba(0,0,0,1)] md:shadow-[8px_8px_0_0_rgba(0,0,0,1)]"
-      >
-        <Icon className="w-8 h-8" />
-      </motion.div>
-      <motion.div
-        animate={{ scale: inView ? 1 : 0.5 }}
-        className="text-5xl md:text-6xl font-black text-black"
-      >
-        {formattedCount}{suffix}
-      </motion.div>
-      <p className="text-sm md:text-base font-black uppercase text-gray-700 text-center tracking-wide">{label}</p>
-    </div>
-  );
-};
 
 interface TestimonialsProps {
   onOpenCommunity?: () => void;
@@ -70,7 +13,7 @@ export default function Testimonials({ onOpenCommunity }: TestimonialsProps) {
       name: 'Marco R.',
       role: 'Creator early adopter',
       avatar: 'https://api.dicebear.com/9.x/thumbs/svg?seed=Marco',
-      text: 'Ho usato una base già curata, ho sistemato il copy nel customizer e il risultato finale è rimasto coerente dalla preview al prodotto consegnato.',
+      text: 'Ho usato una base giÃ  curata, ho sistemato il copy nel customizer e il risultato finale Ã¨ rimasto coerente dalla preview al prodotto consegnato.',
       rating: 5,
       color: 'bg-pink-100',
     },
@@ -78,7 +21,7 @@ export default function Testimonials({ onOpenCommunity }: TestimonialsProps) {
       name: 'Giulia P., Milano',
       role: 'Cliente repeat',
       avatar: 'https://api.dicebear.com/9.x/thumbs/svg?seed=Giulia',
-      text: 'La parte migliore è che il sito non usa immagini riempitive: quello che scegli in editor è quello che percepisci anche nella scheda prodotto.',
+      text: 'La parte migliore Ã¨ che il sito non usa immagini riempitive: quello che scegli in editor Ã¨ quello che percepisci anche nella scheda prodotto.',
       rating: 5,
       color: 'bg-cyan-100',
     },
@@ -86,7 +29,7 @@ export default function Testimonials({ onOpenCommunity }: TestimonialsProps) {
       name: 'Luca F., Torino',
       role: 'Creator community',
       avatar: 'https://api.dicebear.com/9.x/thumbs/svg?seed=Luca',
-      text: 'Per la community il salto di qualità si vede: seed credibili, visual pertinenti e promessa royalty finalmente spiegata in modo semplice.',
+      text: 'Per la community il salto di qualitÃ  si vede: seed credibili, visual pertinenti e promessa royalty finalmente spiegata in modo semplice.',
       rating: 5,
       color: 'bg-yellow-100',
     },
@@ -141,12 +84,6 @@ export default function Testimonials({ onOpenCommunity }: TestimonialsProps) {
           ))}
         </div>
 
-        <div className="mt-20 md:mt-32 grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-16">
-          <AnimatedCounter target={2} label="Prodotti Base nel Customizer" icon={MessageSquare} />
-          <AnimatedCounter target={8} label="Basi Curate da Cui Partire" icon={Star} />
-          <AnimatedCounter target={CREATOR_ROYALTY_RATE} label="Royalty Creator per Vendita" icon={ShieldCheck} suffix="%" />
-        </div>
-
         <div className="mt-16 md:mt-20 flex justify-center">
           <motion.button
             whileHover={{ scale: 1.02, y: -3 }}
@@ -155,9 +92,9 @@ export default function Testimonials({ onOpenCommunity }: TestimonialsProps) {
               playBlipSound();
               onOpenCommunity?.();
             }}
-            className="border-4 border-black bg-yellow-400 px-8 py-4 text-lg font-black uppercase italic shadow-[8px_8px_0_0_rgba(0,0,0,1)] transition-all hover:translate-x-1 hover:translate-y-1 hover:bg-black hover:text-yellow-400 hover:shadow-none"
+            className={getSiteCtaClasses('archive', 'lg')}
           >
-            Unisciti alla community →
+            Archivio Digitale
           </motion.button>
         </div>
       </div>

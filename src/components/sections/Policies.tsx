@@ -36,6 +36,7 @@ export default function Policies() {
           {policies.map((policy, i) => (
             <motion.div
               key={i}
+              id={policy.title.includes('Spedizioni') ? 'shipping-policy' : policy.title.includes('Resi') ? 'returns-policy' : policy.title.includes('Privacy') ? 'privacy-policy-summary' : undefined}
               initial={{ y: 50, opacity: 0 }}
               whileInView={{ y: 0, opacity: 1 }}
               viewport={{ once: true }}

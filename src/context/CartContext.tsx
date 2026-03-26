@@ -4,10 +4,11 @@ import type { CartItem, Product } from '../types';
 import { STORAGE_KEYS } from '../constants';
 import { playChaChingSound } from '../utils/sounds';
 import { logger } from '../utils/logger';
+import { buildCartItemId } from '../services/commerce/helpers';
 
 interface CartContextType {
   items: CartItem[];
-  addToCart: (product: Product, quantity?: number, size?: string, color?: string, customData?: Record<string, unknown>) => void;
+  addToCart: (item: CartItem | Product, quantity?: number, size?: string, color?: string) => void;
   removeFromCart: (cartItemId: string) => void;
   updateQuantity: (cartItemId: string, quantity: number) => void;
   clearCart: () => void;
@@ -25,7 +26,9 @@ function isValidCartItem(item: unknown): item is CartItem {
     typeof i.cartItemId === 'string' &&
     typeof i.price === 'number' &&
     typeof i.quantity === 'number' &&
-    typeof i.id === 'string'
+    typeof i.productId === 'string' &&
+    typeof i.name === 'string' &&
+    typeof i.image === 'string'
   );
 }
 
@@ -52,26 +55,49 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }, [items]);
 
   const addToCart = (
-    product: Product,
+    incomingItem: CartItem | Product,
     quantity: number = 1,
     size?: string,
     color?: string,
-    customData?: Record<string, unknown>
   ) => {
-    // Include a short hash of customData to avoid ID collisions between different designs on same base product
-    const customHash = customData ? btoa(JSON.stringify(customData)).slice(0, 8) : '';
-    const cartItemId = `${product.id}-${size || 'nosize'}-${color || 'nocolor'}${customHash ? `-${customHash}` : ''}`;
+    const normalizedItem: CartItem = 'cartItemId' in incomingItem
+      ? incomingItem
+      : {
+          cartItemId: buildCartItemId({
+            sourceType: incomingItem.sourceType === 'community' ? 'community' : 'catalog',
+            productId: incomingItem.id,
+            communityDesignId: incomingItem.communityDesignId,
+            designId: incomingItem.designId,
+            catalogVariantRef: incomingItem.catalogVariantRef ?? `${incomingItem.baseProductId ?? incomingItem.id}:${size ?? 'std'}:${color ?? 'std'}`,
+          }),
+          sourceType: incomingItem.sourceType === 'community' ? 'community' : 'catalog',
+          productId: incomingItem.id,
+          baseProductId: incomingItem.baseProductId,
+          designId: incomingItem.designId,
+          communityDesignId: incomingItem.communityDesignId,
+          catalogVariantRef: incomingItem.catalogVariantRef,
+          quantity,
+          price: incomingItem.price,
+          name: incomingItem.name,
+          image: incomingItem.image,
+          category: incomingItem.category,
+          memeDescription: incomingItem.memeDescription,
+          color: incomingItem.color,
+          selectedSize: size,
+          selectedColor: color,
+          authorName: incomingItem.authorName,
+        };
 
     setItems(prev => {
-      const existing = prev.find(item => item.cartItemId === cartItemId);
+      const existing = prev.find(item => item.cartItemId === normalizedItem.cartItemId);
       if (existing) {
         return prev.map(item =>
-          item.cartItemId === cartItemId
-            ? { ...item, quantity: item.quantity + quantity }
+          item.cartItemId === normalizedItem.cartItemId
+            ? { ...item, quantity: item.quantity + normalizedItem.quantity }
             : item
         );
       }
-      return [...prev, { ...product, quantity, selectedSize: size, selectedColor: color, cartItemId }];
+      return [...prev, normalizedItem];
     });
 
     playChaChingSound();

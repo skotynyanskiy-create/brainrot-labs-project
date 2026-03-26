@@ -1,8 +1,10 @@
 import { Component, Suspense, useLayoutEffect, useMemo, useRef, type ReactNode } from 'react';
-import { Canvas } from '@react-three/fiber';
+import { Canvas, useLoader } from '@react-three/fiber';
 import { ContactShadows, Environment, OrbitControls, PerspectiveCamera, useGLTF } from '@react-three/drei';
 import * as THREE from 'three';
+import { STLLoader } from 'three-stdlib';
 import Product3DPreview from '../customizer/Product3DPreview';
+import Tshirt3DModel, { TSHIRT_MODEL_PATH } from './Tshirt3DModel';
 
 interface Product3DViewerProps {
   modelPath: string;
@@ -50,20 +52,12 @@ function GLBModel({ modelPath }: { modelPath: string }) {
         child.castShadow = true;
         child.receiveShadow = true;
 
-        const sourceMaterial = Array.isArray(child.material) ? child.material[0] : child.material;
-        const baseColor = sourceMaterial instanceof THREE.Material && 'color' in sourceMaterial
-          ? (sourceMaterial as THREE.MeshStandardMaterial).color?.clone?.() ?? new THREE.Color('#f3b3aa')
-          : new THREE.Color('#f3b3aa');
-
-        child.material = new THREE.MeshPhysicalMaterial({
-          color: baseColor,
-          roughness: 0.88,
-          metalness: 0.02,
-          clearcoat: 0.08,
-          clearcoatRoughness: 0.7,
-          sheen: 0.45,
-          sheenRoughness: 0.92,
-          envMapIntensity: 0.65,
+        const mats = Array.isArray(child.material) ? child.material : [child.material];
+        mats.forEach((mat) => {
+          if (mat instanceof THREE.MeshStandardMaterial || mat instanceof THREE.MeshPhysicalMaterial) {
+            mat.envMapIntensity = 0.7;
+            mat.needsUpdate = true;
+          }
         });
       }
     });
@@ -90,7 +84,48 @@ function GLBModel({ modelPath }: { modelPath: string }) {
   );
 }
 
-useGLTF.preload('/models/tshirt-ecommerce-ready.glb');
+function STLModel({ modelPath, color = '#d4d4d4' }: { modelPath: string; color?: string }) {
+  const geometry = useLoader(STLLoader, modelPath);
+  const meshRef = useRef<THREE.Mesh>(null);
+
+  const { centeredGeo, normalizedScale } = useMemo(() => {
+    const geo = geometry.clone();
+    geo.computeVertexNormals();
+    geo.computeBoundingBox();
+    const box = geo.boundingBox ?? new THREE.Box3();
+    const size = new THREE.Vector3();
+    const center = new THREE.Vector3();
+    box.getSize(size);
+    box.getCenter(center);
+    geo.translate(-center.x, -center.y, -center.z);
+    const maxAxis = Math.max(size.x, size.y, size.z) || 1;
+    return { centeredGeo: geo, normalizedScale: 3 / maxAxis };
+  }, [geometry]);
+
+  const material = useMemo(
+    () =>
+      new THREE.MeshPhysicalMaterial({
+        color: new THREE.Color(color),
+        roughness: 0.45,
+        metalness: 0.08,
+        envMapIntensity: 0.75,
+      }),
+    [color]
+  );
+
+  return (
+    <mesh
+      ref={meshRef}
+      geometry={centeredGeo}
+      material={material}
+      scale={normalizedScale}
+      castShadow
+      receiveShadow
+    />
+  );
+}
+
+useGLTF.preload(TSHIRT_MODEL_PATH);
 
 export default function Product3DViewer({
   modelPath,
@@ -100,6 +135,8 @@ export default function Product3DViewer({
   designTextureUrl = null,
   usePreviewModel = false,
 }: Product3DViewerProps) {
+  const isSharedTshirtModel = modelPath === TSHIRT_MODEL_PATH;
+  const isSTL = modelPath.toLowerCase().endsWith('.stl');
   const fallback = (
     <div className={`relative h-full w-full ${className}`}>
       <Product3DPreview
@@ -132,46 +169,57 @@ export default function Product3DViewer({
             gl={{ antialias: true }}
             className="h-full w-full"
           >
-            <color attach="background" args={['#f7f5ef']} />
-            <fog attach="fog" args={['#f7f5ef', 8, 15]} />
+            <color attach="background" args={['#ffffff']} />
+            <fog attach="fog" args={['#ffffff', 8, 15]} />
 
-            <PerspectiveCamera makeDefault position={[0, 0.55, 6.1]} fov={29} />
+            <PerspectiveCamera makeDefault position={[0, 0.28, 5.8]} fov={37} />
 
-            <ambientLight intensity={0.72} color="#fffaf2" />
-            <hemisphereLight intensity={0.75} color="#fffdf8" groundColor="#d7d0c4" />
+            <ambientLight intensity={1.1} color="#ffffff" />
+            <hemisphereLight intensity={0.9} color="#ffffff" groundColor="#cccccc" />
             <spotLight
-              position={[3.2, 6.5, 4.5]}
-              angle={0.34}
-              penumbra={0.9}
-              intensity={2.3}
-              color="#fff4e8"
+              position={[3.5, 7, 5]}
+              angle={0.38}
+              penumbra={0.85}
+              intensity={3.2}
+              color="#ffffff"
               castShadow
               shadow-mapSize-width={2048}
               shadow-mapSize-height={2048}
             />
-            <directionalLight position={[-3.5, 2.8, -3.5]} intensity={0.5} color="#cfe5ff" />
-            <pointLight position={[0, 1.6, 4.2]} intensity={0.35} color="#ffffff" />
-            <Environment preset="warehouse" environmentIntensity={0.55} />
+            <directionalLight position={[-4, 3, -3]} intensity={0.8} color="#e8f0ff" />
+            <directionalLight position={[2, -1, 4]} intensity={0.4} color="#fff8f0" />
+            <Environment preset="studio" environmentIntensity={0.8} />
 
-            <group rotation={[0.04, 0.12, 0]}>
-              <GLBModel modelPath={modelPath} />
+            <group position={[0, -0.12, 0]} rotation={[0.05, 0.1, 0]}>
+              {isSharedTshirtModel ? (
+                <Tshirt3DModel
+                  baseColor={baseColor}
+                  designTextureUrl={designTextureUrl}
+                  scaleTarget={2.84}
+                  printOffsetY={0.04}
+                />
+              ) : isSTL ? (
+                <STLModel modelPath={modelPath} color={baseColor} />
+              ) : (
+                <GLBModel modelPath={modelPath} />
+              )}
             </group>
 
-            <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -2.08, 0]}>
+            <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -1.78, 0]}>
               <circleGeometry args={[2.45, 48]} />
               <meshBasicMaterial color="#ffffff" transparent opacity={0.75} />
             </mesh>
 
-            <ContactShadows position={[0, -2.05, 0]} opacity={0.42} blur={2.8} scale={8.5} far={5.2} color="#000000" />
+            <ContactShadows position={[0, -1.74, 0]} opacity={0.34} blur={2.8} scale={7.4} far={5.2} color="#000000" />
 
             <OrbitControls
               enablePan={false}
               enableDamping
               dampingFactor={0.07}
-              minDistance={4.8}
-              maxDistance={7.2}
-              minPolarAngle={Math.PI / 2.3}
-              maxPolarAngle={Math.PI / 1.8}
+              minDistance={3.4}
+              maxDistance={7.4}
+              minPolarAngle={Math.PI / 3}
+              maxPolarAngle={Math.PI / 1.6}
               autoRotate={autoRotate}
               autoRotateSpeed={1.15}
             />

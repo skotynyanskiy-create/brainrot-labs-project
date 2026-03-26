@@ -13,7 +13,8 @@ import {
   sendPasswordResetEmail,
   updateProfile
 } from 'firebase/auth';
-import { getFirestore, collection, doc, getDoc, getDocs, setDoc, addDoc, updateDoc, deleteDoc, onSnapshot, query, where, orderBy, limit, getDocFromServer, Timestamp, serverTimestamp } from 'firebase/firestore';
+import { getFirestore, collection, doc, getDoc, getDocs, setDoc, addDoc, updateDoc, deleteDoc, onSnapshot, query, where, orderBy, limit, startAfter, getDocFromServer, Timestamp, serverTimestamp, increment } from 'firebase/firestore';
+import type { DocumentSnapshot } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 import { env } from './config/env';
 import { logger } from './utils/logger';
@@ -82,7 +83,9 @@ export {
   where,
   orderBy,
   limit,
+  startAfter,
   Timestamp,
   serverTimestamp,
+  increment,
 };
-export type { FirebaseUser };
+export type { FirebaseUser, DocumentSnapshot };

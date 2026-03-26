@@ -1,0 +1,68 @@
+import type { BaseProductConfig } from './types';
+
+export const BASE_PRODUCTS: BaseProductConfig[] = [
+  {
+    id: 'base-tshirt',
+    slug: 'tshirt',
+    name: 'T-Shirt Bella+Canvas 3001',
+    price: 28,
+    image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=800&q=80&fm=webp',
+    category: 'wearable',
+    rendererType: 'tshirt',
+    modelPath: '/models/tshirt-brainrot.glb',
+    selectionMode: 'size-color',
+    sizes: ['S', 'M', 'L', 'XL', '2XL'],
+    colors: [
+      { name: 'White', hex: '#FFFFFF' },
+      { name: 'Black', hex: '#000000' },
+      { name: 'Athletic Heather', hex: '#B2BABB' },
+      { name: 'Navy', hex: '#1F305E' },
+      { name: 'Red', hex: '#EF3340' },
+    ],
+    overlay: { top: '28%', left: '25%', width: '50%', height: '52%', mixBlendMode: 'multiply' },
+    printfulProductId: 71,
+    printTemplateKey: 'bella-canvas-3001-front',
+    defaultPlacement: 'front',
+  },
+  {
+    id: 'base-phonecase',
+    slug: 'iphone-case',
+    name: 'iPhone Snap Case',
+    price: 19,
+    image: 'https://images.unsplash.com/photo-1601593346740-925612772716?auto=format&fit=crop&w=800&q=80&fm=webp',
+    category: 'useless',
+    rendererType: 'phone-case',
+    modelPath: '/models/iphone-17.stl',
+    selectionMode: 'phone-model-finish',
+    sizes: ['15 Pro', '15 Pro Max'],
+    colors: [
+      { name: 'Glossy', hex: '#F5F5F5' },
+      { name: 'Matte', hex: '#E0E0E0' },
+    ],
+    overlay: { top: '5%', left: '5%', width: '90%', height: '90%' },
+    printfulProductId: 571,
+    printTemplateKey: 'iphone-snap-case-back',
+    defaultPlacement: 'default',
+  },
+  {
+    id: 'base-poster',
+    slug: 'poster',
+    name: 'Poster Premium',
+    price: 24,
+    image: 'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&w=800&q=80&fm=webp',
+    category: 'decor',
+    rendererType: 'poster',
+    selectionMode: 'poster-size',
+    variantOptions: [
+      { label: '30x40 cm', value: '30x40' },
+      { label: '50x70 cm', value: '50x70' },
+      { label: '70x100 cm', value: '70x100' },
+    ],
+    colors: [{ name: 'Natural White', hex: '#F8F6F0' }],
+    overlay: { top: '8%', left: '8%', width: '84%', height: '84%' },
+    printTemplateKey: 'poster-paper-front',
+    defaultPlacement: 'front',
+  },
+];
+
+export const BASE_PRODUCTS_BY_ID = new Map(BASE_PRODUCTS.map((product) => [product.id, product]));

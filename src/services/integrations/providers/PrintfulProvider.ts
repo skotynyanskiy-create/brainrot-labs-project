@@ -27,6 +27,9 @@ function resolveVariantId(productId: string, size?: string, color?: string): num
   if (!product) {
     throw new Error(`Prodotto base "${baseId}" non trovato nel catalogo. Ordine annullato.`);
   }
+  if (!product.printfulVariants || product.printfulVariants.length === 0) {
+    throw new Error(`Il prodotto "${baseId}" non ha varianti Printful configurate.`);
+  }
 
   const normalizedSize  = (size  ?? '').trim();
   const normalizedColor = (color ?? '').trim();

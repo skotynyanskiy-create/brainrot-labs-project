@@ -19,7 +19,7 @@ import {
 } from '../firebase';
 import { useToast } from './ToastContext';
 import type { UserProfile } from '../types';
-import { DEFAULT_PAYOUT_SETUP, DEFAULT_ROYALTY_WALLET, DEFAULT_TAX_PROFILE } from '../services/payouts/payoutConfig';
+import { DEFAULT_PAYOUT_SETUP, DEFAULT_ROYALTY_WALLET } from '../services/payouts/payoutConfig';
 import { DEFAULT_LEGAL_ACCEPTANCES } from '../services/legal/legalConfig';
 
 interface AuthContextType {
@@ -80,21 +80,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     role: 'client',
     username: firebaseUser.email?.split('@')[0] || firebaseUser.uid.slice(0, 8),
     creatorTagline: '',
-    newsletterOptIn: false,
-    creatorCategory: 'creator',
-    legalName: firebaseUser.displayName || '',
     location: '',
-    portfolioUrl: '',
     socialHandle: '',
     payoutEmail: firebaseUser.email ?? '',
     authProvider,
     createdAt: new Date().toISOString(),
     payoutSetup: {
       ...DEFAULT_PAYOUT_SETUP,
-    },
-    taxProfile: {
-      ...DEFAULT_TAX_PROFILE,
-      legalName: firebaseUser.displayName || '',
     },
     royaltyWallet: {
       ...DEFAULT_ROYALTY_WALLET,
@@ -149,30 +141,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       username: 'demo_creator',
       creatorTagline: 'Meme designer indipendente con setup payout pronto per il go-live.',
       bio: 'Profilo demo locale per revisionare la dashboard account, il workflow creator e le sezioni ordini/royalty.',
-      creatorCategory: 'Visual meme creator',
-      legalName: 'Demo Creator Studio',
       location: 'Milano, Italia',
-      portfolioUrl: 'https://demo-creator.local',
       socialHandle: '@demo_creator',
       payoutEmail: 'demo@localhost',
-      newsletterOptIn: true,
       authProvider: 'password',
       payoutSetup: {
         provider: 'stripe_connect',
         status: 'pending_verification',
-        accountId: 'acct_demo_localhost',
         accountLabel: 'Demo Creator Studio',
         payoutCurrency: 'EUR',
-        minimumPayoutAmount: 25,
         onboardingReady: true,
         connectedAt: new Date().toISOString(),
-      },
-      taxProfile: {
-        legalName: 'Demo Creator Studio',
-        businessType: 'individual',
-        taxCountry: 'Italia',
-        taxId: 'TSTXXX00A00X000X',
-        vatId: '',
       },
       royaltyWallet: {
         available: 18.4,
@@ -269,30 +248,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       username: 'demo_creator',
       creatorTagline: 'Meme designer indipendente con setup payout pronto per il go-live.',
       bio: 'Profilo demo locale per revisionare la dashboard account, il workflow creator e le sezioni ordini/royalty.',
-      creatorCategory: 'Visual meme creator',
-      legalName: 'Demo Creator Studio',
       location: 'Milano, Italia',
-      portfolioUrl: 'https://demo-creator.local',
       socialHandle: '@demo_creator',
       payoutEmail: 'demo@localhost',
-      newsletterOptIn: true,
       authProvider: 'password',
       payoutSetup: {
         provider: 'stripe_connect',
         status: 'pending_verification',
-        accountId: 'acct_demo_localhost',
         accountLabel: 'Demo Creator Studio',
         payoutCurrency: 'EUR',
-        minimumPayoutAmount: 25,
         onboardingReady: true,
         connectedAt: new Date().toISOString(),
-      },
-      taxProfile: {
-        legalName: 'Demo Creator Studio',
-        businessType: 'individual',
-        taxCountry: 'Italia',
-        taxId: 'TSTXXX00A00X000X',
-        vatId: '',
       },
       royaltyWallet: {
         available: 18.4,

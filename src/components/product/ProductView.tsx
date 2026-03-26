@@ -26,6 +26,7 @@ import { useUI } from '../../context/UIContext';
 import { useProduct } from '../../context/ProductContext';
 import { CREATOR_ROYALTY_RATE, MEME_BASES } from '../../constants';
 import { playBlipSound, playCoinSound } from '../../utils/sounds';
+import { buildCartItemId, resolveCatalogVariantBySelection } from '../../services/commerce/helpers';
 
 interface ProductViewProps {
   product: Product;
@@ -133,7 +134,40 @@ export default function ProductView({ product, onBack }: ProductViewProps) {
 
   const handleAddToCart = () => {
     playCoinSound();
-    addToCart(product, quantity, selectedSize, selectedColor);
+    if (isCommunityProduct && communityDesign?.baseProductId) {
+      const catalogVariant = resolveCatalogVariantBySelection(communityDesign.baseProductId, selectedSize, selectedColor);
+      if (!catalogVariant) {
+        addToast('Variante non disponibile per questo design.', 'error');
+        return;
+      }
+
+      addToCart({
+        cartItemId: buildCartItemId({
+          sourceType: 'community',
+          productId: product.id,
+          communityDesignId: communityDesign.id,
+          catalogVariantRef: catalogVariant.id,
+        }),
+        sourceType: 'community',
+        productId: product.id,
+        baseProductId: communityDesign.baseProductId,
+        communityDesignId: communityDesign.id,
+        designId: product.designId,
+        catalogVariantRef: catalogVariant.id,
+        quantity,
+        price: catalogVariant.price,
+        name: product.name,
+        image: selectedImage,
+        category: product.category,
+        memeDescription: product.memeDescription,
+        color: product.color,
+        selectedSize,
+        selectedColor,
+        authorName: product.authorName,
+      });
+    } else {
+      addToCart(product, quantity, selectedSize, selectedColor);
+    }
     addToast(isCommunityProduct ? 'Design aggiunto al carrello.' : 'Prodotto aggiunto al carrello.');
   };
 
