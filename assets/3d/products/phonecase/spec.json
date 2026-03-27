@@ -1,0 +1,35 @@
+{
+  "id": "base-phonecase",
+  "slug": "iphone-case",
+  "displayName": "iPhone Snap Case",
+  "authoringFormat": "blend",
+  "runtimeFormat": "glb",
+  "sourceFile": "source/phonecase-master.blend",
+  "runtimeFile": "exports/phonecase-runtime.glb",
+  "publicModelTarget": "/public/models/phonecase-runtime.glb",
+  "units": "meters",
+  "worldForward": "+Z",
+  "worldUp": "+Y",
+  "pivot": "center",
+  "rendererType": "phone-case",
+  "baseMaterialStrategy": "dynamic-finish",
+  "legacyRuntimeFile": "/public/models/iphone-17.stl",
+  "printSurface": {
+    "type": "uv-mapped-surface",
+    "meshName": "print_area_back",
+    "placement": "back"
+  },
+  "textureProfiles": {
+    "preview": { "width": 512, "height": 512 },
+    "checkout": { "width": 1024, "height": 1024 },
+    "print": { "width": 2048, "height": 2048 }
+  },
+  "cameraPreset": {
+    "position": [0, 0, 5.5],
+    "fov": 45
+  },
+  "notes": [
+    "Migrare da STL a GLB appena possibile.",
+    "Glossy e matte devono essere varianti materiale, non modelli separati."
+  ]
+}

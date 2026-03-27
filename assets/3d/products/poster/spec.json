@@ -1,0 +1,34 @@
+{
+  "id": "base-poster",
+  "slug": "poster",
+  "displayName": "Poster Premium",
+  "authoringFormat": "blend",
+  "runtimeFormat": "glb",
+  "sourceFile": "source/poster-master.blend",
+  "runtimeFile": "exports/poster-runtime.glb",
+  "publicModelTarget": "/public/models/poster-runtime.glb",
+  "units": "meters",
+  "worldForward": "+Z",
+  "worldUp": "+Y",
+  "pivot": "center",
+  "rendererType": "poster",
+  "baseMaterialStrategy": "simple-base-color",
+  "printSurface": {
+    "type": "front-plane",
+    "meshName": "print_area_front",
+    "placement": "front"
+  },
+  "textureProfiles": {
+    "preview": { "width": 512, "height": 512 },
+    "checkout": { "width": 1024, "height": 1024 },
+    "print": { "width": 2048, "height": 3072 }
+  },
+  "cameraPreset": {
+    "position": [0, 0, 6.2],
+    "fov": 32
+  },
+  "notes": [
+    "Il poster è il prodotto più semplice da mantenere coerente.",
+    "Le varianti formato possono restare metadati commerciali se la preview non cambia."
+  ]
+}

@@ -3,6 +3,7 @@ import type {
   BaseProductId,
   CartItemRecord,
   CatalogSelectionMode,
+  ProductPlacementConfig,
   PrintPlacement,
   ProductOverlayConfig,
   RendererType,
@@ -95,6 +96,7 @@ export interface LayerData {
   id: string;
   type: 'meme' | 'text' | 'image';
   content: string;
+  sourceUrl?: string;
   x: number;
   y: number;
   width: number;
@@ -185,6 +187,7 @@ export interface BaseProduct {
   colors?: { name: string; hex: string }[];
   variantOptions?: Array<{ label: string; value: string }>;
   overlay: ProductOverlayConfig;
+  placements?: ProductPlacementConfig[];
   /** Printful catalog product ID (e.g. 71 for Bella+Canvas 3001) */
   printfulProductId: number;
   printTemplateKey?: string;

@@ -1,4 +1,4 @@
-import { X, Trash2, AlertTriangle, CheckCircle2, ShoppingBag, LogIn, MapPin } from 'lucide-react';
+import { X, Trash2, AlertTriangle, CheckCircle2, ShoppingBag, LogIn, MapPin, Truck, CreditCard } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 
@@ -10,7 +10,17 @@ import type { ShippingAddressInput } from '../../services/commerce/types';
 import { playBlipSound } from '../../utils/sounds';
 import { logger } from '../../utils/logger';
 
-interface ShippingAddress extends ShippingAddressInput {}
+type ShippingAddress = ShippingAddressInput;
+
+type LocalShippingOption = {
+  id: string;
+  shipping: string;
+  label: string;
+  rate: number;
+  currency: string;
+  minDeliveryDays?: number;
+  maxDeliveryDays?: number;
+};
 
 const EMPTY_ADDRESS: ShippingAddress = {
   name: '',
@@ -23,7 +33,36 @@ const EMPTY_ADDRESS: ShippingAddress = {
   phone: '',
 };
 
-type CheckoutState = 'idle' | 'address' | 'loading' | 'success' | 'error' | 'needs-login';
+type CheckoutState = 'idle' | 'address' | 'shipping' | 'review' | 'loading' | 'success' | 'error' | 'needs-login';
+
+const LOCAL_CHECKOUT_ENABLED = import.meta.env.DEV;
+
+function buildLocalShippingOptions(orderTotal: number, country: string): LocalShippingOption[] {
+  const isItaly = country.toLowerCase().includes('ital');
+  const standardRate = orderTotal >= 49 ? 0 : isItaly ? 5.9 : 8.9;
+  const expressRate = isItaly ? 11.9 : 16.9;
+
+  return [
+    {
+      id: 'local-standard',
+      shipping: 'STANDARD',
+      label: standardRate === 0 ? 'Standard gratuita' : 'Standard',
+      rate: standardRate,
+      currency: 'EUR',
+      minDeliveryDays: isItaly ? 3 : 5,
+      maxDeliveryDays: isItaly ? 5 : 8,
+    },
+    {
+      id: 'local-express',
+      shipping: 'EXPRESS',
+      label: 'Express',
+      rate: expressRate,
+      currency: 'EUR',
+      minDeliveryDays: isItaly ? 1 : 2,
+      maxDeliveryDays: isItaly ? 2 : 4,
+    },
+  ];
+}
 
 export default function CartDrawer() {
   const { items, isCartOpen, setIsCartOpen, updateQuantity, removeFromCart, clearCart, total } = useCart();
@@ -34,6 +73,8 @@ export default function CartDrawer() {
   const [shippingAddress, setShippingAddress] = useState<ShippingAddress>(EMPTY_ADDRESS);
   const [addressErrors, setAddressErrors] = useState<Partial<ShippingAddress>>({});
   const [loadingMessage, setLoadingMessage] = useState('Prepariamo spedizione e checkout sicuro...');
+  const [shippingOptions, setShippingOptions] = useState<LocalShippingOption[]>([]);
+  const [selectedShippingOptionId, setSelectedShippingOptionId] = useState<string>('');
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -85,25 +126,40 @@ export default function CartDrawer() {
     setCheckoutState('idle');
     setLoadingMessage('Prepariamo spedizione e checkout sicuro...');
     setAddressErrors({});
+    setShippingOptions([]);
+    setSelectedShippingOptionId('');
   };
 
   const handleCheckout = () => {
     playBlipSound();
-    if (items.some((item) => item.designId?.startsWith('local-dev-'))) {
+    if (!LOCAL_CHECKOUT_ENABLED && items.some((item) => item.designId?.startsWith('local-dev-'))) {
       addToast('Questo carrello contiene bozze locali: attiva le Functions o usa un account reale per il checkout.', 'warning');
       return;
     }
-    if (!user) {
+    if (!LOCAL_CHECKOUT_ENABLED && !user) {
       setCheckoutState('needs-login');
       return;
     }
     setCheckoutState('address');
   };
 
+  const selectedShippingOption = shippingOptions.find((option) => option.id === selectedShippingOptionId) ?? shippingOptions[0];
+  const checkoutGrandTotal = total + (selectedShippingOption?.rate ?? 0);
+
   const handleAddressSubmit = async () => {
-    if (!validateAddress() || !user) return;
+    if (!validateAddress()) return;
 
     playBlipSound();
+    if (LOCAL_CHECKOUT_ENABLED) {
+      const options = buildLocalShippingOptions(total, shippingAddress.country);
+      setShippingOptions(options);
+      setSelectedShippingOptionId(options[0]?.id ?? '');
+      setCheckoutState('shipping');
+      return;
+    }
+
+    if (!user) return;
+
     setCheckoutState('loading');
 
     try {
@@ -137,6 +193,54 @@ export default function CartDrawer() {
       addToast(error instanceof Error ? error.message : 'Checkout non disponibile al momento.', 'error');
       playBlipSound();
     }
+  };
+
+  const persistLocalOrder = () => {
+    if (typeof window === 'undefined') return;
+
+    const orderId = `local-order-${Date.now()}`;
+    const storedValue = window.localStorage.getItem('brainrot_order_history');
+    const existingOrders = storedValue ? JSON.parse(storedValue) as unknown[] : [];
+    const nextOrder = {
+      id: orderId,
+      providerOrderId: `LOCAL-${Date.now()}`,
+      createdAt: new Date().toISOString(),
+      paymentStatus: 'paid',
+      fulfillmentStatus: 'queued',
+      statusLabel: 'Ordine locale confermato',
+      total: checkoutGrandTotal,
+      itemsCount: items.reduce((sum, item) => sum + item.quantity, 0),
+      shippingLabel: selectedShippingOption?.label ?? 'Standard',
+      items: items.map((item) => ({
+        id: item.productId,
+        name: item.name,
+        image: item.image,
+        quantity: item.quantity,
+        price: item.price,
+        selectedSize: item.selectedSize ?? null,
+        selectedColor: item.selectedColor ?? null,
+      })),
+    };
+
+    const nextOrders = [nextOrder, ...(Array.isArray(existingOrders) ? existingOrders : [])];
+    window.localStorage.setItem('brainrot_order_history', JSON.stringify(nextOrders));
+  };
+
+  const handleLocalCheckoutConfirm = async () => {
+    if (!selectedShippingOption) {
+      addToast('Seleziona un metodo di spedizione.', 'warning');
+      return;
+    }
+
+    playBlipSound();
+    setLoadingMessage('Registriamo l’ordine locale e simuliamo il pagamento...');
+    setCheckoutState('loading');
+
+    await new Promise((resolve) => window.setTimeout(resolve, 900));
+    persistLocalOrder();
+    clearCart();
+    setCheckoutState('success');
+    addToast('Ordine locale confermato. Flusso checkout pronto per i test.', 'success');
   };
 
   const handleClose = () => {
@@ -255,7 +359,9 @@ export default function CartDrawer() {
 
                   <div className="mt-8 border-t-4 border-black pt-6">
                     <p className="mb-4 font-mono text-xs font-black uppercase tracking-[0.2em] text-gray-500">
-                      La spedizione viene calcolata server-side con il catalogo sincronizzato e validata prima di aprire Stripe Checkout.
+                      {LOCAL_CHECKOUT_ENABLED
+                        ? 'Checkout locale attivo: il prossimo step simula spedizione e pagamento per validare il flusso UX.'
+                        : 'La spedizione viene calcolata server-side con il catalogo sincronizzato e validata prima di aprire Stripe Checkout.'}
                     </p>
                     <div className="flex flex-col gap-4">
                       <motion.button
@@ -264,13 +370,152 @@ export default function CartDrawer() {
                         onClick={handleAddressSubmit}
                         className="w-full border-4 border-black bg-cyan-400 py-5 text-2xl font-black uppercase italic shadow-[8px_8px_0_0_rgba(0,0,0,1)] transition-all hover:shadow-none hover:translate-x-2 hover:translate-y-2"
                       >
-                        CONTINUA SU STRIPE
+                        {LOCAL_CHECKOUT_ENABLED ? 'CONTINUA ALLA SPEDIZIONE' : 'CONTINUA SU STRIPE'}
                       </motion.button>
                       <button
                         onClick={() => setCheckoutState('idle')}
                         className="w-full border-4 border-black bg-white py-4 text-lg font-black uppercase italic transition-colors hover:bg-black hover:text-white"
                       >
                         TORNA AL CARRELLO
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {checkoutState === 'shipping' && (
+                <div className="absolute inset-0 z-10 flex flex-col overflow-y-auto bg-white p-8">
+                  <div className="mb-8 flex items-center gap-4">
+                    <div className="border-4 border-black bg-black p-3 text-white shadow-[4px_4px_0_0_rgba(0,0,0,1)]">
+                      <Truck className="h-8 w-8" />
+                    </div>
+                    <div>
+                      <h3 className="text-3xl font-black uppercase tracking-tighter leading-none">Scegli la spedizione</h3>
+                      <p className="mt-1 text-xs font-mono uppercase tracking-widest text-gray-500">Step locale per simulare tariffe e tempi</p>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col gap-4">
+                    {shippingOptions.map((option) => (
+                      <button
+                        key={option.id}
+                        onClick={() => { playBlipSound(); setSelectedShippingOptionId(option.id); }}
+                        className={`w-full border-4 p-5 text-left transition-all ${
+                          selectedShippingOptionId === option.id
+                            ? 'border-cyan-400 bg-black text-white shadow-none'
+                            : 'border-black bg-white shadow-[6px_6px_0_0_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-1 hover:translate-y-1'
+                        }`}
+                      >
+                        <div className="flex items-start justify-between gap-4">
+                          <div>
+                            <p className="text-2xl font-black uppercase italic">{option.label}</p>
+                            <p className="mt-2 font-mono text-xs uppercase tracking-widest opacity-70">
+                              {option.minDeliveryDays}-{option.maxDeliveryDays} giorni stimati
+                            </p>
+                          </div>
+                          <p className="text-3xl font-black italic">EUR {option.rate.toFixed(2)}</p>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+
+                  <div className="mt-8 border-t-4 border-black pt-6">
+                    <div className="mb-4 flex items-center justify-between">
+                      <p className="font-black uppercase text-xl italic">Totale provvisorio</p>
+                      <p className="text-3xl font-black italic text-pink-500">EUR {checkoutGrandTotal.toFixed(2)}</p>
+                    </div>
+                    <div className="flex flex-col gap-4">
+                      <button
+                        onClick={() => setCheckoutState('review')}
+                        className="w-full border-4 border-black bg-cyan-400 py-5 text-2xl font-black uppercase italic shadow-[8px_8px_0_0_rgba(0,0,0,1)] transition-all hover:shadow-none hover:translate-x-2 hover:translate-y-2"
+                      >
+                        CONTINUA AL RIEPILOGO
+                      </button>
+                      <button
+                        onClick={() => setCheckoutState('address')}
+                        className="w-full border-4 border-black bg-white py-4 text-lg font-black uppercase italic transition-colors hover:bg-black hover:text-white"
+                      >
+                        TORNA ALL’INDIRIZZO
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {checkoutState === 'review' && (
+                <div className="absolute inset-0 z-10 flex flex-col overflow-y-auto bg-white p-8">
+                  <div className="mb-8 flex items-center gap-4">
+                    <div className="border-4 border-black bg-black p-3 text-white shadow-[4px_4px_0_0_rgba(0,0,0,1)]">
+                      <CreditCard className="h-8 w-8" />
+                    </div>
+                    <div>
+                      <h3 className="text-3xl font-black uppercase tracking-tighter leading-none">Riepilogo checkout locale</h3>
+                      <p className="mt-1 text-xs font-mono uppercase tracking-widest text-gray-500">Ultimo step prima della conferma ordine</p>
+                    </div>
+                  </div>
+
+                  <div className="grid gap-6">
+                    <div className="border-4 border-black bg-yellow-50 p-5">
+                      <p className="font-black uppercase text-sm">Spedizione</p>
+                      <p className="mt-2 font-mono text-sm">{shippingAddress.name} {shippingAddress.surname}</p>
+                      <p className="font-mono text-sm">{shippingAddress.address}</p>
+                      <p className="font-mono text-sm">{shippingAddress.zip} {shippingAddress.city} ({shippingAddress.province})</p>
+                      <p className="font-mono text-sm">{shippingAddress.country}</p>
+                    </div>
+
+                    <div className="border-4 border-black bg-cyan-50 p-5">
+                      <p className="font-black uppercase text-sm">Metodo selezionato</p>
+                      <p className="mt-2 text-2xl font-black uppercase italic">{selectedShippingOption?.label ?? 'Standard'}</p>
+                      <p className="font-mono text-sm">EUR {(selectedShippingOption?.rate ?? 0).toFixed(2)}</p>
+                    </div>
+
+                    <div className="border-4 border-black bg-white p-5">
+                      <div className="space-y-3">
+                        {items.map((item) => (
+                          <div key={item.cartItemId} className="flex items-center justify-between gap-4 border-b-2 border-black/10 pb-3 last:border-b-0 last:pb-0">
+                            <div className="min-w-0">
+                              <p className="truncate font-black uppercase">{item.name}</p>
+                              <p className="font-mono text-xs uppercase text-gray-500">
+                                {item.quantity}x {item.selectedSize ?? 'std'} {item.selectedColor ? `· ${item.selectedColor}` : ''}
+                              </p>
+                            </div>
+                            <p className="font-black italic">EUR {(item.price * item.quantity).toFixed(2)}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="mt-8 border-t-4 border-black pt-6">
+                    <div className="mb-6 space-y-2">
+                      <div className="flex items-center justify-between font-mono text-sm uppercase">
+                        <span>Subtotale</span>
+                        <span>EUR {total.toFixed(2)}</span>
+                      </div>
+                      <div className="flex items-center justify-between font-mono text-sm uppercase">
+                        <span>Spedizione</span>
+                        <span>EUR {(selectedShippingOption?.rate ?? 0).toFixed(2)}</span>
+                      </div>
+                      <div className="flex items-center justify-between text-3xl font-black italic">
+                        <span>Totale</span>
+                        <span className="text-pink-500">EUR {checkoutGrandTotal.toFixed(2)}</span>
+                      </div>
+                    </div>
+
+                    <div className="flex flex-col gap-4">
+                      <motion.button
+                        whileHover={{ scale: 1.02, y: -2 }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={handleLocalCheckoutConfirm}
+                        className="w-full border-4 border-black bg-pink-500 py-5 text-2xl font-black uppercase italic text-white shadow-[8px_8px_0_0_rgba(0,0,0,1)] transition-all hover:shadow-none hover:translate-x-2 hover:translate-y-2"
+                      >
+                        CONFERMA ORDINE LOCALE
+                      </motion.button>
+                      <button
+                        onClick={() => setCheckoutState('shipping')}
+                        className="w-full border-4 border-black bg-white py-4 text-lg font-black uppercase italic transition-colors hover:bg-black hover:text-white"
+                      >
+                        TORNA ALLA SPEDIZIONE
                       </button>
                     </div>
                   </div>
@@ -295,7 +540,9 @@ export default function CartDrawer() {
                     <span className="border-4 border-black bg-white px-4 py-2 text-black shadow-[8px_8px_0_0_rgba(0,0,0,1)]">PAGAMENTO CONFERMATO</span>
                   </h3>
                   <p className="mb-10 text-xl font-bold">
-                    Il tuo ordine e stato registrato. Fulfillment, tracking e aggiornamenti arriveranno nella dashboard account.
+                    {LOCAL_CHECKOUT_ENABLED
+                      ? 'Il tuo ordine locale e stato registrato. Puoi usare questo flusso per testare UX, dati e passaggi prima di collegare Stripe e Printful.'
+                      : 'Il tuo ordine e stato registrato. Fulfillment, tracking e aggiornamenti arriveranno nella dashboard account.'}
                   </p>
                   <button
                     onClick={handleClose}
@@ -459,7 +706,9 @@ export default function CartDrawer() {
                 </div>
 
                 <p className="mb-6 font-mono text-xs font-black uppercase tracking-[0.2em] text-gray-500">
-                  Stripe Checkout hosted, prezzi validati server-side, ordine Printful creato solo dopo conferma pagamento.
+                  {LOCAL_CHECKOUT_ENABLED
+                    ? 'Checkout locale attivo: spedizione, riepilogo e conferma ordine simulati in locale.'
+                    : 'Stripe Checkout hosted, prezzi validati server-side, ordine Printful creato solo dopo conferma pagamento.'}
                 </p>
 
                 <motion.button
@@ -470,7 +719,7 @@ export default function CartDrawer() {
                   onClick={handleCheckout}
                   className="w-full border-4 border-black bg-cyan-400 py-5 text-3xl font-black uppercase italic tracking-tighter shadow-[8px_8px_0_0_rgba(0,0,0,1)] transition-all hover:shadow-[4px_4px_0_0_rgba(0,0,0,1)] hover:translate-x-1 hover:translate-y-1 md:border-8 md:py-6 md:text-4xl md:shadow-[12px_12px_0_0_rgba(0,0,0,1)]"
                 >
-                  VAI AL CHECKOUT
+                  {LOCAL_CHECKOUT_ENABLED ? 'VAI AL CHECKOUT LOCALE' : 'VAI AL CHECKOUT'}
                 </motion.button>
               </div>
             )}

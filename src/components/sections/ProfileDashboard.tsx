@@ -237,8 +237,10 @@ export default function ProfileDashboard({ onBack, onOpenCreatorTerms, onOpenRoy
       return;
     }
 
-    setDesignsLoading(true);
-    setOrdersLoading(true);
+    queueMicrotask(() => {
+      setDesignsLoading(true);
+      setOrdersLoading(true);
+    });
 
     const designQuery = query(collection(db, 'communityDesigns'), where('authorId', '==', user.uid));
     const orderQueryRef = query(collection(db, 'orders'), where('userId', '==', user.uid), orderBy('createdAt', 'desc'));

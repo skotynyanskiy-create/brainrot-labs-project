@@ -61,6 +61,14 @@ export default function Tshirt3DModel({
     z: sceneMetrics.scaledDepth * 0.44 + 0.05,
   }), [sceneMetrics, printOffsetY]);
 
+  const textureRotation = useMemo(() => {
+    texture.flipY = false;
+    texture.center.set(0.5, 0.5);
+    texture.rotation = 0;
+    texture.needsUpdate = true;
+    return texture;
+  }, [texture]);
+
   useLayoutEffect(() => {
     const tint = new THREE.Color(baseColor);
     if (tint.r > 0.97 && tint.g > 0.97 && tint.b > 0.97) {
@@ -115,7 +123,7 @@ export default function Tshirt3DModel({
         <mesh position={[0, printLayout.y, printLayout.z]} renderOrder={3}>
           <planeGeometry args={[printLayout.width, printLayout.height]} />
           <meshStandardMaterial
-            map={texture}
+            map={textureRotation}
             transparent
             alphaTest={0.02}
             roughness={0.78}

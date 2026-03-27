@@ -19,6 +19,53 @@ export interface ProductOverlayConfig {
   mixBlendMode?: string;
 }
 
+export interface ProductPlacementArea2D {
+  top: number;
+  left: number;
+  width: number;
+  height: number;
+}
+
+export interface ProductPlacementHotspot3D {
+  x: number;
+  y: number;
+  label?: string;
+}
+
+export interface ProductPlacementCameraPreset {
+  position: [number, number, number];
+  fov: number;
+}
+
+export interface ProductPlacementConstraints {
+  minScale: number;
+  maxScale: number;
+  acceptedLayerTypes: Array<'meme' | 'image' | 'text'>;
+}
+
+export interface ProductPlacementTextureProfile {
+  preview: {
+    width: number;
+    height: number;
+  };
+  print: {
+    width: number;
+    height: number;
+  };
+}
+
+export interface ProductPlacementConfig {
+  id: string;
+  label: string;
+  printfulPlacement: PrintPlacement;
+  technique: string;
+  area2D: ProductPlacementArea2D;
+  hotspot3D: ProductPlacementHotspot3D;
+  cameraPreset?: ProductPlacementCameraPreset;
+  constraints: ProductPlacementConstraints;
+  textureProfile: ProductPlacementTextureProfile;
+}
+
 export interface ProductColorOption {
   name: string;
   hex: string;
@@ -39,6 +86,7 @@ export interface BaseProductConfig {
   rendererType: RendererType;
   modelPath?: string;
   overlay: ProductOverlayConfig;
+  placements?: ProductPlacementConfig[];
   selectionMode: CatalogSelectionMode;
   sizes?: string[];
   colors?: ProductColorOption[];
@@ -77,9 +125,19 @@ export interface DesignAssetRecord {
 }
 
 export interface DesignPlacementRecord {
+  placementId?: string;
   placement: PrintPlacement;
   technique: string;
   asset: DesignAssetRecord;
+  previewAsset?: DesignAssetRecord;
+  layerConfig?: unknown[];
+  transform?: {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  };
+  status?: 'ready' | 'processing' | 'failed';
 }
 
 export interface DesignDraftRecord {
@@ -228,9 +286,18 @@ export interface SaveDesignDraftRequest {
   layerConfig: unknown[];
   previewDataUrl: string;
   printPlacements: Array<{
+    placementId?: string;
     placement: PrintPlacement;
     technique: string;
     imageDataUrl: string;
+    previewDataUrl?: string;
+    layerConfig?: unknown[];
+    transform?: {
+      x: number;
+      y: number;
+      width: number;
+      height: number;
+    };
   }>;
   metadata?: DesignDraftRecord['metadata'];
 }

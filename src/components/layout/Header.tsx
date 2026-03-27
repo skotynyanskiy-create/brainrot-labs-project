@@ -1,5 +1,5 @@
 import { ShoppingCart, Menu, Zap, X, Wand2, Search, User, LogOut, LayoutGrid, Archive } from 'lucide-react';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion, useMotionValueEvent, useScroll } from 'motion/react';
 
 import { useCart } from '../../context/CartContext';
@@ -12,6 +12,7 @@ interface HeaderProps {
   onNavigateHome?: () => void;
   searchQuery?: string;
   setSearchQuery?: (query: string) => void;
+  onSearchSubmit?: (query: string) => void;
   onOpenCommunity?: () => void;
   onOpenProfile?: () => void;
 }
@@ -30,6 +31,7 @@ export default function Header({
   onNavigateHome,
   searchQuery,
   setSearchQuery,
+  onSearchSubmit,
   onOpenCommunity,
   onOpenProfile,
 }: HeaderProps) {
@@ -38,8 +40,28 @@ export default function Header({
   const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isHidden, setIsHidden] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const mobileSearchRef = useRef<HTMLInputElement>(null);
   const { scrollY } = useScroll();
+
+  useEffect(() => {
+    if (!isSearchOpen) {
+      return;
+    }
+
+    const frame = window.requestAnimationFrame(() => {
+      mobileSearchRef.current?.focus();
+      mobileSearchRef.current?.select();
+    });
+
+    return () => window.cancelAnimationFrame(frame);
+  }, [isSearchOpen]);
+
+  useEffect(() => {
+    if (searchQuery?.trim()) {
+      setIsSearchOpen(true);
+    }
+  }, [searchQuery]);
 
   useMotionValueEvent(scrollY, 'change', (latest) => {
     const previous = scrollY.getPrevious() ?? 0;
@@ -65,10 +87,32 @@ export default function Header({
     setIsCartOpen(true);
   };
 
-  const focusSearch = () => {
+  const toggleSearch = () => {
     playBlipSound();
-    mobileSearchRef.current?.focus();
-    mobileSearchRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    setIsSearchOpen((current) => {
+      const next = !current;
+      if (next) {
+        window.requestAnimationFrame(() => {
+          mobileSearchRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        });
+      }
+      return next;
+    });
+  };
+
+  const closeSearch = () => {
+    playBlipSound();
+    setIsSearchOpen(false);
+  };
+
+  const handleSearchSubmit = () => {
+    const normalizedQuery = searchQuery?.trim() ?? '';
+    if (!normalizedQuery) {
+      return;
+    }
+
+    playBlipSound();
+    onSearchSubmit?.(normalizedQuery);
   };
 
   return (
@@ -97,7 +141,13 @@ export default function Header({
             </h1>
           </button>
 
-          <div className="hidden xl:flex flex-1 max-w-xl px-8">
+          <form
+            className="hidden xl:flex flex-1 max-w-xl px-8"
+            onSubmit={(event) => {
+              event.preventDefault();
+              handleSearchSubmit();
+            }}
+          >
             <label className="relative block w-full">
               <span className="sr-only">Cerca catalogo e archivio digitale</span>
               <input
@@ -109,12 +159,14 @@ export default function Header({
               />
               <Search className="absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-black" />
             </label>
-          </div>
+          </form>
 
           <div className="flex items-center gap-2 md:gap-3">
             <button
-              onClick={focusSearch}
+              onClick={toggleSearch}
               aria-label="Apri ricerca"
+              aria-expanded={isSearchOpen}
+              aria-controls="mobile-search-panel"
               className="xl:hidden border-4 border-black bg-white p-3 shadow-[4px_4px_0_0_rgba(0,0,0,1)] transition-all hover:translate-x-1 hover:translate-y-1 hover:bg-black hover:text-white hover:shadow-none"
             >
               <Search className="h-5 w-5" />
@@ -185,73 +237,98 @@ export default function Header({
 
       </motion.header>
 
-      <motion.div
-        variants={{ visible: { y: 0 }, hidden: { y: -120 } }}
-        animate={isHidden ? 'hidden' : 'visible'}
-        transition={{ duration: 0.28, ease: 'easeInOut' }}
-        className="sticky top-[112px] z-30 border-b-4 border-black bg-[#f5f1e8] px-4 py-3 md:hidden"
-      >
-        <div className="space-y-3">
-          <label className="relative block">
-            <span className="sr-only">Cerca catalogo e archivio digitale</span>
-            <input
-              ref={mobileSearchRef}
-              type="search"
-              placeholder="CERCA PRODOTTI, CREATOR E DESIGN..."
-              value={searchQuery}
-              onChange={(event) => setSearchQuery?.(event.target.value)}
-              className="w-full border-4 border-black bg-white py-3 pl-4 pr-12 font-mono text-sm font-bold uppercase shadow-[4px_4px_0_0_rgba(0,0,0,1)] focus:outline-none focus:ring-4 focus:ring-offset-2"
-            />
-            <Search className="absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-black" />
-          </label>
+      <AnimatePresence initial={false}>
+        {isSearchOpen && (
+          <motion.div
+            id="mobile-search-panel"
+            initial={{ opacity: 0, height: 0, y: -12 }}
+            animate={{ opacity: 1, height: 'auto', y: 0 }}
+            exit={{ opacity: 0, height: 0, y: -12 }}
+            transition={{ duration: 0.22, ease: 'easeInOut' }}
+            className="sticky top-[112px] z-30 overflow-hidden border-b-4 border-black bg-[#f5f1e8] px-4 py-3 xl:hidden"
+          >
+            <div className="space-y-3">
+              <form
+                onSubmit={(event) => {
+                  event.preventDefault();
+                  handleSearchSubmit();
+                }}
+              >
+                <label className="relative block">
+                  <span className="sr-only">Cerca catalogo e archivio digitale</span>
+                  <input
+                    ref={mobileSearchRef}
+                    type="search"
+                    placeholder="CERCA PRODOTTI, CREATOR E DESIGN..."
+                    value={searchQuery}
+                    onChange={(event) => setSearchQuery?.(event.target.value)}
+                    onKeyDown={(event) => {
+                      if (event.key === 'Escape' && !searchQuery?.trim()) {
+                        closeSearch();
+                      }
+                    }}
+                    className="w-full border-4 border-black bg-white py-3 pl-4 pr-12 font-mono text-sm font-bold uppercase shadow-[4px_4px_0_0_rgba(0,0,0,1)] focus:outline-none focus:ring-4 focus:ring-offset-2"
+                  />
+                  <Search className="absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-black" />
+                </label>
+              </form>
 
-          <div className="flex gap-2 overflow-x-auto pb-1">
-            <button
-              onClick={() => {
-                playBlipSound();
-                onNavigateHome?.();
-              }}
-              className={mobileSecondaryButton}
-            >
-              <LayoutGrid className="h-4 w-4" />
-              Shop
-            </button>
-            {onOpenCommunity && (
-              <button
-                onClick={() => {
-                  playBlipSound();
-                  onOpenCommunity();
-                }}
-                className={getSiteCtaClasses('archive', 'sm', mobileActionButton)}
-              >
-                Archivio Digitale
-              </button>
-            )}
-            {onOpenCustomizer && (
-              <button
-                onClick={() => {
-                  playBlipSound();
-                  onOpenCustomizer();
-                }}
-                className={getSiteCtaClasses('create', 'sm', mobileActionButton)}
-              >
-                Crea il tuo design
-              </button>
-            )}
-            {onOpenProfile && (
-              <button
-                onClick={() => {
-                  playBlipSound();
-                  onOpenProfile();
-                }}
-                className={mobileAccountButton}
-              >
-                {user ? 'Account' : 'Accedi'}
-              </button>
-            )}
-          </div>
-        </div>
-      </motion.div>
+              <div className="flex items-center gap-2 overflow-x-auto pb-1">
+                <button
+                  onClick={() => {
+                    playBlipSound();
+                    onNavigateHome?.();
+                  }}
+                  className={mobileSecondaryButton}
+                >
+                  <LayoutGrid className="h-4 w-4" />
+                  Shop
+                </button>
+                {onOpenCommunity && (
+                  <button
+                    onClick={() => {
+                      playBlipSound();
+                      onOpenCommunity();
+                    }}
+                    className={getSiteCtaClasses('archive', 'sm', mobileActionButton)}
+                  >
+                    Archivio Digitale
+                  </button>
+                )}
+                {onOpenCustomizer && (
+                  <button
+                    onClick={() => {
+                      playBlipSound();
+                      onOpenCustomizer();
+                    }}
+                    className={getSiteCtaClasses('create', 'sm', mobileActionButton)}
+                  >
+                    Crea il tuo design
+                  </button>
+                )}
+                {onOpenProfile && (
+                  <button
+                    onClick={() => {
+                      playBlipSound();
+                      onOpenProfile();
+                    }}
+                    className={mobileAccountButton}
+                  >
+                    {user ? 'Account' : 'Accedi'}
+                  </button>
+                )}
+                <button
+                  onClick={closeSearch}
+                  aria-label="Chiudi ricerca"
+                  className="shrink-0 inline-flex items-center justify-center border-4 border-black bg-white p-2.5 shadow-[4px_4px_0_0_rgba(0,0,0,1)] transition-all hover:translate-x-1 hover:translate-y-1 hover:bg-black hover:text-white hover:shadow-none"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <AnimatePresence>
         {isMenuOpen && (

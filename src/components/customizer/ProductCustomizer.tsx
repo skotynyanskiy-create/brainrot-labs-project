@@ -83,22 +83,40 @@ const STICKERS = [
 
 const LOCAL_DRAFTS_STORAGE_KEY = 'brainrot_local_design_drafts';
 
+const remoteUrlPattern = /^https?:\/\//i;
+
+const getDefaultSelectionForBase = (base: BaseProduct) => {
+  const firstColor = base.colors?.[0]?.name ?? 'White';
+  const firstVariant = resolveCatalogVariantBySelection(base.id, base.sizes?.[0], firstColor);
+
+  return {
+    color: firstColor,
+    size:
+      firstVariant?.size
+      ?? firstVariant?.phoneModel
+      ?? firstVariant?.posterSize
+      ?? base.sizes?.[0]
+      ?? base.variantOptions?.[0]?.value
+      ?? 'M',
+  };
+};
+
 // ─── Component ───────────────────────────────────────────────────────────────
 const ProductCustomizer: React.FC<ProductCustomizerProps> = ({ onBack, initialMeme, initialBaseProductId, onPublished }) => {
   const { addToCart } = useCart();
   const { addToast } = useToast();
   const { user, isDemoUser } = useAuth();
   const { setIsProfileOpen, setIsCustomizerOpen } = useUI();
+  const initialBase = BASE_PRODUCTS.find((p) => p.id === initialBaseProductId) ?? BASE_PRODUCTS[0];
+  const initialSelection = getDefaultSelectionForBase(initialBase);
 
   // ── Step state ──────────────────────────────────────────────────────────────
   const [currentStep, setCurrentStep] = useState<Step>(initialBaseProductId ? 2 : 1);
 
   // ── Product state ───────────────────────────────────────────────────────────
-  const [selectedBase, setSelectedBase] = useState<BaseProduct>(
-    () => BASE_PRODUCTS.find((p) => p.id === initialBaseProductId) ?? BASE_PRODUCTS[0]
-  );
-  const [selectedSize,  setSelectedSize]  = useState<string>(BASE_PRODUCTS[0].sizes?.[0] ?? 'M');
-  const [selectedColor, setSelectedColor] = useState<string>(BASE_PRODUCTS[0].colors?.[0]?.name ?? 'White');
+  const [selectedBase, setSelectedBase] = useState<BaseProduct>(initialBase);
+  const [selectedSize,  setSelectedSize]  = useState<string>(initialSelection.size);
+  const [selectedColor, setSelectedColor] = useState<string>(initialSelection.color);
   const [quantity, setQuantity] = useState(1);
 
   // ── Design state ────────────────────────────────────────────────────────────
@@ -144,14 +162,13 @@ const ProductCustomizer: React.FC<ProductCustomizerProps> = ({ onBack, initialMe
   // ── Auto-load meme base from TrendingSection entry ────────────────────────
   useEffect(() => {
     if (!initialMeme) return;
-    setLayers([{
-      id: `meme-${Date.now()}`,
-      type: 'meme',
-      content: initialMeme.url,
-      x: 50, y: 30,
-      width: 300, height: 300,
-      rotate: 0, opacity: 1,
-    }]);
+    void addLayer('meme', initialMeme.url, {
+      sourceUrl: initialMeme.url,
+      x: 50,
+      y: 30,
+      width: 300,
+      height: 300,
+    });
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -228,17 +245,9 @@ const ProductCustomizer: React.FC<ProductCustomizerProps> = ({ onBack, initialMe
   const handleBaseChange = (base: BaseProduct) => {
     playBlipSound();
     setSelectedBase(base);
-    const firstColor = base.colors?.[0]?.name ?? 'White';
-    setSelectedColor(firstColor);
-    const firstVariant = resolveCatalogVariantBySelection(base.id, base.sizes?.[0], firstColor);
-    setSelectedSize(
-      firstVariant?.size
-      ?? firstVariant?.phoneModel
-      ?? firstVariant?.posterSize
-      ?? base.sizes?.[0]
-      ?? base.variantOptions?.[0]?.value
-      ?? 'M'
-    );
+    const defaults = getDefaultSelectionForBase(base);
+    setSelectedColor(defaults.color);
+    setSelectedSize(defaults.size);
   };
 
   const handleColorChange = (colorName: string) => {
@@ -252,11 +261,50 @@ const ProductCustomizer: React.FC<ProductCustomizerProps> = ({ onBack, initialMe
   };
 
   // ─── Layer operations ─────────────────────────────────────────────────────
-  const addLayer = useCallback((type: 'meme' | 'text' | 'image', content: string, overrides: Partial<Layer> = {}) => {
+  const urlToDataUrl = useCallback(async (url: string) => {
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`Impossibile scaricare asset remoto: ${response.status}`);
+    }
+
+    const blob = await response.blob();
+    return await new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        if (typeof reader.result === 'string') {
+          resolve(reader.result);
+          return;
+        }
+        reject(new Error('Conversione asset remoto fallita.'));
+      };
+      reader.onerror = () => reject(reader.error ?? new Error('Lettura asset remoto fallita.'));
+      reader.readAsDataURL(blob);
+    });
+  }, []);
+
+  const addLayer = useCallback(async (type: 'meme' | 'text' | 'image', content: string, overrides: Partial<Layer> = {}) => {
+    let normalizedContent = content;
+    let normalizedOverrides = overrides;
+
+    if (type !== 'text' && remoteUrlPattern.test(content)) {
+      try {
+        normalizedContent = await urlToDataUrl(content);
+        normalizedOverrides = {
+          ...overrides,
+          sourceUrl: overrides.sourceUrl ?? content,
+        };
+      } catch (error) {
+        logger.error('addLayer remote asset normalization failed', error);
+        addToast('Immagine remota non caricabile. Prova con un upload diretto o un altro meme.', 'error');
+        return;
+      }
+    }
+
     playBlipSound();
     const newLayer: Layer = {
       id: Math.random().toString(36).substr(2, 9),
-      type, content,
+      type,
+      content: normalizedContent,
       x: 80, y: 80,
       width:  type === 'text' ? 200 : 160,
       height: type === 'text' ? 60  : 160,
@@ -266,11 +314,11 @@ const ProductCustomizer: React.FC<ProductCustomizerProps> = ({ onBack, initialMe
       color:       type === 'text' ? '#ffffff' : undefined,
       strokeColor: type === 'text' ? '#000000' : undefined,
       strokeWidth: type === 'text' ? 2 : undefined,
-      ...overrides,
+      ...normalizedOverrides,
     };
     setLayers(prev => [...prev, newLayer]);
     setActiveLayerId(newLayer.id);
-  }, []);
+  }, [addToast, urlToDataUrl]);
 
   const updateLayer = (id: string, updates: Partial<Layer>) =>
     setLayers(prev => prev.map(l => l.id === id ? { ...l, ...updates } : l));
@@ -303,12 +351,16 @@ const ProductCustomizer: React.FC<ProductCustomizerProps> = ({ onBack, initialMe
 
   // ─── Canvas / texture ─────────────────────────────────────────────────────
   const captureDesignTexture = async (): Promise<string | null> => {
-    if (!canvasRef.current) return null;
+    if (!canvasRef.current) return designTextureUrl;
     try {
-      return await toPng(canvasRef.current, { pixelRatio: 2, backgroundColor: 'transparent' });
+      return await toPng(canvasRef.current, {
+        pixelRatio: 2,
+        backgroundColor: 'transparent',
+        cacheBust: true,
+      });
     } catch (e) {
       logger.error('captureDesignTexture failed', e);
-      return null;
+      return designTextureUrl;
     }
   };
 
@@ -443,13 +495,14 @@ const ProductCustomizer: React.FC<ProductCustomizerProps> = ({ onBack, initialMe
     return false;
   };
 
-  const createLocalDraftFallback = (texture: string) => {
+  const createLocalDraftFallback = (texture: string | null) => {
+    const previewUrl = texture ?? designTextureUrl ?? selectedBase.image;
     const localDesignId = `local-dev-${Date.now()}`;
     const localDraft = {
       id: localDesignId,
       baseProductId: selectedBase.id,
       selectionKey: `${selectedBase.id}:${selectedSize}:${selectedColor}`,
-      previewUrl: texture,
+      previewUrl,
       layerConfig: layers,
       createdAt: new Date().toISOString(),
     };
@@ -468,25 +521,45 @@ const ProductCustomizer: React.FC<ProductCustomizerProps> = ({ onBack, initialMe
     addToast('Bozza salvata in locale. Per checkout reale servono Functions attive.', 'warning');
     return {
       designId: localDesignId,
-      previewUrl: texture,
+      previewUrl,
     };
   };
 
   // ─── Add to cart ──────────────────────────────────────────────────────────
-  const persistDesignDraft = async () => {
-    if (!requireAuthenticatedDraftFlow()) {
+  const persistDesignDraft = async (options?: { requireAuth?: boolean }) => {
+    const requireAuth = options?.requireAuth ?? false;
+    const texture = await captureDesignTexture();
+    const normalizedTexture = texture ?? designTextureUrl;
+
+    if (!normalizedTexture && !(import.meta.env.DEV || isDemoUser)) {
+      addToast('Errore nella cattura del design. Riprova.', 'error');
       return null;
     }
 
-    const texture = await captureDesignTexture();
-    if (!texture) {
-      addToast('Errore nella cattura del design. Riprova.', 'error');
+    if (!user) {
+      if (requireAuth) {
+        requireAuthenticatedDraftFlow();
+        return null;
+      }
+
+      if (import.meta.env.DEV) {
+        return createLocalDraftFallback(normalizedTexture);
+      }
+
+      addToast('Accedi prima di aggiungere il design al carrello.', 'warning');
+      setIsCustomizerOpen(false);
+      setIsProfileOpen(true);
       return null;
     }
 
     const detectedMemeBase = detectMemeBaseFromLayers(layers);
     if (isDemoUser) {
-      return createLocalDraftFallback(texture);
+      return createLocalDraftFallback(normalizedTexture);
+    }
+
+    if (!normalizedTexture) {
+      addToast('Preview non disponibile per il salvataggio del design.', 'error');
+      return null;
     }
 
     try {
@@ -495,12 +568,12 @@ const ProductCustomizer: React.FC<ProductCustomizerProps> = ({ onBack, initialMe
         sourceType: 'customizer',
         selectionKey: `${selectedBase.id}:${selectedSize}:${selectedColor}`,
         layerConfig: layers,
-        previewDataUrl: texture,
+        previewDataUrl: normalizedTexture,
         printPlacements: [
           {
             placement: selectedBase.printfulPlacement,
             technique: selectedBase.id === 'base-tshirt' ? 'dtg' : selectedBase.id === 'base-phonecase' ? 'uv' : 'print',
-            imageDataUrl: texture,
+            imageDataUrl: normalizedTexture,
           },
         ],
         metadata: {
@@ -522,7 +595,7 @@ const ProductCustomizer: React.FC<ProductCustomizerProps> = ({ onBack, initialMe
     } catch (error) {
       logger.error('persistDesignDraft error', error);
       if (import.meta.env.DEV || isDemoUser) {
-        return createLocalDraftFallback(texture);
+        return createLocalDraftFallback(normalizedTexture);
       }
       throw error;
     }
@@ -531,7 +604,7 @@ const ProductCustomizer: React.FC<ProductCustomizerProps> = ({ onBack, initialMe
   const detectMemeBaseFromLayers = (currentLayers: Layer[]) => {
     const memeLayer = currentLayers.find((l) => l.type === 'meme');
     if (!memeLayer) return null;
-    return MEME_BASES.find((mb) => mb.url === memeLayer.content) ?? null;
+    return MEME_BASES.find((mb) => mb.url === (memeLayer.sourceUrl ?? memeLayer.content)) ?? null;
   };
 
   const handlePublishToCommunity = async () => {
@@ -546,7 +619,7 @@ const ProductCustomizer: React.FC<ProductCustomizerProps> = ({ onBack, initialMe
     playBlipSound();
     setIsPublishing(true);
     try {
-      const persisted = await persistDesignDraft();
+      const persisted = await persistDesignDraft({ requireAuth: true });
       if (!persisted) return;
 
       if (persisted.designId.startsWith('local-dev-')) {
@@ -583,6 +656,7 @@ const ProductCustomizer: React.FC<ProductCustomizerProps> = ({ onBack, initialMe
         return;
       }
       const productId = `${selectedBase.id}:${catalogVariant.id}`;
+      const previewUrl = persisted.previewUrl || designTextureUrl || selectedBase.image;
       addToCart({
         cartItemId: buildCartItemId({
           sourceType: 'customizer',
@@ -598,7 +672,7 @@ const ProductCustomizer: React.FC<ProductCustomizerProps> = ({ onBack, initialMe
         quantity,
         price: catalogVariant.price,
         name: `${selectedBase.name} - Custom`,
-        image: persisted.previewUrl,
+        image: previewUrl,
         category: selectedBase.category,
         memeDescription: aiPrompt || 'Creato da te, genio incompreso.',
         color: 'bg-green-400',
@@ -629,10 +703,10 @@ const ProductCustomizer: React.FC<ProductCustomizerProps> = ({ onBack, initialMe
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="min-h-screen bg-[#f0f0f0] flex flex-col font-sans"
+      className="h-full bg-[#f0f0f0] flex flex-col font-sans overflow-hidden"
     >
       {/* ── HEADER ─────────────────────────────────────────────────────────── */}
-      <header className="bg-white border-b-4 border-black sticky top-0 z-50 flex items-center justify-between px-4 py-3 gap-4">
+      <header className="bg-white border-b-4 border-black shrink-0 z-10 flex items-center justify-between px-4 py-3 gap-4">
         {/* Left: back + branding */}
         <div className="flex items-center gap-3">
           <motion.button

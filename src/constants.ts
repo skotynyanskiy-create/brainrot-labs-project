@@ -61,6 +61,26 @@ export const BASE_PRODUCTS: BaseProduct[] = [
     ],
     // Front print area (chest): ~28% top, 25% left, 50% wide, 52% tall (on 800px image)
     overlay: { top: '28%', left: '25%', width: '50%', height: '52%', mixBlendMode: 'multiply' },
+    placements: [
+      {
+        id: 'front',
+        label: 'Front chest',
+        printfulPlacement: 'front',
+        technique: 'dtg',
+        area2D: { top: 28, left: 25, width: 50, height: 52 },
+        hotspot3D: { x: 50, y: 45, label: 'Front' },
+        cameraPreset: { position: [0, 0.1, 5.85], fov: 36 },
+        constraints: {
+          minScale: 0.2,
+          maxScale: 1.2,
+          acceptedLayerTypes: ['meme', 'image', 'text'],
+        },
+        textureProfile: {
+          preview: { width: 512, height: 512 },
+          print: { width: 2048, height: 2048 },
+        },
+      },
+    ],
     printfulProductId: 71,
     printTemplateKey: 'bella-canvas-3001-front',
     printfulPlacement: 'front',
@@ -117,6 +137,26 @@ export const BASE_PRODUCTS: BaseProduct[] = [
     // Full-bleed back surface: 5% margin all around
     // Use 'normal' blend mode (design IS the product, not overlaid on color)
     overlay: { top: '5%', left: '5%', width: '90%', height: '90%' },
+    placements: [
+      {
+        id: 'back',
+        label: 'Back case',
+        printfulPlacement: 'default',
+        technique: 'uv',
+        area2D: { top: 5, left: 5, width: 90, height: 90 },
+        hotspot3D: { x: 50, y: 50, label: 'Back' },
+        cameraPreset: { position: [0, 0, 5.5], fov: 45 },
+        constraints: {
+          minScale: 0.35,
+          maxScale: 1.15,
+          acceptedLayerTypes: ['meme', 'image', 'text'],
+        },
+        textureProfile: {
+          preview: { width: 512, height: 512 },
+          print: { width: 2048, height: 2048 },
+        },
+      },
+    ],
     printfulProductId: 571,
     printTemplateKey: 'iphone-snap-case-back',
     printfulPlacement: 'default',
@@ -144,6 +184,26 @@ export const BASE_PRODUCTS: BaseProduct[] = [
     sizes: ['30x40', '50x70', '70x100'],
     colors: [{ name: 'Natural White', hex: '#F8F6F0' }],
     overlay: { top: '8%', left: '8%', width: '84%', height: '84%' },
+    placements: [
+      {
+        id: 'front',
+        label: 'Poster front',
+        printfulPlacement: 'front',
+        technique: 'print',
+        area2D: { top: 8, left: 8, width: 84, height: 84 },
+        hotspot3D: { x: 50, y: 50, label: 'Front' },
+        cameraPreset: { position: [0, 0, 6.2], fov: 32 },
+        constraints: {
+          minScale: 0.35,
+          maxScale: 1.15,
+          acceptedLayerTypes: ['meme', 'image', 'text'],
+        },
+        textureProfile: {
+          preview: { width: 512, height: 512 },
+          print: { width: 2048, height: 3072 },
+        },
+      },
+    ],
     printfulProductId: 0,
     printTemplateKey: 'poster-paper-front',
     printfulPlacement: 'front',

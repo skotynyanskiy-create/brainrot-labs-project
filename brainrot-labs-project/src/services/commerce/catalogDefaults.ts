@@ -1,0 +1,19 @@
+import type { CatalogVariantRecord } from './types';
+
+export const CURATED_CATALOG_VARIANTS: CatalogVariantRecord[] = [
+  { id: 'base-tshirt-white-s', baseProductId: 'base-tshirt', label: 'White / S', size: 'S', colorName: 'White', colorHex: '#FFFFFF', printfulProductId: 71, printfulVariantId: 4011, placement: 'front', technique: 'dtg', price: 28, currency: 'EUR', active: true, sortOrder: 10 },
+  { id: 'base-tshirt-white-m', baseProductId: 'base-tshirt', label: 'White / M', size: 'M', colorName: 'White', colorHex: '#FFFFFF', printfulProductId: 71, printfulVariantId: 4012, placement: 'front', technique: 'dtg', price: 28, currency: 'EUR', active: true, sortOrder: 20 },
+  { id: 'base-tshirt-white-l', baseProductId: 'base-tshirt', label: 'White / L', size: 'L', colorName: 'White', colorHex: '#FFFFFF', printfulProductId: 71, printfulVariantId: 4013, placement: 'front', technique: 'dtg', price: 28, currency: 'EUR', active: true, sortOrder: 30 },
+  { id: 'base-tshirt-black-m', baseProductId: 'base-tshirt', label: 'Black / M', size: 'M', colorName: 'Black', colorHex: '#000000', printfulProductId: 71, printfulVariantId: 4018, placement: 'front', technique: 'dtg', price: 28, currency: 'EUR', active: true, sortOrder: 40 },
+  { id: 'base-tshirt-black-l', baseProductId: 'base-tshirt', label: 'Black / L', size: 'L', colorName: 'Black', colorHex: '#000000', printfulProductId: 71, printfulVariantId: 4019, placement: 'front', technique: 'dtg', price: 28, currency: 'EUR', active: true, sortOrder: 50 },
+  { id: 'base-tshirt-navy-l', baseProductId: 'base-tshirt', label: 'Navy / L', size: 'L', colorName: 'Navy', colorHex: '#1F305E', printfulProductId: 71, printfulVariantId: 4068, placement: 'front', technique: 'dtg', price: 28, currency: 'EUR', active: true, sortOrder: 60 },
+
+  { id: 'base-phonecase-15pro-glossy', baseProductId: 'base-phonecase', label: 'iPhone 15 Pro / Glossy', phoneModel: '15 Pro', finish: 'Glossy', colorName: 'Glossy', colorHex: '#F5F5F5', printfulProductId: 571, printfulVariantId: 11534, placement: 'default', technique: 'uv', price: 19, currency: 'EUR', active: true, sortOrder: 10 },
+  { id: 'base-phonecase-15pro-matte', baseProductId: 'base-phonecase', label: 'iPhone 15 Pro / Matte', phoneModel: '15 Pro', finish: 'Matte', colorName: 'Matte', colorHex: '#E0E0E0', printfulProductId: 571, printfulVariantId: 11535, placement: 'default', technique: 'uv', price: 19, currency: 'EUR', active: true, sortOrder: 20 },
+  { id: 'base-phonecase-15promax-glossy', baseProductId: 'base-phonecase', label: 'iPhone 15 Pro Max / Glossy', phoneModel: '15 Pro Max', finish: 'Glossy', colorName: 'Glossy', colorHex: '#F5F5F5', printfulProductId: 571, printfulVariantId: 11536, placement: 'default', technique: 'uv', price: 19, currency: 'EUR', active: true, sortOrder: 30 },
+  { id: 'base-phonecase-15promax-matte', baseProductId: 'base-phonecase', label: 'iPhone 15 Pro Max / Matte', phoneModel: '15 Pro Max', finish: 'Matte', colorName: 'Matte', colorHex: '#E0E0E0', printfulProductId: 571, printfulVariantId: 11537, placement: 'default', technique: 'uv', price: 19, currency: 'EUR', active: true, sortOrder: 40 },
+
+  { id: 'base-poster-30x40', baseProductId: 'base-poster', label: 'Poster 30x40 cm', posterSize: '30x40', printfulProductId: 0, printfulVariantId: 0, placement: 'front', technique: 'print', price: 24, currency: 'EUR', active: true, sortOrder: 10 },
+  { id: 'base-poster-50x70', baseProductId: 'base-poster', label: 'Poster 50x70 cm', posterSize: '50x70', printfulProductId: 0, printfulVariantId: 0, placement: 'front', technique: 'print', price: 29, currency: 'EUR', active: true, sortOrder: 20 },
+  { id: 'base-poster-70x100', baseProductId: 'base-poster', label: 'Poster 70x100 cm', posterSize: '70x100', printfulProductId: 0, printfulVariantId: 0, placement: 'front', technique: 'print', price: 34, currency: 'EUR', active: true, sortOrder: 30 },
+];

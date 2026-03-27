@@ -5,6 +5,7 @@ import * as THREE from 'three';
 import { STLLoader } from 'three-stdlib';
 import Product3DPreview from '../customizer/Product3DPreview';
 import Tshirt3DModel, { TSHIRT_MODEL_PATH } from './Tshirt3DModel';
+import { getProduct3DConfig } from '../../config/product3d';
 
 interface Product3DViewerProps {
   modelPath: string;
@@ -13,6 +14,7 @@ interface Product3DViewerProps {
   baseColor?: string;
   designTextureUrl?: string | null;
   usePreviewModel?: boolean;
+  showContactShadows?: boolean;
 }
 
 class ViewerErrorBoundary extends Component<
@@ -134,9 +136,15 @@ export default function Product3DViewer({
   baseColor = '#ffffff',
   designTextureUrl = null,
   usePreviewModel = false,
+  showContactShadows = true,
 }: Product3DViewerProps) {
   const isSharedTshirtModel = modelPath === TSHIRT_MODEL_PATH;
   const isSTL = modelPath.toLowerCase().endsWith('.stl');
+  const tshirtConfig = getProduct3DConfig('base-tshirt');
+  const viewerCamera = tshirtConfig.viewerCamera ?? tshirtConfig.previewCamera;
+  const viewerContactShadows = tshirtConfig.viewerContactShadows ?? tshirtConfig.previewContactShadows;
+  const viewerOrbit = tshirtConfig.viewerOrbit ?? tshirtConfig.previewOrbit;
+  const viewerModel = tshirtConfig.viewerModel;
   const fallback = (
     <div className={`relative h-full w-full ${className}`}>
       <Product3DPreview
@@ -172,7 +180,7 @@ export default function Product3DViewer({
             <color attach="background" args={['#ffffff']} />
             <fog attach="fog" args={['#ffffff', 8, 15]} />
 
-            <PerspectiveCamera makeDefault position={[0, 0.28, 5.8]} fov={37} />
+            <PerspectiveCamera makeDefault position={viewerCamera.position} fov={viewerCamera.fov} />
 
             <ambientLight intensity={1.1} color="#ffffff" />
             <hemisphereLight intensity={0.9} color="#ffffff" groundColor="#cccccc" />
@@ -190,13 +198,16 @@ export default function Product3DViewer({
             <directionalLight position={[2, -1, 4]} intensity={0.4} color="#fff8f0" />
             <Environment preset="studio" environmentIntensity={0.8} />
 
-            <group position={[0, -0.12, 0]} rotation={[0.05, 0.1, 0]}>
+            <group
+              position={viewerModel?.groupPosition ?? [0, -0.12, 0]}
+              rotation={viewerModel?.groupRotation ?? [0.05, 0.1, 0]}
+            >
               {isSharedTshirtModel ? (
                 <Tshirt3DModel
                   baseColor={baseColor}
                   designTextureUrl={designTextureUrl}
-                  scaleTarget={2.84}
-                  printOffsetY={0.04}
+                  scaleTarget={viewerModel?.tshirtScaleTarget}
+                  printOffsetY={viewerModel?.tshirtPrintOffsetY}
                 />
               ) : isSTL ? (
                 <STLModel modelPath={modelPath} color={baseColor} />
@@ -210,16 +221,25 @@ export default function Product3DViewer({
               <meshBasicMaterial color="#ffffff" transparent opacity={0.75} />
             </mesh>
 
-            <ContactShadows position={[0, -1.74, 0]} opacity={0.34} blur={2.8} scale={7.4} far={5.2} color="#000000" />
+            {showContactShadows && (
+              <ContactShadows
+                position={viewerContactShadows.position}
+                opacity={viewerContactShadows.opacity}
+                blur={viewerContactShadows.blur}
+                scale={viewerContactShadows.scale}
+                far={viewerContactShadows.far}
+                color="#000000"
+              />
+            )}
 
             <OrbitControls
               enablePan={false}
               enableDamping
               dampingFactor={0.07}
-              minDistance={3.4}
-              maxDistance={7.4}
-              minPolarAngle={Math.PI / 3}
-              maxPolarAngle={Math.PI / 1.6}
+              minDistance={viewerOrbit.minDistance}
+              maxDistance={viewerOrbit.maxDistance}
+              minPolarAngle={viewerOrbit.minPolarAngle}
+              maxPolarAngle={viewerOrbit.maxPolarAngle}
               autoRotate={autoRotate}
               autoRotateSpeed={1.15}
             />

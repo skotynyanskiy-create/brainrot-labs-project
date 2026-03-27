@@ -437,11 +437,29 @@ export async function saveDesignDraftHandler(request: CallableRequest<SaveDesign
         `designs/${uid}/${designRef.id}/placement-${placement.placement}-${index}.png`,
         imageDataUrl,
       );
+      const previewAsset = typeof placement.previewDataUrl === 'string'
+        ? await uploadDataUrl(
+            `designs/${uid}/${designRef.id}/placement-preview-${placement.placement}-${index}.png`,
+            assertDataUrl(placement.previewDataUrl, `printPlacements[${index}].previewDataUrl`),
+          )
+        : undefined;
 
       return {
+        placementId: typeof placement.placementId === 'string' ? placement.placementId : undefined,
         placement: placement.placement,
         technique: assertString(placement.technique, 'technique', 2, 40),
         asset,
+        previewAsset,
+        layerConfig: Array.isArray(placement.layerConfig) ? placement.layerConfig : undefined,
+        transform: placement.transform && typeof placement.transform === 'object'
+          ? {
+              x: Number((placement.transform as Record<string, unknown>).x ?? 0),
+              y: Number((placement.transform as Record<string, unknown>).y ?? 0),
+              width: Number((placement.transform as Record<string, unknown>).width ?? 0),
+              height: Number((placement.transform as Record<string, unknown>).height ?? 0),
+            }
+          : undefined,
+        status: 'ready' as const,
       };
     }),
   );

@@ -1,4 +1,4 @@
-import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import React, { createContext, useCallback, useContext, useDeferredValue, useEffect, useMemo, useRef, useState } from 'react';
 import type { Product, CommunityDesign } from '../types';
 import { COMMUNITY_SEED_DESIGNS, PRODUCTS } from '../constants';
 import {
@@ -80,6 +80,7 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const [communityDesigns, setCommunityDesigns] = useState<CommunityDesign[]>(FALLBACK_COMMUNITY_DESIGNS);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const deferredSearchQuery = useDeferredValue(searchQuery);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
   // Community filter state
@@ -232,9 +233,9 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
   }, [selectedMemeBaseId, selectedBaseProductId, communitySort, fetchDesignsByFilter]);
 
   const filteredProducts = useMemo(() => {
+    const normalizedQuery = deferredSearchQuery.toLowerCase();
     return products.filter((product) => {
       const matchesCategory = selectedCategory === 'all' || product.category === selectedCategory;
-      const normalizedQuery = searchQuery.toLowerCase();
       const matchesSearch =
         product.name.toLowerCase().includes(normalizedQuery) ||
         product.memeDescription.toLowerCase().includes(normalizedQuery) ||
@@ -242,11 +243,11 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
       return matchesCategory && matchesSearch;
     });
-  }, [products, selectedCategory, searchQuery]);
+  }, [deferredSearchQuery, products, selectedCategory]);
 
   // Community designs matching the current search query (empty when query is blank)
   const communitySearchResults = useMemo(() => {
-    const q = searchQuery.trim().toLowerCase();
+    const q = deferredSearchQuery.trim().toLowerCase();
     if (!q) return [];
     return communityDesigns.filter((d) =>
       d.memeDescription.toLowerCase().includes(q) ||
@@ -255,7 +256,7 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
       d.baseProductName?.toLowerCase().includes(q) ||
       d.tags?.some((t) => t.toLowerCase().includes(q))
     );
-  }, [communityDesigns, searchQuery]);
+  }, [communityDesigns, deferredSearchQuery]);
 
   return (
     <ProductContext.Provider

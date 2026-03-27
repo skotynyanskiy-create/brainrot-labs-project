@@ -10,6 +10,7 @@ import {
 import Tshirt3DModel from '../product/Tshirt3DModel';
 import PhoneCase3DModel from '../product/PhoneCase3DModel';
 import Poster3DModel from '../product/Poster3DModel';
+import { getProduct3DConfig } from '../../config/product3d';
 
 export interface Product3DPreviewProps {
   baseProductId: 'base-tshirt' | 'base-phonecase' | 'base-poster';
@@ -47,15 +48,20 @@ const Product3DPreview: React.FC<Product3DPreviewProps> = ({
 }) => {
   const [isHovered, setIsHovered] = useState(false);
   const colorHex = baseColor || '#ffffff';
+  const config = getProduct3DConfig(baseProductId);
 
   const model = baseProductId === 'base-phonecase'
-    ? <PhoneCase3DModel baseColor={colorHex} designTextureUrl={designTextureUrl} scaleTarget={3.05} />
+    ? <PhoneCase3DModel baseColor={colorHex} designTextureUrl={designTextureUrl} scaleTarget={config.previewModel.scaleTarget} />
     : baseProductId === 'base-poster'
       ? <Poster3DModel baseColor={colorHex} designTextureUrl={designTextureUrl} />
-      : <Tshirt3DModel baseColor={colorHex} designTextureUrl={designTextureUrl} scaleTarget={3.05} printOffsetY={0.04} />;
-
-  const isPhoneCase = baseProductId === 'base-phonecase';
-  const isPoster = baseProductId === 'base-poster';
+      : (
+        <Tshirt3DModel
+          baseColor={colorHex}
+          designTextureUrl={designTextureUrl}
+          scaleTarget={config.previewModel.scaleTarget}
+          printOffsetY={config.previewModel.printOffsetY}
+        />
+      );
 
   return (
     <div
@@ -74,8 +80,8 @@ const Product3DPreview: React.FC<Product3DPreviewProps> = ({
           <color attach="background" args={['#ffffff']} />
           <PerspectiveCamera
             makeDefault
-            position={isPhoneCase ? [0, 0, 5.5] : isPoster ? [0, 0, 6.2] : [0, 0.1, 5.85]}
-            fov={isPhoneCase ? 45 : isPoster ? 32 : 36}
+            position={config.previewCamera.position}
+            fov={config.previewCamera.fov}
           />
 
           {lightingMode === 'y2k' ? <Y2KLighting /> : <NeutralLighting />}
@@ -89,18 +95,18 @@ const Product3DPreview: React.FC<Product3DPreviewProps> = ({
           )}
 
           <ContactShadows
-            position={[0, isPhoneCase ? -2.2 : isPoster ? -2.05 : -1.78, 0]}
-            opacity={0.48}
-            scale={isPhoneCase ? 10 : isPoster ? 8.5 : 7.4}
-            blur={2.8}
-            far={5}
+            position={config.previewContactShadows.position}
+            opacity={config.previewContactShadows.opacity}
+            scale={config.previewContactShadows.scale}
+            blur={config.previewContactShadows.blur}
+            far={config.previewContactShadows.far}
             color="#000000"
           />
 
           <OrbitControls
             enablePan={false}
-            minDistance={isPhoneCase ? 3 : isPoster ? 4.2 : 4}
-            maxDistance={isPhoneCase ? 9 : 9}
+            minDistance={config.previewOrbit.minDistance}
+            maxDistance={config.previewOrbit.maxDistance}
             autoRotate={autoRotate}
             autoRotateSpeed={autoRotate ? 2.5 : 0}
             enableDamping

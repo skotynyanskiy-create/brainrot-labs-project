@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { lazy, Suspense, useState } from 'react';
+import { lazy, Suspense, useDeferredValue, useEffect, useState } from 'react';
 import ErrorBoundary from './components/ui/ErrorBoundary';
 import { CartProvider } from './context/CartContext';
 import { ToastProvider } from './context/ToastContext';
@@ -53,6 +53,7 @@ function AppContent() {
     selectedProduct,
     setSelectedProduct
   } = useProduct();
+  const deferredSearchQuery = useDeferredValue(searchQuery);
 
   const {
     isCustomizerOpen,
@@ -73,6 +74,33 @@ function AppContent() {
 
   const [pendingMeme, setPendingMeme] = useState<{ url: string; name: string } | null>(null);
   const [pendingBaseProductId, setPendingBaseProductId] = useState<string | null>(null);
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }, [isCustomizerOpen, isCommunityOpen, isProfileOpen, isPrivacyOpen, isTermsOpen, isCreatorTermsOpen, isRoyaltyPolicyOpen, selectedProduct]);
+
+  useEffect(() => {
+    const normalizedQuery = deferredSearchQuery.trim();
+    if (!normalizedQuery || isCustomizerOpen || isCommunityOpen) {
+      return;
+    }
+
+    setIsProfileOpen(false);
+    setSelectedProduct(null);
+    setIsCommunityOpen(true);
+  }, [deferredSearchQuery, isCustomizerOpen, isCommunityOpen, setIsCommunityOpen, setIsProfileOpen, setSelectedProduct]);
+
+  const handleSearchSubmit = (query: string) => {
+    if (!query.trim()) {
+      return;
+    }
+
+    setIsCustomizerOpen(false);
+    setIsProfileOpen(false);
+    setSelectedProduct(null);
+    setIsCommunityOpen(true);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   const handleNavigateHome = () => {
     setIsCustomizerOpen(false);
@@ -134,6 +162,7 @@ function AppContent() {
         onNavigateHome={handleNavigateHome}
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
+        onSearchSubmit={handleSearchSubmit}
         onOpenCommunity={handleOpenCommunity}
         onOpenProfile={handleOpenProfile}
       />
@@ -212,10 +241,11 @@ function AppContent() {
         ) : isCustomizerOpen ? (
           <motion.div
             key="customizer-view"
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            transition={{ duration: 0.3, ease: "easeInOut" }}
+            className="fixed inset-0 z-[200]"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
           >
             <ErrorBoundary>
               <ProductCustomizer
